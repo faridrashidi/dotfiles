@@ -1,0 +1,12 @@
+{
+	"bootstrapped": true,
+	"installed_packages":
+	[
+		"gruvbox",
+		"Package Control",
+		"rainbow_csv",
+	],
+	"in_process_packages":
+	[
+	],
+}

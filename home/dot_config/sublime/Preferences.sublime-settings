@@ -1,0 +1,19 @@
+// Settings in here override those in "Default/Preferences.sublime-settings",
+// and are overridden in turn by syntax-specific settings.
+{
+  "command": "paste",
+  "font_face": "FiraCode-Retina, Symbols Nerd Font Mono, Vazirmatn",
+  "font_options": ["subpixel_antialias"],
+  "font_size": 15,
+  "keys": ["super+shift+v"],
+  "open_files_in_new_window": false,
+  "tab_size": 4,
+  "color_scheme": "Packages/gruvbox/gruvbox (Dark) (Medium).sublime-color-scheme",
+  // "color_scheme": "auto",
+  "light_color_scheme": "Packages/gruvbox/gruvbox (Light) (Medium).sublime-color-scheme",
+  "dark_color_scheme": "Packages/gruvbox/gruvbox (Dark) (Medium).sublime-color-scheme",
+  "theme": "gruvbox.sublime-theme",
+  "translate_tabs_to_spaces": true,
+  "index_files": false,
+  "ignored_packages": ["Vintage"],
+}
