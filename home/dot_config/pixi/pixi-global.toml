@@ -1,0 +1,171 @@
+version = 1
+
+[envs.python]
+channels = ["conda-forge"]
+dependencies = { python = "==3.12.12" }
+exposed = { python = "python", python3 = "python3" }
+
+[envs.node]
+channels = ["conda-forge"]
+dependencies = { nodejs = "==25.6.1" }
+exposed = { node = "node", npm = "npm", npx = "npx" }
+
+[envs.r]
+channels = ["conda-forge"]
+dependencies = { r-base = "==4.3.3" }
+exposed = { R = "R", Rscript = "Rscript" }
+
+[envs.ruby]
+channels = ["conda-forge"]
+dependencies = { ruby = "==3.4.8" }
+exposed = { ruby = "ruby", gem = "gem", bundle = "bundle", bundler = "bundler" }
+
+[envs.rust]
+channels = ["conda-forge"]
+dependencies = { rust = "==1.93.1" }
+exposed = { rustc = "rustc", cargo = "cargo", rustdoc = "rustdoc", rustfmt = "rustfmt" }
+
+[envs.go]
+channels = ["conda-forge"]
+dependencies = { go = "==1.25.7" }
+exposed = { go = "go", gofmt = "gofmt" }
+
+[envs.atuin]
+channels = ["conda-forge"]
+dependencies = { atuin = "*" }
+exposed = { atuin = "atuin" }
+
+[envs.bat]
+channels = ["conda-forge"]
+dependencies = { bat = "*" }
+exposed = { bat = "bat" }
+
+[envs.btop]
+channels = ["conda-forge"]
+dependencies = { btop = "*" }
+exposed = { btop = "btop" }
+
+[envs.chezmoi]
+channels = ["conda-forge"]
+dependencies = { chezmoi = "==2.69.4" }
+exposed = { chezmoi = "chezmoi" }
+
+[envs.direnv]
+channels = ["conda-forge"]
+dependencies = { direnv = "*" }
+exposed = { direnv = "direnv" }
+
+[envs.eza]
+channels = ["conda-forge"]
+dependencies = { eza = "*" }
+exposed = { eza = "eza" }
+
+[envs.fd]
+channels = ["conda-forge"]
+dependencies = { fd-find = "*" }
+exposed = { fd = "fd" }
+
+[envs.ffmpeg]
+channels = ["conda-forge"]
+dependencies = { ffmpeg = "*" }
+exposed = { ffmpeg = "ffmpeg" }
+
+[envs.fzf]
+channels = ["conda-forge"]
+dependencies = { fzf = "==0.68.0" }
+exposed = { fzf = "fzf" }
+
+[envs.gh]
+channels = ["conda-forge"]
+dependencies = { gh = "*" }
+exposed = { gh = "gh" }
+
+[envs.lazydocker]
+channels = ["conda-forge"]
+dependencies = { lazydocker = "==0.24.4" }
+exposed = { lazydocker = "lazydocker" }
+
+[envs.lazygit]
+channels = ["conda-forge"]
+dependencies = { lazygit = "==0.58.1" }
+exposed = { lazygit = "lazygit" }
+
+[envs.mutool]
+channels = ["conda-forge"]
+dependencies = { mupdf = "*" }
+exposed = { mutool = "mutool" }
+
+[envs.ncdu]
+channels = ["conda-forge"]
+dependencies = { ncdu = "*" }
+exposed = { ncdu = "ncdu" }
+
+[envs.nvim]
+channels = ["conda-forge"]
+dependencies = { nvim = "*" }
+exposed = { nvim = "nvim" }
+
+[envs.parallel]
+channels = ["conda-forge"]
+dependencies = { parallel = "*" }
+exposed = { parallel = "parallel" }
+
+[envs.pip]
+channels = ["conda-forge"]
+dependencies = { pip = "*" }
+exposed = { pip = "pip", pip3 = "pip3" }
+
+[envs.pipx]
+channels = ["conda-forge"]
+dependencies = { pipx = "*" }
+exposed = { pipx = "pipx" }
+
+[envs.rg]
+channels = ["conda-forge"]
+dependencies = { ripgrep = "*" }
+exposed = { rg = "rg" }
+
+[envs.rsync]
+channels = ["conda-forge"]
+dependencies = { rsync = "*" }
+exposed = { rsync = "rsync" }
+
+[envs.sesh]
+channels = ["https://prefix.dev/github-releases"]
+dependencies = { sesh = "*" }
+exposed = { sesh = "sesh" }
+
+[envs.sheldon]
+channels = ["conda-forge"]
+dependencies = { sheldon = "*" }
+exposed = { sheldon = "sheldon" }
+
+[envs.starship]
+channels = ["conda-forge"]
+dependencies = { starship = "*" }
+exposed = { starship = "starship" }
+
+[envs.tldr]
+channels = ["conda-forge"]
+dependencies = { tealdeer = "*" }
+exposed = { tldr = "tldr" }
+
+[envs.tmux]
+channels = ["conda-forge"]
+dependencies = { tmux = "==3.5a" }
+exposed = { tmux = "tmux" }
+
+[envs.uv]
+channels = ["conda-forge"]
+dependencies = { uv = "*" }
+exposed = { uv = "uv", uvx = "uvx" }
+
+[envs.yazi]
+channels = ["conda-forge"]
+dependencies = { yazi = "*" }
+exposed = { yazi = "yazi" }
+
+[envs.zoxide]
+channels = ["conda-forge"]
+dependencies = { zoxide = "*" }
+exposed = { zoxide = "zoxide" }

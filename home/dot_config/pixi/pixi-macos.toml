@@ -1,0 +1,47 @@
+[envs.exiftool]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { exiftool = "*" }
+exposed = { exiftool = "exiftool" }
+
+[envs.colima]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { colima = "*" }
+exposed = { colima = "colima" }
+
+[envs.docker]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { docker-cli = "*" }
+exposed = { docker = "docker" }
+
+[envs.vercel]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { vercel-cli = "*" }
+exposed = { vercel = "vercel" }
+
+[envs.ollama]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { ollama = "*" }
+exposed = { ollama = "ollama" }
+
+[envs.yt-dlp]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { yt-dlp = "*" }
+exposed = { yt-dlp = "yt-dlp" }
+
+[envs.fastfetch]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { fastfetch = "*" }
+exposed = { fastfetch = "fastfetch" }
+
+[envs.shfmt]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { go-shfmt = "*" }
+exposed = { shfmt = "shfmt" }
