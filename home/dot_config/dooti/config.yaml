@@ -1,0 +1,92 @@
+app:
+  com.sublimetext.4:
+    ext:
+      - astro
+      - bib
+      - c
+      - cc
+      - cfg
+      - conf
+      - cpp
+      - csv
+      - css
+      - cxx
+      - dat
+      - diff
+      - dockerignore
+      - Dockerfile
+      - env
+      - gitattributes
+      - gitignore
+      - go
+      - h
+      - hpp
+      - hxx
+      - ini
+      - java
+      - js
+      - json
+      - jsx
+      - kt
+      - lock
+      - log
+      - lua
+      - makefile
+      - Makefile
+      - md
+      - mk
+      - nix
+      - patch
+      - php
+      - properties
+      - py
+      - R
+      - rb
+      - Rmd
+      - rs
+      - rst
+      - sass
+      - scss
+      - sh
+      - sql
+      - swift
+      - tex
+      - tmpl
+      - toml
+      - ts
+      - tsv
+      - tsx
+      - txt
+      - vue
+      - xml
+      - yaml
+      - yml
+      - zsh
+  com.microsoft.VSCode:
+    ext:
+      - ipynb
+  com.colliderli.iina:
+    ext:
+      - avi
+      - gif
+      - m4a
+      - m4v
+      - mkv
+      - mov
+      - mp3
+      - mp4
+      - wav
+      - webm
+  com.aone.keka:
+    ext:
+      - 7z
+      - bz2
+      - gz
+      - rar
+      - tar
+      - tgz
+      - xz
+      - zip
+  com.bohemiancoding.sketch3:
+    ext:
+      - svg
