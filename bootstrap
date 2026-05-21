@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -n "${PIXI_HOME:-}" ]]; then
+    PIXI_BIN="${PIXI_HOME}/bin/pixi"
+elif command -v pixi >/dev/null 2>&1; then
+    PIXI_BIN="$(command -v pixi)"
+    export PIXI_HOME="$(cd "$(dirname "${PIXI_BIN}")/.." && pwd)"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    export PIXI_HOME="${HOME}/.pixi"
+    PIXI_BIN="${PIXI_HOME}/bin/pixi"
+else
+    export PIXI_HOME="/data/${USER}/.pixi"
+    PIXI_BIN="${PIXI_HOME}/bin/pixi"
+fi
+
+print_step() {
+    printf '• %s\n' "$1"
+}
+
+print_error() {
+    printf 'Error: %s\n' "$1" >&2
+}
+
+require_command() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        print_error "$2"
+        exit 1
+    fi
+}
+
+if [[ "$(uname)" == "Darwin" ]] && ! xcode-select -p >/dev/null 2>&1; then
+    print_error "Xcode Command Line Tools are required before bootstrap can continue."
+    echo "Run: xcode-select --install"
+    exit 1
+fi
+
+require_command curl "curl is required to install pixi."
+
+if [[ ! -x "$PIXI_BIN" ]]; then
+    print_step "Installing pixi to ${PIXI_HOME}"
+    curl -fsSL https://pixi.sh/install.sh | PIXI_HOME="$PIXI_HOME" bash
+fi
+
+CHEZMOI_BIN="${PIXI_HOME}/bin/chezmoi"
+PIXI_SYNC_BIN="${ROOT_DIR}/scripts/pixi-global-sync"
+
+if [[ ! -x "$PIXI_BIN" ]]; then
+    print_error "pixi installation did not produce an executable at ${PIXI_BIN}."
+    exit 1
+fi
+
+if [[ ! -x "$CHEZMOI_BIN" ]]; then
+    print_step "Installing chezmoi with pixi global"
+    PIXI_HOME="$PIXI_HOME" "$PIXI_BIN" global install --channel conda-forge --environment chezmoi --expose chezmoi "chezmoi==2.69.4"
+fi
+
+if [[ ! -x "$CHEZMOI_BIN" ]]; then
+    print_error "pixi global did not expose chezmoi at ${CHEZMOI_BIN}."
+    exit 1
+fi
+
+print_step "Applying chezmoi source from ${ROOT_DIR}"
+CHEZMOI_INIT_ARGS=(init --apply --source="$ROOT_DIR" --promptString "PIXI_HOME=$PIXI_HOME")
+if [[ ! -t 0 || ! -t 1 ]]; then
+    print_step "No TTY detected, using default answers for first-run chezmoi prompts"
+    CHEZMOI_INIT_ARGS+=(--promptDefaults --no-tty)
+fi
+"$CHEZMOI_BIN" "${CHEZMOI_INIT_ARGS[@]}"
+
+if [[ ! -x "$PIXI_SYNC_BIN" ]]; then
+    print_error "Could not find an executable pixi-global-sync at ${PIXI_SYNC_BIN}."
+    exit 1
+fi
+
+print_step "Syncing pixi global environments"
+"$PIXI_SYNC_BIN"
+
+echo ""
+print_step "Bootstrap complete"
+if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Next steps:"
+    echo "  ${ROOT_DIR}/scripts/apps -i"
+    echo "  ${ROOT_DIR}/scripts/systems -i"
+else
+    echo "No additional post-bootstrap steps are required."
+fi
