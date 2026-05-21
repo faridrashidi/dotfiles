@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils.sh"
 
 PREF_DIR="$HOME/Library/Preferences"
-PLISTS_DIR="$HOME/Dropbox/Resources/Mac/Settings/Dot/plists"
+PLISTS_DIR="$HOME/Dropbox/Resources/Mac/Settings/Dotfiles/plists"
 
 ACTION="install"
 DRY_RUN=true
