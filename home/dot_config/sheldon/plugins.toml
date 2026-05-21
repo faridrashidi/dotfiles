@@ -1,0 +1,57 @@
+shell = "zsh"
+
+# Deferred loading via romkatv/zsh-defer — plugins with apply = ["defer"]
+# are sourced asynchronously after zshrc finishes, improving startup time.
+[templates]
+defer = "{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}"
+
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+
+# === Oh My Zsh ===
+
+[plugins.ohmyzsh-git]
+github = "ohmyzsh/ohmyzsh"
+dir = "plugins/git"
+use = ["*.plugin.zsh"]
+apply = ["defer"]
+
+[plugins.ohmyzsh-extract]
+github = "ohmyzsh/ohmyzsh"
+dir = "plugins/extract"
+use = ["*.plugin.zsh"]
+apply = ["defer"]
+
+[plugins.ohmyzsh-aliases]
+github = "ohmyzsh/ohmyzsh"
+dir = "plugins/aliases"
+use = ["*.plugin.zsh"]
+apply = ["defer"]
+
+# === Utilities ===
+
+[plugins.zsh-you-should-use]
+github = "michaelaquilina/zsh-you-should-use"
+apply = ["defer"]
+
+# Loaded eagerly (before compinit) — hooks into the completion system
+[plugins.fzf-tab]
+github = "aloxaf/fzf-tab"
+
+# === Completions ===
+
+# Only adds to fpath — actual initialization happens via compinit in zshrc
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+dir = "src"
+apply = ["fpath"]
+
+# === Syntax Highlighting & Autosuggestions ===
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+apply = ["defer"]
+
+[plugins.fast-syntax-highlighting]
+github = "zdharma-continuum/fast-syntax-highlighting"
+apply = ["defer"]
