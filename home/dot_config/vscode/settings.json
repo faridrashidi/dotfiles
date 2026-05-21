@@ -1,0 +1,313 @@
+{
+  // ----------------------------------------------------------------------
+  // # General & Window
+  // ----------------------------------------------------------------------
+  "window.newWindowDimensions": "maximized",
+  "window.zoomLevel": -0.5,
+  "window.commandCenter": false,
+  "update.mode": "none",
+  "security.workspace.trust.enabled": false,
+  "security.promptForLocalFileProtocolHandling": false,
+
+  // ----------------------------------------------------------------------
+  // # Editor & Formatting
+  // ----------------------------------------------------------------------
+  "editor.fontFamily": "FiraCode-Retina, Symbols Nerd Font Mono, Vazirmatn",
+  "editor.fontLigatures": true,
+  "editor.renderControlCharacters": true,
+  "editor.fontSize": 16,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.rulers": [88],
+  "editor.stickyScroll.enabled": true,
+  "editor.suggestSelection": "first",
+  "editor.accessibilitySupport": "off",
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "editor.unicodeHighlight.invisibleCharacters": false,
+
+  // ----------------------------------------------------------------------
+  // # Git
+  // ----------------------------------------------------------------------
+  "git.openRepositoryInParentFolders": "never",
+
+  // ----------------------------------------------------------------------
+  // # Workbench & Appearance
+  // ----------------------------------------------------------------------
+  "window.autoDetectColorScheme": false,
+  "workbench.secondarySideBar.showLabels": false,
+  "workbench.colorTheme": "Gruvbox Dark Medium",
+  "workbench.preferredDarkColorTheme": "Gruvbox Dark Medium",
+  "workbench.preferredLightColorTheme": "Gruvbox Light Soft",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.startupEditor": "none",
+  "workbench.editor.openSideBySideDirection": "down",
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.panel.showLabels": false,
+  "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" },
+  "breadcrumbs.enabled": true,
+  "outline.collapseItems": "alwaysCollapse",
+
+  // Custom Terminal Colors
+  "workbench.colorCustomizations": {
+    "terminal.ansiBlack": "#32302f",
+    "terminal.ansiRed": "#ea6962",
+    "terminal.ansiGreen": "#a9b665",
+    "terminal.ansiYellow": "#d8a657",
+    "terminal.ansiBlue": "#7daea3",
+    "terminal.ansiMagenta": "#d3869b",
+    "terminal.ansiCyan": "#89b482",
+    "terminal.ansiWhite": "#d4be98",
+    "terminal.ansiBrightBlack": "#504945",
+    "terminal.ansiBrightRed": "#f87070",
+    "terminal.ansiBrightGreen": "#bac249",
+    "terminal.ansiBrightYellow": "#e3ad44",
+    "terminal.ansiBrightBlue": "#8fb9af",
+    "terminal.ansiBrightMagenta": "#e0a0b5",
+    "terminal.ansiBrightCyan": "#9dc09b",
+    "terminal.ansiBrightWhite": "#e2d7b0",
+    "terminal.background": "#282828",
+    "terminal.foreground": "#d4be98",
+    "terminalCursor.foreground": "#d4be98",
+    "terminalCursor.background": "#a9b665",
+    "[Gruvbox Dark Medium]": {
+      "notebook.cellEditorBackground": "#282828",
+      "notebook.inactiveFocusedCellBorder": "#282828",
+      "notebook.focusedCellBorder": "#282828",
+      "notebook.focusedEditorBorder": "#d4be98"
+    }
+  },
+
+  // ----------------------------------------------------------------------
+  // # Terminal
+  // ----------------------------------------------------------------------
+  "terminal.integrated.fontFamily": "'Meslo LG L', 'Symbols Nerd Font Mono'",
+  "terminal.integrated.fontSize": 16,
+
+  // ----------------------------------------------------------------------
+  // # Testing
+  // ----------------------------------------------------------------------
+  "testing.automaticallyOpenTestResults": "neverOpen",
+
+  // ----------------------------------------------------------------------
+  // # Files & Explorer
+  // ----------------------------------------------------------------------
+  "files.insertFinalNewline": true,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "explorer.excludeGitIgnore": true,
+  "search.exclude": { "**/*.svg": true },
+
+  // ----------------------------------------------------------------------
+  // # Git & Version Control
+  // ----------------------------------------------------------------------
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.ignoreLegacyWarning": true,
+  "githubPullRequests.fileListLayout": "tree",
+
+  // ----------------------------------------------------------------------
+  // # Python
+  // ----------------------------------------------------------------------
+  "python.languageServer": "Pylance",
+  "python.defaultInterpreterPath": "${env:PIXI_HOME}/envs/python/bin/python",
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python.analysis.typeCheckingMode": "off",
+  "python.testing.pytestEnabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": { "source.organizeImports": "explicit" }
+  },
+
+  // ----------------------------------------------------------------------
+  // # Jupyter Notebooks
+  // ----------------------------------------------------------------------
+  "notebook.lineNumbers": "on",
+  "notebook.output.textLineLimit": 20,
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.organizeImports": "explicit"
+  },
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "interactiveWindow.alwaysScrollOnNewCell": false,
+
+  // ----------------------------------------------------------------------
+  // # R Language
+  // ----------------------------------------------------------------------
+  // "r.rterm.mac": "${userHome}/.pixi/bin/radian",
+  // "r.rpath.mac": "${userHome}/.pixi/bin/R",
+  // "r.lsp.promptToInstall": false,
+  // "r.useRenvLibPath": true,
+  // "r.plot.useHttpgd": true,
+  // "[r]": { "editor.defaultFormatter": "Posit.air-vscode" },
+
+  // ----------------------------------------------------------------------
+  // # Web & Other Languages (Formatters)
+  // ----------------------------------------------------------------------
+  "prettier.resolveGlobalModules": true,
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[shellscript]": { "editor.defaultFormatter": "mkhl.shfmt" },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "shfmt.executableArgs": ["-i=4", "-ci"],
+  "yaml.maxItemsComputed": 100000,
+
+  // ----------------------------------------------------------------------
+  // # Extensions & Tools
+  // ----------------------------------------------------------------------
+  "extensions.autoUpdate": false,
+  "extensions.ignoreRecommendations": true,
+
+  // Code Runner
+  "code-runner.clearPreviousOutput": true,
+  "code-runner.showExecutionMessage": true,
+  "code-runner.fileDirectoryAsCwd": true,
+  "code-runner.ignoreSelection": true,
+  "code-runner.runInTerminal": false,
+  "code-runner.saveFileBeforeRun": true,
+  "code-runner.enableAppInsights": false,
+  "code-runner.executorMap": {
+    "python": "$pythonPath -u $fullFileName",
+    "r": "Rscript"
+  },
+
+  // Todo Highlight & Tree
+  "todohighlight.isEnable": true,
+  "todohighlight.isCaseSensitive": true,
+  "todohighlight.keywords": [
+    {
+      "text": "NOTE:",
+      "color": "white",
+      "backgroundColor": "gray",
+      "isWholeLine": false
+    }
+  ],
+  "todo-tree.general.tags": ["TODO:", "FIXME:", "NOTE:"],
+  "todo-tree.tree.sortTagsOnlyViewAlphabetically": true,
+
+  // gitlens
+  "diffEditor.codeLens": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+
+  // ----------------------------------------------------------------------
+  // # Copilot & AI
+  // ----------------------------------------------------------------------
+  "github.copilot.enable": { "*": true },
+  "editor.inlineSuggest.enabled": false,
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "chat.editor.fontSize": 16,
+  "chat.viewSessions.orientation": "stacked",
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.global.autoApprove": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    { "text": "Use gitmoji style." },
+    { "text": "Choose the single best matching gitmoji from this list:" },
+    { "text": "🎨 Improve structure / format of the code." },
+    { "text": "⚡️ Improve performance." },
+    { "text": "🔥 Remove code or files." },
+    { "text": "🐛 Fix a bug." },
+    { "text": "🚑️ Critical hotfix." },
+    { "text": "✨ Introduce new features." },
+    { "text": "📝 Add or update documentation." },
+    { "text": "🚀 Deploy stuff." },
+    { "text": "💄 Add or update the UI and style files." },
+    { "text": "🎉 Begin a project." },
+    { "text": "✅ Add, update, or pass tests." },
+    { "text": "🔒️ Fix security or privacy issues." },
+    { "text": "🔐 Add or update secrets." },
+    { "text": "🔖 Release / Version tags." },
+    { "text": "🚨 Fix compiler / linter warnings." },
+    { "text": "🚧 Work in progress." },
+    { "text": "💚 Fix CI Build." },
+    { "text": "⬇️ Downgrade dependencies." },
+    { "text": "⬆️ Upgrade dependencies." },
+    { "text": "📌 Pin dependencies to specific versions." },
+    { "text": "👷 Add or update CI build system." },
+    { "text": "📈 Add or update analytics or track code." },
+    { "text": "♻️ Refactor code." },
+    { "text": "➕ Add a dependency." },
+    { "text": "➖ Remove a dependency." },
+    { "text": "🔧 Add or update configuration files." },
+    { "text": "🔨 Add or update development scripts." },
+    { "text": "🌐 Internationalization and localization." },
+    { "text": "✏️ Fix typos." },
+    { "text": "💩 Write bad code that needs to be improved." },
+    { "text": "⏪️ Revert changes." },
+    { "text": "🔀 Merge branches." },
+    { "text": "📦️ Add or update compiled files or packages." },
+    { "text": "👽️ Update code due to external API changes." },
+    { "text": "🚚 Move or rename resources (e.g.: files, paths, routes)." },
+    { "text": "📄 Add or update license." },
+    { "text": "💥 Introduce breaking changes." },
+    { "text": "🍱 Add or update assets." },
+    { "text": "♿️ Improve accessibility." },
+    { "text": "💡 Add or update comments in source code." },
+    { "text": "🍻 Write code drunkenly." },
+    { "text": "💬 Add or update text and literals." },
+    { "text": "🗃️ Perform database related changes." },
+    { "text": "🔊 Add or update logs." },
+    { "text": "🔇 Remove logs." },
+    { "text": "👥 Add or update contributor(s)." },
+    { "text": "🚸 Improve user experience / usability." },
+    { "text": "🏗️ Make architectural changes." },
+    { "text": "📱 Work on responsive design." },
+    { "text": "🤡 Mock things." },
+    { "text": "🥚 Add or update an easter egg." },
+    { "text": "🙈 Add or update a .gitignore file." },
+    { "text": "📸 Add or update snapshots." },
+    { "text": "⚗️ Perform experiments." },
+    { "text": "🔍️ Improve SEO." },
+    { "text": "🏷️ Add or update types." },
+    { "text": "🌱 Add or update seed files." },
+    { "text": "🚩 Add, update, or remove feature flags." },
+    { "text": "🥅 Catch errors." },
+    { "text": "💫 Add or update animations and transitions." },
+    { "text": "🗑️ Deprecate code that needs to be cleaned up." },
+    { "text": "🛂 Work on code related to authorization and permissions." },
+    { "text": "🩹 Simple fix for a non-critical issue." },
+    { "text": "🧐 Data exploration/inspection." },
+    { "text": "⚰️ Remove dead code." },
+    { "text": "🧪 Add a failing test." },
+    { "text": "👔 Add or update business logic." },
+    { "text": "🩺 Add or update healthcheck." },
+    { "text": "🧱 Infrastructure related changes." },
+    { "text": "🧑‍💻 Improve developer experience." },
+    { "text": "💸 Add sponsorships or money related infrastructure." },
+    { "text": "🧵 Add or update code related to multithreading." },
+    { "text": "🦺 Add or update code related to validation." },
+    { "text": "✈️ Improve offline support." },
+    { "text": "🦖 Code that adds backwards compatibility." },
+    { "text": "Use sentence case for the subject." },
+    { "text": "Capitalize the first word after the emoji and optional scope." },
+    { "text": "Format: <emoji> <Subject in imperative mood>" },
+    { "text": "Do not add a trailing period." },
+    { "text": "Use 5 words maximum." }
+  ],
+
+  // Gemini
+  "geminicodeassist.project": "eighth-case-llsq8",
+  "geminicodeassist.displayInlineContextHint": false,
+
+  // Claude
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.preferredLocation": "panel"
+}
