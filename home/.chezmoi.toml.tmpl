@@ -1,0 +1,15 @@
+{{- $gitEmail := promptStringOnce . "git_email" "Git email" "" -}}
+{{- $defaultPixiHome := printf "/data/%s/.pixi" (env "USER") -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{- $defaultPixiHome = printf "%s/.pixi" (env "HOME") -}}
+{{- end -}}
+{{- $pixiHome := promptStringOnce . "pixi_home" "PIXI_HOME" $defaultPixiHome -}}
+
+mode = "symlink"
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
+[data]
+pixi_home = {{ $pixiHome | quote }}
+
+[data.git]
+email = {{ $gitEmail | quote }}

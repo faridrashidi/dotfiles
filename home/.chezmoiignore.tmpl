@@ -1,0 +1,9 @@
+{{- if eq .chezmoi.os "darwin" }}
+.config/biowulf/**
+.bash_profile
+.bashrc
+{{- else }}
+.config/dooti/**
+.config/sublime/**
+.config/vscode/**
+{{- end }}
