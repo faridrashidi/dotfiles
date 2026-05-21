@@ -1,0 +1,238 @@
+command_timeout = 1000
+
+format = """
+$os\
+$hostname\
+$time\
+${custom.outside_home}\
+$directory\
+$docker_context\
+$conda\
+$pixi\
+$kubernetes\
+$aws\
+$gcloud\
+$azure\
+$python\
+$nodejs\
+$ruby\
+$golang\
+$java\
+$perl\
+$rlang\
+$rust\
+$package\
+${custom.giturl}\
+$git_branch\
+$git_commit\
+$git_status\
+$cmd_duration\
+$jobs\
+$status\
+$fill\
+$line_break\
+$character"""
+
+[os]
+disabled = false
+style = "bright-black"
+format = "[$symbol]($style) "
+
+[os.symbols]
+Macos = "\uF179"
+RedHatEnterprise = "\uF316"
+RockyLinux = "\uF32B"
+Windows = "\uF17A"
+Linux = "\uF17C"
+Ubuntu = "\uF31B"
+Arch = "\uF303"
+Debian = "\uF306"
+Raspbian = "\uF315"
+Mint = "\uF30E"
+CentOS = "\uF304"
+Fedora = "\uF30A"
+Alpine = "\uF300"
+Amazon = "\uF270"
+Android = "\uF17B"
+FreeBSD = "\uF30C"
+Redhat = "\uF316"
+SUSE = "\uF314"
+
+[hostname]
+style = "bright-black"
+format = "[\\($hostname\\)]($style) "
+ssh_only = true
+
+[directory]
+style = "blue"
+truncation_length = 1
+fish_style_pwd_dir_length = 2
+truncate_to_repo = false
+truncation_symbol = "\uF07C /"
+home_symbol = "\uF015 ~"
+read_only = "\uF023 "
+read_only_style = "red"
+format = " [$read_only]($read_only_style)[$path]($style) "
+
+[custom.outside_home]
+command = "printf '\uF1C0'"
+when = """
+case "$PWD" in
+    "$HOME"|"$HOME"/*) false ;;
+    *) true ;;
+esac
+"""
+style = "blue"
+format = " [$output]($style)"
+
+[python]
+symbol = "\uE73C "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[nodejs]
+symbol = "\uE776 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[ruby]
+symbol = "\uF219 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[golang]
+symbol = "\uE626 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[java]
+symbol = "\uE738 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[perl]
+symbol = "\uE769 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[rlang]
+symbol = "\uE68A "
+style = "purple"
+detect_files = ["renv.lock"]
+format = "[$symbol$version]($style) "
+
+[rust]
+symbol = "\uE7A8 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[package]
+display_private = true
+symbol = "\uF1B2 "
+style = "purple"
+format = "[$symbol$version]($style) "
+
+[docker_context]
+symbol = "\uF1B3 "
+style = "cyan"
+format = "[$symbol$context]($style) "
+
+[conda]
+symbol = "\uF10C "
+style = "cyan"
+format = "[$symbol$environment]($style) "
+
+[pixi]
+symbol = "\uF12E "
+style = "cyan"
+format = "[$symbol$environment]($style) "
+show_default_environment = true
+
+# [kubernetes]
+# symbol = "\u2388 "
+# style = "purple"
+
+# [aws]
+# symbol = "\uF270 "
+# style = "purple"
+
+# [gcloud]
+# symbol = "\uF7B7 "
+# style = "purple"
+
+# [azure]
+# symbol = "\uFD03 "
+# style = "purple"
+
+[custom.giturl]
+description = "Display symbol for remote Git server"
+command = """
+case "$(git config --get remote.origin.url 2>/dev/null)" in
+    *github*)    echo "\uF408" ;;
+    *gitlab*)    echo "\uF296" ;;
+    *bitbucket*) echo "\uF171" ;;
+    *git*)       echo "\uF7A1" ;;
+    *)           echo "\uF1D2" ;;
+esac
+"""
+style = "green"
+detect_folders = [".git"]
+format = "[$output]($style) "
+
+[git_branch]
+symbol = "\uF126 "
+style = "green"
+format = "[$branch]($style) "
+
+[git_commit]
+only_detached = false
+tag_disabled = false
+tag_symbol = "\uF02C "
+format = "([${tag}]($style) )"
+style = "green"
+
+[git_status]
+style = "green"
+format = "[$all_status$ahead_behind]($style)"
+ignore_submodules = true
+conflicted = "\uF46e $count "                 # cross sign
+ahead = "\uF4f2 $count "                      # arrow up
+behind = "\uF4ef $count "                     # arrow down
+diverged = "\uF47F $count "                   # branch split
+untracked = "\uF196 $count "                  # plus sign
+stashed = "\uF01C $count "                    # archive box
+modified = "\uF044 $count "                   # pencil/edit
+staged = "\uF474 $count "                     # slash sign
+renamed = "\uF45a $count "                    # arrow right
+deleted = "\uF147 $count "                    # minus sign
+typechanged = "\uF0EC $count "                # exchange arrows
+
+[jobs]
+symbol = "\uF46A "
+style = "yellow"
+
+[cmd_duration]
+min_time = 3000
+style = "yellow"
+format = "[\uF252 $duration]($style) "
+
+[fill]
+symbol = " "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "bright-black"
+format = "[\uF017 $time]($style)"
+
+[status]
+disabled = false
+symbol = "\uF188 "
+success_symbol = ""
+format = "[$symbol]($style) "
+style = "red"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vicmd_symbol = "[❮](green)"
