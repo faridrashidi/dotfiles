@@ -1,0 +1,14 @@
+--smart-case
+--hidden
+
+# Don't print lines longer than 150 characters (prevents minified code from flooding terminal)
+--max-columns=150
+--max-columns-preview
+
+# Ignore lock files which are usually noise
+--glob=!package-lock.json
+--glob=!yarn.lock
+--glob=!pnpm-lock.yaml
+--glob=!composer.lock
+--glob=!uv.lock
+--glob=!renv.lock
