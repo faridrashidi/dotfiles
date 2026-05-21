@@ -1,0 +1,332 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ ! -f "$SCRIPT_DIR/utils.sh" ]; then
+    printf 'Error: could not find utils.sh at %s\n' "$SCRIPT_DIR/utils.sh" >&2
+    exit 1
+fi
+
+source "$SCRIPT_DIR/utils.sh"
+
+PIXI_HOME_DIR="${PIXI_HOME:-$HOME/.pixi}"
+MANIFEST_FILE="$PIXI_HOME_DIR/manifests/pixi-global.toml"
+
+OUTDATED_TABLE_SPECS=("Environment:16" "Package:20" "Installed:14" "Latest:14" "Status:25")
+
+usage() {
+    cat <<'EOF'
+Usage: pixi-global-outdated
+
+Report globally installed Pixi packages that have newer versions available.
+
+This command is read-only. It compares the versions from `pixi global list --json`
+against the latest versions returned by `pixi search`.
+
+Status values:
+  outdated                   A newer version is available.
+  exact-pinned               A newer version is available, but the dependency is exact-pinned.
+  unknown-installed-version  The installed version could not be determined.
+  lookup-failed              `pixi search` did not return a latest version.
+EOF
+}
+
+fail() {
+    print_msg "$1" "error"
+    exit 1
+}
+
+if [ ! -f "$MANIFEST_FILE" ]; then
+    fail "pixi global manifest not found at ${MANIFEST_FILE}. Run pixi-global-sync first."
+fi
+
+require_command() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        fail "$2"
+    fi
+}
+
+TMP_DIR="$(mktemp -d)"
+CHANNELS_FILE="$TMP_DIR/channels.tsv"
+PLATFORMS_FILE="$TMP_DIR/platforms.tsv"
+PINS_FILE="$TMP_DIR/pins.tsv"
+GLOBAL_LIST_FILE="$TMP_DIR/global-list.json"
+OUTDATED_ROWS_FILE="$TMP_DIR/outdated-rows.tsv"
+WARNING_ROWS_FILE="$TMP_DIR/warning-rows.tsv"
+
+cleanup() {
+    rm -rf "$TMP_DIR"
+}
+
+trap cleanup EXIT
+
+touch "$CHANNELS_FILE" "$PLATFORMS_FILE" "$PINS_FILE" "$OUTDATED_ROWS_FILE" "$WARNING_ROWS_FILE"
+
+append_row() {
+    printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$5" >>"$6"
+}
+
+parse_manifest() {
+    if [ ! -f "$MANIFEST_FILE" ]; then
+        return 0
+    fi
+
+    awk \
+        -v channels_file="$CHANNELS_FILE" \
+        -v platforms_file="$PLATFORMS_FILE" \
+        -v pins_file="$PINS_FILE" '
+        function trim(value) {
+            sub(/^[[:space:]]+/, "", value)
+            sub(/[[:space:]]+$/, "", value)
+            return value
+        }
+
+        function emit_channels(line,    content, count, i, channel, items) {
+            content = line
+            sub(/^[^=]*=[[:space:]]*\[/, "", content)
+            sub(/\][[:space:]]*$/, "", content)
+            count = split(content, items, ",")
+            for (i = 1; i <= count; i++) {
+                channel = trim(items[i])
+                gsub(/"/, "", channel)
+                if (channel != "") {
+                    print current_env "\t" channel >> channels_file
+                }
+            }
+        }
+
+        function parse_assignment(line,    position, value) {
+            position = index(line, "=")
+            if (position == 0) {
+                return ""
+            }
+            value = substr(line, position + 1)
+            value = trim(value)
+            return value
+        }
+
+        function emit_inline_pins(line,    content, pair, package, value) {
+            content = line
+            sub(/^[^=]*=[[:space:]]*\{[[:space:]]*/, "", content)
+            sub(/\}[[:space:]]*$/, "", content)
+
+            while (match(content, /[A-Za-z0-9_.-]+[[:space:]]*=[[:space:]]*"[^"]*"/)) {
+                pair = substr(content, RSTART, RLENGTH)
+
+                package = pair
+                sub(/[[:space:]]*=.*$/, "", package)
+                package = trim(package)
+
+                value = pair
+                sub(/^[^=]*=[[:space:]]*"/, "", value)
+                sub(/".*$/, "", value)
+
+                if (substr(value, 1, 2) == "==") {
+                    print current_env "\t" package >> pins_file
+                }
+
+                content = substr(content, RSTART + RLENGTH)
+                sub(/^[[:space:]]*,[[:space:]]*/, "", content)
+            }
+        }
+
+        BEGIN {
+            current_env = ""
+            section = ""
+        }
+
+        /^[[:space:]]*#/ || /^[[:space:]]*$/ {
+            next
+        }
+
+        /^\[envs\..+\.dependencies\]$/ {
+            current_env = $0
+            sub(/^\[envs\./, "", current_env)
+            sub(/\.dependencies\]$/, "", current_env)
+            section = "dependencies"
+            next
+        }
+
+        /^\[envs\..+\.exposed\]$/ {
+            current_env = $0
+            sub(/^\[envs\./, "", current_env)
+            sub(/\.exposed\]$/, "", current_env)
+            section = "other"
+            next
+        }
+
+        /^\[envs\..+\]$/ {
+            current_env = $0
+            sub(/^\[envs\./, "", current_env)
+            sub(/\]$/, "", current_env)
+            section = "environment"
+            next
+        }
+
+        /^\[/ {
+            current_env = ""
+            section = ""
+            next
+        }
+
+        section == "environment" && /^[[:space:]]*channels[[:space:]]*=/ {
+            emit_channels($0)
+            next
+        }
+
+        section == "environment" && /^[[:space:]]*platform[[:space:]]*=/ {
+            value = parse_assignment($0)
+            gsub(/^"/, "", value)
+            gsub(/".*$/, "", value)
+            if (value != "") {
+                print current_env "\t" value >> platforms_file
+            }
+            next
+        }
+
+        section == "environment" && /^[[:space:]]*dependencies[[:space:]]*=/ {
+            emit_inline_pins($0)
+            next
+        }
+
+        section == "dependencies" && /^[[:space:]]*[A-Za-z0-9_.-]+[[:space:]]*=/ {
+            package = $0
+            sub(/[[:space:]]*=.*$/, "", package)
+            package = trim(package)
+
+            value = parse_assignment($0)
+            gsub(/^"/, "", value)
+            gsub(/".*$/, "", value)
+
+            if (substr(value, 1, 2) == "==") {
+                print current_env "\t" package >> pins_file
+            }
+            next
+        }
+    ' "$MANIFEST_FILE"
+}
+
+build_search_args() {
+    local target_env="$1"
+    local row_env=""
+    local channel=""
+    local platform=""
+
+    SEARCH_ARGS=()
+
+    while IFS=$'\t' read -r row_env channel; do
+        if [ -n "$row_env" ] && [ "$row_env" = "$target_env" ]; then
+            SEARCH_ARGS+=("-c" "$channel")
+        fi
+    done <"$CHANNELS_FILE"
+
+    platform="$(awk -F '\t' -v target_env="$target_env" '$1 == target_env { print $2; exit }' "$PLATFORMS_FILE")"
+    if [ -n "$platform" ]; then
+        SEARCH_ARGS+=("-p" "$platform")
+    fi
+}
+
+is_exact_pinned() {
+    grep -Fqx "$(printf '%s\t%s' "$1" "$2")" "$PINS_FILE"
+}
+
+print_rows_as_table() {
+    local title="$1"
+    local kind="$2"
+    local file="$3"
+    local environment=""
+    local package=""
+    local installed=""
+    local latest=""
+    local status=""
+
+    if [ ! -s "$file" ]; then
+        return 0
+    fi
+
+    print_msg "$title" "$kind"
+    print_table_header "${OUTDATED_TABLE_SPECS[@]}"
+    while IFS=$'\t' read -r environment package installed latest status; do
+        print_table_row "$environment" "$package" "$installed" "$latest" "$status"
+    done < <(sort -t $'\t' -k5,5 -k1,1 -k2,2 "$file")
+    print_table_footer
+    printf '\n'
+}
+
+main() {
+    local environment=""
+    local package=""
+    local installed=""
+    local latest=""
+    local search_output=""
+    local status=""
+
+    case "${1:-}" in
+        "") ;;
+        -h | --help)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            fail "unknown argument: $1"
+            ;;
+    esac
+
+    require_command jq "jq is required. Install it and try again."
+    require_command pixi "pixi is required to query global packages."
+
+    parse_manifest
+
+    if ! pixi global list --json >"$GLOBAL_LIST_FILE"; then
+        fail "failed to read global packages with \`pixi global list --json\`."
+    fi
+
+    while IFS=$'\t' read -r environment package installed; do
+        if [ "$installed" = "__NULL__" ]; then
+            append_row "$environment" "$package" "unknown" "-" "unknown-installed-version" "$WARNING_ROWS_FILE"
+            continue
+        fi
+
+        build_search_args "$environment"
+        if ! search_output="$(pixi search "${SEARCH_ARGS[@]}" "$package" 2>&1)"; then
+            append_row "$environment" "$package" "$installed" "-" "lookup-failed" "$WARNING_ROWS_FILE"
+            continue
+        fi
+
+        latest="$(printf '%s\n' "$search_output" | awk '$1 == "Version" { print $2; exit }')"
+        if [ -z "$latest" ]; then
+            append_row "$environment" "$package" "$installed" "-" "lookup-failed" "$WARNING_ROWS_FILE"
+            continue
+        fi
+
+        if [ "$installed" = "$latest" ]; then
+            continue
+        fi
+
+        status="outdated"
+        if is_exact_pinned "$environment" "$package"; then
+            status="exact-pinned"
+        fi
+
+        append_row "$environment" "$package" "$installed" "$latest" "$status" "$OUTDATED_ROWS_FILE"
+    done < <(
+        jq -r '.[] | .name as $environment | .dependencies[] | [$environment, .name, (.version // "__NULL__")] | @tsv' \
+            "$GLOBAL_LIST_FILE"
+    )
+
+    if [ -s "$OUTDATED_ROWS_FILE" ]; then
+        print_rows_as_table "Outdated global packages" "default" "$OUTDATED_ROWS_FILE"
+    else
+        print_msg "No outdated global packages found." "success"
+        if [ -s "$WARNING_ROWS_FILE" ]; then
+            printf '\n'
+        fi
+    fi
+
+    print_rows_as_table "Warnings" "warning" "$WARNING_ROWS_FILE"
+}
+
+main "$@"

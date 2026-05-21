@@ -1,0 +1,356 @@
+#!/usr/bin/env bash
+
+mac_casks=(
+    "1password"
+    "brave-browser"
+    "clop"
+    "copilot-money"
+    "ghostty"
+    "google-chrome"
+    "iina"
+    "istat-menus"
+    "keka"
+    "netnewswire"
+    "raycast"
+    "shottr"
+    "sublime-text"
+    "telegram"
+    "visual-studio-code"
+    "wispr-flow"
+    "zotero"
+)
+
+mac_mases=(
+    "Amphetamine:937984704"
+    "Infuse:1136220934"
+    "Microsoft Outlook:985367838"
+    "Keynote Creator Studio:361285480"
+    "Numbers Creator Studio:361304891"
+    "Pages Creator Studio:361309726"
+    "Ice"
+)
+
+###############################################################################
+# Functions                                                                   #
+###############################################################################
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/utils.sh"
+
+APP_DIR="$HOME/Applications"
+CASK_DIR="/tmp/casks"
+PRIVATE_APPS_SCRIPT="${SCRIPT_DIR}/apps-private"
+
+CHECK_OUTDATED=false
+UPDATE_APPS=false
+INSTALL_APPS=false
+DRY_RUN=true
+
+get_version_from_dot_app() {
+    local app_path="$1"
+    local app_name=$(basename "$app_path" .app)
+    if [[ -d "$app_path" ]]; then
+        local plist_path="$app_path/Contents/Info.plist"
+        local version=""
+        if [[ -f "$plist_path" ]]; then
+            version=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$plist_path" 2>/dev/null)
+            if [[ -z "$version" || "$version" == "(null)" ]]; then
+                version=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "$plist_path" 2>/dev/null)
+            fi
+        fi
+        if [[ -z "$version" || "$version" == "(null)" ]]; then
+            version=$(mdls -name kMDItemVersion "$app_path" | awk -F' = ' '{print $2}' | tr -d '"')
+        fi
+        if [[ -z "$version" || "$version" == "(null)" ]]; then
+            version="unknown"
+        fi
+        local normalized_version="$version"
+        if [[ "$app_name" == "Brave Browser" && "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            normalized_version=$(echo "$version" | cut -d'.' -f2-)
+        fi
+        if [[ "$app_name" == "Sublime Text" ]]; then
+            normalized_version=$(echo "$version" | sed 's/^Build //')
+        fi
+        echo "$normalized_version"
+    else
+        echo "not_installed"
+    fi
+}
+
+check_versions_difference() {
+    local installed_version="$1"
+    local downloaded_version="$2"
+
+    if [[ "$installed_version" == "not_installed" ]]; then
+        echo "install"
+    elif [[ "$installed_version" != "$downloaded_version" ]]; then
+        if [ "$downloaded_version" == "0.0.0" ]; then
+            echo "update"
+            return
+        fi
+        IFS='.' read -ra curr_ver <<<"$installed_version"
+        IFS='.' read -ra new_ver <<<"$downloaded_version"
+        local max_length=${#curr_ver[@]}
+        [ ${#new_ver[@]} -gt $max_length ] && max_length=${#new_ver[@]}
+        for ((i = 0; i < max_length; i++)); do
+            local curr_part=${curr_ver[i]:-0}
+            local new_part=${new_ver[i]:-0}
+            curr_part=$(echo "$curr_part" | tr -cd '0-9')
+            new_part=$(echo "$new_part" | tr -cd '0-9')
+            curr_part=${curr_part:-0}
+            new_part=${new_part:-0}
+            if [ "$new_part" -gt "$curr_part" ]; then
+                echo "update"
+                return
+            elif [ "$new_part" -lt "$curr_part" ]; then
+                echo "skip"
+                return
+            fi
+        done
+        echo "skip"
+    else
+        echo "skip"
+    fi
+}
+
+get_app_info_from_brew() {
+    local cask_name="$1"
+    local json_data=$(curl -s "https://formulae.brew.sh/api/cask/$cask_name.json")
+    if [[ $(echo "$json_data" | jq -r '.message?') == "Not found" ]]; then
+        print_msg "Error: Could not find $cask_name in Homebrew Cask API" "error"
+        return 1
+    fi
+    local name=$(echo "$json_data" | jq -r '.artifacts[] | select(.app?) | .app[0] | 
+                split("/") | last | rtrimstr(".app")' | head -n 1)
+    local url=$(echo "$json_data" | jq -r '.url // empty' | head -n 1)
+    if [[ -z "$url" ]]; then
+        print_msg "Error: No URL found for $cask_name" "error"
+        return 1
+    fi
+    local version=$(echo "$json_data" | jq -r '.version' | cut -d',' -f1 | sed 's/\.0$//')
+    echo "$name|$url|$version"
+}
+
+get_app_info_from_appstore() {
+    local name="$1"
+    local id="$2"
+    if [[ -z "$id" ]]; then
+        echo "$name||"
+        return
+    fi
+    local json_data=$(curl -s "https://itunes.apple.com/lookup?id=$id")
+    if [[ $(echo "$json_data" | jq -r '.resultCount') == "0" ]]; then
+        print_msg "Error: Could not find $name in App Store" "error"
+        return 1
+    fi
+    local url=$(echo "$json_data" | jq -r '.results[0].trackViewUrl')
+    local version=$(echo "$json_data" | jq -r '.results[0].version')
+    echo "$name|$url|$version"
+}
+
+download_dmg_or_zip_from_url() {
+    local url="$1"
+    local dest_dir="$2"
+    mkdir -p "$dest_dir"
+    if ! curl -s -L -o "$dest_dir/$(basename "$url")" "$url"; then
+        print_msg "Error: Failed to download $url" "error"
+        return 1
+    fi
+}
+
+extract_dot_app_from_dmg_or_zip() {
+    local dmg_or_zip="$1"
+    local dest_dir="$2"
+    local file_type=$(file -b "$dmg_or_zip")
+    local app_file
+
+    if [[ "$file_type" =~ "Zip archive" ]]; then
+        mkdir -p "$dest_dir/tmp"
+        if ! unzip -q "$dmg_or_zip" -d "$dest_dir/tmp"; then
+            rm -rf "$dest_dir/tmp"
+            print_msg "Error: Failed to unzip $dmg_or_zip" "error"
+            return 1
+        fi
+        app_file=$(find "$dest_dir/tmp" -maxdepth 2 -name "*.app" | head -n 1)
+        if [[ -z "$app_file" ]]; then
+            rm -rf "$dest_dir/tmp"
+            print_msg "Error: No .app found in $dmg_or_zip" "error"
+            return 1
+        fi
+        mv -f "$app_file" "$dest_dir"
+        rm -rf "$dest_dir/tmp"
+    elif [[ "$file_type" == *"compressed"* ]]; then
+        mkdir -p "$dest_dir/tmp"
+        if ! hdiutil attach "$dmg_or_zip" -mountpoint "$dest_dir/tmp" -nobrowse -quiet; then
+            hdiutil detach "$dest_dir/tmp" -quiet 2>/dev/null
+            rm -rf "$dest_dir/tmp"
+            print_msg "Error: Failed to mount $dmg_or_zip" "error"
+            return 1
+        fi
+        app_file=$(find "$dest_dir/tmp" -maxdepth 1 -name "*.app" | head -n 1)
+        if [[ -z "$app_file" ]]; then
+            hdiutil detach "$dest_dir/tmp" -quiet
+            rm -rf "$dest_dir/tmp"
+            print_msg "Error: No .app found in $dmg_or_zip" "error"
+            return 1
+        fi
+        cp -R "$app_file" "$dest_dir"
+        hdiutil detach "$dest_dir/tmp" -quiet
+        rm -rf "$dest_dir/tmp"
+    else
+        print_msg "Error: Unsupported format $dmg_or_zip" "error"
+        return 1
+    fi
+}
+
+get_app_dir() {
+    [[ "$1" == "1Password" ]] && echo "/Applications" || echo "$APP_DIR"
+}
+
+install_or_update_downloaded_app() {
+    local name="$1"
+    local downloaded_dir="$2"
+    local app_dir=$(get_app_dir "$name")
+    local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
+    local downloaded_version=$(get_version_from_dot_app "$downloaded_dir/$name.app")
+    local difference=$(check_versions_difference "$installed_version" "$downloaded_version")
+
+    case "$difference" in
+        install)
+            print_msg "$name installed (v$downloaded_version)" "success"
+            mv -f "$downloaded_dir/$name.app" "$app_dir"
+            ;;
+        update)
+            print_msg "$name updated (v$installed_version -> v$downloaded_version)" "success"
+            cp -R "$downloaded_dir/$name.app" "$app_dir"
+            rm -rf "$downloaded_dir/$name.app"
+            ;;
+        *)
+            print_msg "$name already up-to-date (v$installed_version)" "default"
+            rm -rf "$downloaded_dir/$name.app"
+            ;;
+    esac
+}
+
+manage_cask() {
+    local name="$1"
+    local url="$2"
+    local temp_dir="$CASK_DIR/$(echo "$name" | tr -d ' ')"
+    download_dmg_or_zip_from_url "$url" "$temp_dir"
+    extract_dot_app_from_dmg_or_zip "$temp_dir/$(basename "$url")" "$temp_dir"
+    install_or_update_downloaded_app "$name" "$temp_dir"
+}
+
+run_public_apps_script() {
+    if [[ "$DRY_RUN" == "false" ]]; then
+        mkdir -p "$APP_DIR"
+    fi
+
+    if [[ "$CHECK_OUTDATED" == "true" || "$DRY_RUN" == "true" ]]; then
+        print_table_header "App:18" "Current:14" "Latest:14" "Link:107"
+    fi
+
+    for cask in "${mac_casks[@]}"; do
+        IFS='|' read -r name url remote_version <<<"$(get_app_info_from_brew "$cask")"
+        local app_dir=$(get_app_dir "$name")
+        local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
+        local difference=$(check_versions_difference "$installed_version" "$remote_version")
+        if [[ "$CHECK_OUTDATED" == "true" ]]; then
+            if [[ "$difference" == "update" ]]; then
+                print_table_row "$name" "$installed_version" "$remote_version" "$url"
+            fi
+            continue
+        fi
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_table_row "$name" "$installed_version" "$remote_version" "$url"
+            continue
+        fi
+        if [[ "$difference" == "install" ]]; then
+            if [[ "$INSTALL_APPS" == "true" ]]; then
+                manage_cask "$name" "$url"
+            fi
+        elif [[ "$difference" == "update" ]]; then
+            if [[ "$UPDATE_APPS" == "true" ]]; then
+                manage_cask "$name" "$url"
+            fi
+        fi
+    done
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        for item in "${mac_mases[@]}"; do
+            if [[ "$item" == *":"* ]]; then
+                mas="${item%%:*}"
+                id="${item#*:}"
+            else
+                mas="$item"
+                id=""
+            fi
+            IFS='|' read -r name url remote_version <<<"$(get_app_info_from_appstore "$mas" $id)"
+            local display_name="${mas/ Creator Studio/}"
+            display_name="${display_name/Microsoft /}"
+            local installed_version=$(get_version_from_dot_app "$APP_DIR/$mas.app")
+            local difference=$(check_versions_difference "$installed_version" "$remote_version")
+            if [[ "$CHECK_OUTDATED" == "true" ]]; then
+                if [[ "$difference" == "update" ]]; then
+                    print_table_row "$display_name" "$installed_version" "$remote_version" "$url"
+                fi
+                continue
+            fi
+            if [[ "$DRY_RUN" == "true" ]]; then
+                print_table_row "$display_name" "$installed_version" "$remote_version" "$url"
+                continue
+            fi
+        done
+    fi
+    if [[ "$CHECK_OUTDATED" == "true" || "$DRY_RUN" == "true" ]]; then
+        print_table_footer
+    fi
+}
+
+run_private_apps_script() {
+    if [[ ! -x "$PRIVATE_APPS_SCRIPT" ]]; then
+        return 0
+    fi
+
+    print_msg "Running private app installer" "default"
+    "$PRIVATE_APPS_SCRIPT" "$@"
+}
+
+help() {
+    cat <<EOF
+Applications Installation Tool
+
+Usage: $0 [--install|-i] [--update|-u] [--outdated|-o] [--help|-h]
+
+Options:
+  --install, -i   Install all the applications
+  --update, -u    Update all the applications
+  --outdated, -o  Show outdated applications
+  --help, -h      Display this help message
+EOF
+    exit 0
+}
+
+main() {
+    for arg in "$@"; do
+        case "$arg" in
+            --help | -h) help ;;
+            --outdated | -o)
+                CHECK_OUTDATED=true
+                DRY_RUN=false
+                ;;
+            --update | -u)
+                UPDATE_APPS=true
+                DRY_RUN=false
+                ;;
+            --install | -i)
+                INSTALL_APPS=true
+                DRY_RUN=false
+                ;;
+        esac
+    done
+    run_public_apps_script
+    run_private_apps_script "$@"
+}
+
+main "$@"

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/utils.sh"
+
+PREF_DIR="$HOME/Library/Preferences"
+PLISTS_DIR="$HOME/Dropbox/Resources/Mac/Settings/Dot/plists"
+
+ACTION="install"
+DRY_RUN=true
+
+help() {
+    cat <<EOF
+Plists Maintenance Tool
+
+Usage: $0 [--install|-i] [--backup|-b] [--help|-h]
+
+Options:
+  --install, -i   Copy tracked plist files into ~/Library/Preferences
+  --backup, -b    Refresh tracked plist files from ~/Library/Preferences
+  --help, -h      Display this help message
+EOF
+    exit 0
+}
+
+execute() { run "$1" "$DRY_RUN"; }
+
+require_macos() {
+    if [[ "$(uname)" != "Darwin" ]]; then
+        print_msg "This script only supports macOS." "error"
+        exit 1
+    fi
+}
+
+require_plists_dir() {
+    if [[ ! -d "$PLISTS_DIR" ]]; then
+        print_msg "Plists directory not found at ${PLISTS_DIR}." "error"
+        exit 1
+    fi
+}
+
+install_plists() {
+    while IFS= read -r -d '' src_file; do
+        execute "cp -f '$src_file' '$PREF_DIR/'"
+    done < <(find "$PLISTS_DIR" -type f ! -name '.DS_Store' -print0)
+}
+
+backup_plists() {
+    while IFS= read -r -d '' tracked_file; do
+        local pref_file="$PREF_DIR/$(basename "$tracked_file")"
+
+        if [[ -f "$pref_file" ]]; then
+            execute "cp -f '$pref_file' '$PLISTS_DIR/'"
+        else
+            print_msg "Skipping missing preference file: ${pref_file}" "warning"
+        fi
+    done < <(find "$PLISTS_DIR" -type f ! -name '.DS_Store' -print0)
+}
+
+for arg in "$@"; do
+    case "$arg" in
+        -i | --install)
+            ACTION="install"
+            DRY_RUN=false
+            ;;
+        -b | --backup)
+            ACTION="backup"
+            DRY_RUN=false
+            ;;
+        -h | --help)
+            help
+            ;;
+        *)
+            print_msg "Unknown option: ${arg}" "error"
+            exit 1
+            ;;
+    esac
+done
+
+require_macos
+require_plists_dir
+
+case "$ACTION" in
+    install) install_plists ;;
+    backup) backup_plists ;;
+esac

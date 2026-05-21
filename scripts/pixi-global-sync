@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DOT_PIXI_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/pixi"
+PIXI_HOME_DIR="${PIXI_HOME:-$HOME/.pixi}"
+PIXI_BIN="${PIXI_HOME_DIR}/bin/pixi"
+MANIFEST_DIR="${PIXI_HOME_DIR}/manifests"
+MANIFEST_FILE="${MANIFEST_DIR}/pixi-global.toml"
+BASE_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-global.toml"
+MACOS_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-macos.toml"
+
+if command -v pixi >/dev/null 2>&1; then
+    PIXI_CMD=(pixi)
+elif [[ -x "$PIXI_BIN" ]]; then
+    PIXI_CMD=("$PIXI_BIN")
+else
+    printf 'Error: pixi is not installed. Run ./bootstrap or install pixi first.\n' >&2
+    exit 1
+fi
+
+if [[ ! -f "$BASE_MANIFEST_FILE" ]]; then
+    printf 'Error: could not find %s\n' "$BASE_MANIFEST_FILE" >&2
+    exit 1
+fi
+
+mkdir -p "$MANIFEST_DIR"
+cat "$BASE_MANIFEST_FILE" >"$MANIFEST_FILE"
+
+if [[ "$(uname)" == "Darwin" && -f "$MACOS_MANIFEST_FILE" ]]; then
+    printf '\n' >>"$MANIFEST_FILE"
+    cat "$MACOS_MANIFEST_FILE" >>"$MANIFEST_FILE"
+fi
+
+"${PIXI_CMD[@]}" global sync

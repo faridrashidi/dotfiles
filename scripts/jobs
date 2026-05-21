@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+CPU=8 TIME="0-2:00:00" MEM=50 NAME="helper" MY_EMAIL="$USER@nih.gov" DIR=$(pwd)
+
+usage() {
+    cat <<EOF
+Usage: $0 [slurm|swarm|pbs|info] [OPTIONS]
+
+Options:
+  --cpu NUM       CPUs (default: 8)
+  --time TIME     Time (default: 0-2:00:00)
+  --mem NUM       Memory in GB (default: 50)
+  --name NAME     Job name (default: helper)
+EOF
+}
+
+[[ $# -lt 1 ]] && {
+    usage
+    exit 1
+}
+
+COMMAND=$1
+shift
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --cpu)
+            CPU="$2"
+            shift 2
+            ;;
+        --time)
+            TIME="$2"
+            shift 2
+            ;;
+        --mem)
+            MEM="$2"
+            shift 2
+            ;;
+        --name)
+            NAME="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+case "$COMMAND" in
+    slurm)
+        cat >_sbatch.sh <<EOF
+#!/bin/bash
+
+#SBATCH --cpus-per-task=${CPU}
+#SBATCH --time=${TIME}
+#SBATCH --gres=lscratch:1
+#SBATCH --mem=${MEM}g
+#SBATCH --job-name=${NAME}
+#SBATCH --partition=ccr,norm,largemem
+#SBATCH --chdir=${DIR}
+#SBATCH --output=${DIR}/_sbatch.log
+#SBATCH --error=${DIR}/_sbatch.log
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=${MY_EMAIL}
+#SBATCH --ntasks-per-core=1
+#SBATCH --ntasks=1
+
+module load snpEff/5.0
+EOF
+        echo "Created _sbatch.sh"
+        ;;
+
+    swarm)
+        cat >_swarm.sh <<EOF
+#!/bin/bash
+
+# swarm \\
+#	--file ${DIR}/_swarm.sh \\
+#	--logdir ${DIR}/_swarm \\
+#	--time ${TIME} \\
+#	--gres=lscratch:1 \\
+#	--gb-per-process ${MEM} \\
+#	--threads-per-process 1 \\
+#	--module GATK/4.2.0.0 \\
+#	--bundle 1 --partition ccr,norm,largemem --processes-per-subjob 1 --noht \\
+#	--sbatch "--mail-type=BEGIN,END,FAIL --mail-user=${MY_EMAIL} --job-name=${NAME}"
+
+echo hello && echo Done
+EOF
+        echo "Created _swarm.sh"
+        ;;
+
+    pbs)
+        cat >_qsub.sh <<EOF
+#!/bin/bash
+
+#PBS -l ppn=${CPU}
+#PBS -l walltime=${TIME}
+#PBS -l vmem=${MEM}gb
+#PBS -N ${NAME}
+#PBS -q ccr,norm,largemem
+#PBS -d ${DIR}
+#PBS -o ${DIR}/_qsub.log
+#PBS -e ${DIR}/_qsub.log
+#PBS -m a
+#PBS -M ${MY_EMAIL}
+#PBS -l nodes=1
+
+module load snpEff/5.0
+EOF
+        echo "Created _qsub.sh"
+        ;;
+
+    info)
+        echo "Guide where to download the human/mouse database."
+        ;;
+
+    *)
+        echo "Invalid command: $COMMAND"
+        usage
+        exit 1
+        ;;
+esac

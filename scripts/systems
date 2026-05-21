@@ -1,0 +1,660 @@
+#!/usr/bin/env bash
+
+###############################################################################
+# Command Line Arguments                                                      #
+###############################################################################
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/utils.sh"
+
+if [[ "$(uname)" != "Darwin" ]]; then
+    echo "This script only supports macOS."
+    exit 1
+fi
+
+help() {
+    cat <<EOF
+Systems Installation Tool
+
+Usage: $0 [--install|-i] [--help|-h]
+
+Options:
+  --install, -i   Install all the system settings
+  --help, -h      Display this help message
+EOF
+    exit 0
+}
+
+execute() { run "$@" "$DRY_RUN"; }
+
+DRY_RUN=true
+
+for arg in "$@"; do
+    case $arg in
+        -i | --install) DRY_RUN=false ;;
+        -h | --help) help ;;
+    esac
+done
+
+###############################################################################
+# Initial Setup                                                               #
+###############################################################################
+# Quit System Settings to avoid conflicts while modifying settings
+execute "osascript -e 'tell application \"System Settings\" to quit'"
+
+# Request sudo privileges upfront
+execute "sudo -v"
+
+###############################################################################
+# Security and Login                                                          #
+###############################################################################
+
+# Disable guest account login for security
+execute "sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false"
+
+# Add a custom message to the login window
+execute "sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText \
+\"If found, please call 000-000-0000.\""
+
+# Disable guest access for Apple File Server
+execute "defaults write com.apple.AppleFileServer guestAccess -bool false"
+
+# Disable SMB guest access for security
+execute "defaults write SystemConfiguration/com.apple.smb.server AllowGuestAccess -bool false"
+
+# Prevent power button from sleeping the system
+execute "defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool false"
+
+# Disable state saving on logout for a fresh session each time
+execute "defaults write com.apple.loginwindow TALLogoutSavesState 0"
+
+# Require password immediately after screensaver or sleep
+execute "defaults write com.apple.screensaver askForPassword -int 1"
+execute "defaults write com.apple.screensaver askForPasswordDelay -int 0"
+
+###############################################################################
+# General System Settings                                                     #
+###############################################################################
+
+# Shorten Notification Center banner display time to 2 seconds
+execute "defaults write com.apple.notificationcenterui bannerTime 2"
+
+# Set double-click action to minimize windows instead of maximizing
+execute "defaults write NSGlobalDomain AppleActionOnDoubleClick -string \"Minimize\""
+
+# Prefer tabs when opening documents for a cleaner workspace
+execute "defaults write NSGlobalDomain AppleWindowTabbingMode -string \"always\""
+
+# Disable window restoration on quit (don't reopen windows after quitting apps)
+execute "defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false"
+
+# Enable most recently used spaces in Mission Control
+execute "defaults write com.apple.dock mru-spaces -bool true"
+
+# Disable user activity advertising and receiving for privacy
+execute "defaults write ~/Library/Preferences/ByHost/com.apple.coreservices.useractivityd \
+ActivityAdvertisingAllowed -bool false"
+execute "defaults write ~/Library/Preferences/ByHost/com.apple.coreservices.useractivityd \
+ActivityReceivingAllowed -bool false"
+
+# Always prompt for confirmation when closing windows with changes
+execute "defaults write -g NSCloseAlwaysConfirmsChanges -bool true"
+
+# Disable the first-run quarantine dialog for downloaded apps
+execute "defaults write com.apple.LaunchServices LSQuarantine -bool false"
+
+# Disable the crash reporter dialog
+execute "defaults write com.apple.CrashReporter DialogType -string \"none\""
+
+# Enable network time synchronization using Apple's time server
+[[ -z "$CI" ]] && execute "sudo systemsetup -setusingnetworktime on"
+
+# Display the menu bar clock in analog format
+execute "defaults write com.apple.menuextra.clock IsAnalog -bool true"
+
+###############################################################################
+# UI and Appearance                                                           #
+###############################################################################
+
+# Set Icon & widget style to Dark Auto (switches automatically based on time)
+execute "defaults write NSGlobalDomain AppleInterfaceStyleSwitchesAutomatically -bool true"
+
+# Set highlight color to a custom green shade (RGB: 0.764700, 0.976500, 0.568600)
+execute "defaults write NSGlobalDomain AppleHighlightColor -string \
+\"0.764700 0.976500 0.568600\""
+
+# Enable font smoothing for better text rendering
+execute "defaults write -g CGFontRenderingFontSmoothingDisabled -bool false"
+
+# Enable audio feedback when changing volume
+execute "defaults write -globalDomain \"com.apple.sound.beep.feedback\" -int 1"
+
+# Remove the default "Drop Box" folder from Public directory
+execute "sudo rm -rf \"${HOME}/Public/Drop Box\""
+
+# Disable tiled window margins for a tighter layout
+execute "defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false"
+
+# Change the "Fill" window tiling shortcut to Command + Control + Up Arrow
+execute "defaults write -g NSUserKeyEquivalents -dict-add \"Fill\" \"@^\\U2191\""
+
+# Set light font smoothing level (1 = light)
+execute "defaults write NSGlobalDomain AppleFontSmoothing -int 1"
+
+# Enable high-resolution display support
+execute "sudo defaults write /Library/Preferences/com.apple.windowserver \
+DisplayResolutionEnabled -bool true"
+
+# Disable clicking the desktop to show it (Mission Control behavior)
+execute "defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false"
+
+# Remove all menu bar items
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Battery\" -bool false"
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible WiFi\" -bool false"
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Bluetooth\" -bool false"
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible AirDrop\" -bool false"
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Clock\" -bool false"
+execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Sound\" -bool false"
+
+###############################################################################
+# Input Devices (Keyboard and Trackpad)                                       #
+###############################################################################
+
+# Dim keyboard backlight when idle
+execute "defaults write com.apple.BezelServices kDim -bool true"
+
+# Disable automatic keyboard brightness adjustment
+execute "sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor \
+\"Automatic Keyboard Enabled\" -bool false"
+
+# Enable full keyboard access (Tab key works in dialogs)
+execute "defaults write NSGlobalDomain AppleKeyboardUIMode -int 3"
+
+# Disable press-and-hold for faster key repeat
+execute "defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false"
+
+# Set fast keyboard repeat rate (KeyRepeat = delay between repeats)
+execute "defaults write NSGlobalDomain KeyRepeat -int 2"
+
+# Set fast keyboard repeat rate (InitialKeyRepeat = delay before repeating)
+execute "defaults write NSGlobalDomain InitialKeyRepeat -int 15"
+
+# Set preferred languages to English and Persian
+execute "defaults write NSGlobalDomain AppleLanguages -array \"en\" \"fa\""
+
+# Configure input sources: U.S. and Persian keyboards, plus some input methods
+execute "defaults write com.apple.HIToolbox.plist AppleEnabledInputSources -array \
+\"<dict><key>InputSourceKind</key><string>Keyboard Layout</string>\
+<key>KeyboardLayout ID</key><integer>0</integer>\
+<key>KeyboardLayout Name</key><string>U.S.</string></dict>\" \
+\"<dict><key>InputSourceKind</key><string>Keyboard Layout</string>\
+<key>KeyboardLayout ID</key><integer>-2901</integer>\
+<key>KeyboardLayout Name</key><string>Persian-ISIRI 2901</string></dict>\" \
+\"<dict><key>Bundle ID</key><string>com.apple.CharacterPaletteIM</string>\
+<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\" \
+\"<dict><key>Bundle ID</key><string>com.apple.KeyboardViewer</string>\
+<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\" \
+\"<dict><key>Bundle ID</key><string>com.apple.PressAndHold</string>\
+<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\""
+
+# Disable all service shortcut keys
+execute "defaults write pbs NSServicesStatus -dict"
+
+# Get keyboard vendor and product ID for modifier mapping
+kbid=$(ioreg -n IOHIDKeyboard -r | grep -e VendorID\" -e ProductID | tr -d \
+    "|\"[:blank:]" | cut -d\= -f2 | tr "\n" -)
+execute "defaults -currentHost write -g \"com.apple.keyboard.modifiermapping.${kbid}0\" \
+\"<array> \
+    <dict> \
+      <key>HIDKeyboardModifierMappingSrc</key><integer>0</integer> \
+      <key>HIDKeyboardModifierMappingDst</key><integer>2</integer> \
+    </dict> \
+  </array> \
+\""
+
+# Enable "Select previous input source" hotkey (Hyperkey + Space)
+execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 60 \
+\"<dict> \
+    <key>enabled</key><true/> \
+    <key>value</key><dict> \
+      <key>type</key><string>standard</string> \
+      <key>parameters</key> \
+      <array> \
+        <integer>32</integer> \
+        <integer>49</integer> \
+        <integer>1966080</integer> \
+      </array> \
+    </dict> \
+  </dict> \
+\""
+
+# Disable "Select next input source" hotkey
+execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 61 \
+\"<dict> \
+    <key>enabled</key><false/> \
+    <key>value</key><dict> \
+      <key>type</key><string>standard</string> \
+      <key>parameters</key> \
+      <array> \
+        <integer>32</integer> \
+        <integer>49</integer> \
+        <integer>786432</integer> \
+      </array> \
+    </dict> \
+  </dict> \
+\""
+
+# Disable Spotlight search field hotkey
+execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 64 \
+\"<dict> \
+    <key>enabled</key><false/> \
+    <key>value</key><dict> \
+      <key>type</key><string>standard</string> \
+      <key>parameters</key> \
+      <array> \
+        <integer>65535</integer> \
+        <integer>49</integer> \
+        <integer>1835008</integer> \
+      </array> \
+    </dict> \
+  </dict> \
+\""
+
+# Disable Spotlight window hotkey
+execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 65 \
+\"<dict> \
+    <key>enabled</key><false/> \
+    <key>value</key><dict> \
+      <key>type</key><string>standard</string> \
+      <key>parameters</key> \
+      <array> \
+        <integer>65535</integer> \
+        <integer>49</integer> \
+        <integer>1572864</integer> \
+      </array> \
+    </dict> \
+  </dict> \
+\""
+
+# Show input menu in menu bar
+execute "defaults write com.apple.TextInputMenu visible -bool true"
+
+# Set trackpad tracking speed (0.875 is moderately slow)
+execute "defaults write NSGlobalDomain com.apple.trackpad.scaling -float 0.875"
+
+# Enable tap-to-click for both built-in and Bluetooth trackpads
+execute "defaults write com.apple.AppleMultitouchTrackpad.plist Clicking -bool true"
+execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true"
+execute "defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1"
+execute "defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1"
+
+# Enable right-click with two-finger tap
+execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
+TrackpadCornerSecondaryClick -int 0"
+execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
+TrackpadRightClick -bool true"
+execute "defaults -currentHost write NSGlobalDomain \
+com.apple.trackpad.trackpadCornerClickBehavior -int 0"
+execute "defaults -currentHost write NSGlobalDomain \
+com.apple.trackpad.enableSecondaryClick -bool true"
+
+# Enable three-finger tap for look-up gesture
+execute "defaults write com.apple.AppleMultitouchTrackpad \
+TrackpadThreeFingerTapGesture -int 2"
+execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
+TrackpadThreeFingerTapGesture -int 2"
+
+# Enable three-finger drag and disable swipe gestures for simplicity
+execute "defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true"
+execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
+TrackpadThreeFingerDrag -bool true"
+execute "defaults -currentHost write -g com.apple.trackpad.threeFingerDragGesture -bool true"
+execute "defaults -currentHost write -g \
+com.apple.trackpad.threeFingerHorizSwipeGesture -int 0"
+execute "defaults -currentHost write -g \
+com.apple.trackpad.threeFingerVertSwipeGesture -int 0"
+
+# Enable gestures for App Exposé and Launchpad
+execute "defaults write com.apple.dock showAppExposeGestureEnabled -bool true"
+execute "defaults write com.apple.dock showLaunchpadGestureEnabled -bool true"
+
+###############################################################################
+# Text Editing                                                                #
+###############################################################################
+
+# Disable automatic capitalization (useful for coding)
+execute "defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false"
+
+# Disable smart dashes (useful for coding)
+execute "defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false"
+
+# Disable automatic period substitution (useful for coding)
+execute "defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false"
+
+# Disable smart quotes (useful for coding)
+execute "defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false"
+
+# Disable auto-correct (useful for coding and precision typing)
+execute "defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false"
+
+###############################################################################
+# Display and Screensaver                                                     #
+###############################################################################
+
+# Disable screensaver idle time (0 = never)
+execute "defaults -currentHost write com.apple.screensaver idleTime 0"
+
+# Disable screenshot thumbnail preview, set format to PNG, and remove shadow
+execute "defaults write com.apple.screencapture show-thumbnail -bool false"
+execute "defaults write com.apple.screencapture type -string \"png\""
+execute "defaults write com.apple.screencapture disable-shadow -bool true"
+
+# Hide AirPlay menu bar icon
+execute "defaults write com.apple.airplay showInMenuBarIfPresent -bool false"
+
+# Enable automatic display brightness adjustment
+execute "defaults write com.apple.BezelServices dAuto -bool true"
+
+# Disable automatic display brightness based on ambient light
+execute "sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor \
+\"Automatic Display Enabled\" -bool false"
+
+###############################################################################
+# Finder                                                                      #
+###############################################################################
+
+# Prevent the "Empty Trash" option in Finder for safety
+execute "defaults write com.apple.finder ProhibitEmptyTrash -bool true"
+
+# Show external drives, removable media, and mounted servers on desktop; hide internal drives
+execute "defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true"
+execute "defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false"
+execute "defaults write com.apple.finder ShowMountedServersOnDesktop -bool true"
+execute "defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true"
+
+# Disable extension change warning
+execute "defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false"
+
+# Set new Finder windows to open in the Dropbox folder
+execute "defaults write com.apple.finder NewWindowTarget -string \"PfLo\""
+execute "defaults write com.apple.finder NewWindowTargetPath -string \
+\"file://${HOME}/Dropbox/\""
+
+# Show all file extensions in Finder
+execute "defaults write NSGlobalDomain AppleShowAllExtensions -bool true"
+
+# Show status bar and path bar in Finder windows
+execute "defaults write com.apple.finder ShowStatusBar -bool true"
+execute "defaults write com.apple.finder ShowPathbar -bool true"
+
+# Set default search scope to current folder
+execute "defaults write com.apple.finder FXDefaultSearchScope -string \"SCcf\""
+
+# Prevent .DS_Store files on network and USB volumes
+execute "defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true"
+execute "defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true"
+
+# Keep folders on top when sorting by name
+execute "defaults write com.apple.finder _FXSortFoldersFirst -bool true"
+
+# Set Finder default view to Column View
+execute "defaults write com.apple.finder FXPreferredViewStyle -string \"clmv\""
+
+# Expand specific File Info panes in Finder
+execute "defaults write com.apple.finder FXInfoPanesExpanded -dict \
+General -bool true MetaData -bool true OpenWith -bool true Privileges -bool true"
+
+# Customize Desktop view settings with a single defaults command
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:iconSize 36\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:gridSpacing 45\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:textSize 13\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:labelOnBottom false\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:showItemInfo true\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:showIconPreview true\" \
+~/Library/Preferences/com.apple.finder.plist"
+execute "/usr/libexec/PlistBuddy -c \
+\"Set :DesktopViewSettings:IconViewSettings:arrangeBy grid\" \
+~/Library/Preferences/com.apple.finder.plist"
+
+# Customize Column view settings with a single defaults command
+function set_plist_entry() {
+    local key="$1"
+    local type="$2"
+    local value="$3"
+    local plist="${HOME}/Library/Preferences/com.apple.finder.plist"
+
+    if /usr/libexec/PlistBuddy -c "Print :${key}" "${plist}" &>/dev/null; then
+        if [[ "$type" != "dict" ]]; then
+            execute "/usr/libexec/PlistBuddy -c \"Set :${key} ${value}\" ${plist}"
+        fi
+    else
+        if [[ "$type" == "dict" ]]; then
+            execute "/usr/libexec/PlistBuddy -c \"Add :${key} ${type}\" ${plist}"
+        else
+            execute "/usr/libexec/PlistBuddy -c \"Add :${key} ${type} ${value}\" ${plist}"
+        fi
+    fi
+}
+set_plist_entry "StandardViewOptions" "dict"
+set_plist_entry "StandardViewOptions:ColumnViewOptions" "dict"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ArrangeBy" "string" "dnam"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ColumnShowFolderArrow" "bool" "true"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ColumnShowIcons" "bool" "true"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ColumnWidth" "integer" "245"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:FontSize" "integer" "15"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:PreviewDisclosureState" "bool" "true"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:SharedArrangeBy" "string" "kipl"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ShowIconThumbnails" "bool" "true"
+set_plist_entry "StandardViewOptions:ColumnViewOptions:ShowPreview" "bool" "true"
+unset -f set_plist_entry
+
+# Customize Finder toolbar with specific items (Back, Search, etc.)
+execute "defaults write com.apple.finder \"NSToolbar Configuration Browser\" \
+'{ \
+    \"TB Default Item Identifiers\" =     ( \
+        \"com.apple.finder.BACK\", \
+        \"com.apple.finder.SWCH\", \
+        NSToolbarSpaceItem, \
+        \"com.apple.finder.ARNG\", \
+        \"com.apple.finder.SHAR\", \
+        \"com.apple.finder.LABL\", \
+        \"com.apple.finder.ACTN\", \
+        NSToolbarSpaceItem, \
+        \"com.apple.finder.SRCH\" \
+    ); \
+    \"TB Display Mode\" = 2; \
+    \"TB Icon Size Mode\" = 1; \
+    \"TB Is Shown\" = 1; \
+    \"TB Item Identifiers\" =     ( \
+        \"com.apple.finder.BACK\", \
+        \"com.apple.finder.SRCH\" \
+    ); \
+    \"TB Size Mode\" = 1; \
+} \
+'"
+
+# Show the hidden ~/Library folder
+execute "chflags nohidden \"${HOME}/Library\""
+
+###############################################################################
+# Dock and Dashboard                                                          #
+###############################################################################
+
+# Hide recent apps in the Dock
+execute "defaults write com.apple.dock show-recents -bool false"
+
+# Set tile size to 32 pixels
+execute "defaults write com.apple.dock tilesize -int 32"
+
+# Set magnified size to 128 pixels
+execute "defaults write com.apple.dock largesize -int 128"
+
+# Disable magnification
+execute "defaults write com.apple.dock magnification -bool false"
+
+# Place Dock at bottom
+execute "defaults write com.apple.dock orientation -string \"bottom\""
+
+# Use scale effect for minimization
+execute "defaults write com.apple.dock mineffect -string \"scale\""
+
+# Minimize on double-click
+execute "defaults write NSGlobalDomain AppleMiniaturizeOnDoubleClick -bool true"
+
+# Minimize to app icon
+execute "defaults write com.apple.dock minimize-to-application -bool true"
+
+# Enable launch animation
+execute "defaults write com.apple.dock launchanim -bool true"
+
+# Enable auto-hide
+execute "defaults write com.apple.dock autohide -bool true"
+
+# Show process indicators
+execute "defaults write com.apple.dock show-process-indicators -bool true"
+
+# Set hot corners: Bottom Left = Desktop, Bottom Right = Mission Control
+execute "defaults write com.apple.dock wvous-bl-corner -int 4"
+execute "defaults write com.apple.dock wvous-bl-modifier -int 0"
+execute "defaults write com.apple.dock wvous-br-corner -int 2"
+execute "defaults write com.apple.dock wvous-br-modifier -int 0"
+
+# Speed up Dock auto-hide animation
+execute "defaults write com.apple.dock autohide-time-modifier -float 0.2"
+
+# Show hidden app icons in the Dock as translucent
+execute "defaults write com.apple.dock showhidden -bool true"
+
+# Lock Dock size to prevent resizing
+execute "defaults write com.apple.dock size-immutable -bool true"
+
+###############################################################################
+# Applications (iWork, App Store, Brave)                                      #
+###############################################################################
+
+# Disable "What's New" prompts in iWork apps
+execute "defaults write com.apple.iWork.Keynote dontShowWhatsNew -bool true"
+execute "defaults write com.apple.iWork.Keynote FirstRunFlag -bool true"
+execute "defaults write com.apple.iWork.Numbers dontShowWhatsNew -bool true"
+execute "defaults write com.apple.iWork.Numbers FirstRunFlag -bool true"
+execute "defaults write com.apple.iWork.Pages dontShowWhatsNew -bool true"
+execute "defaults write com.apple.iWork.Pages FirstRunFlag -bool true"
+
+# Disable video autoplay in App Store
+execute "defaults write com.apple.AppStore AutoPlayVideoSetting -string \"off\""
+execute "defaults write com.apple.AppStore UserSetAutoPlayVideoSetting -int 1"
+
+# Configure Software Update
+execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
+AutomaticCheckEnabled -bool true"
+execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
+AutomaticDownload -bool true"
+execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
+AutomaticallyInstallMacOSUpdates -bool false"
+execute "sudo defaults write /Library/Preferences/com.apple.commerce \
+AutoUpdate -bool false"
+execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
+ConfigDataInstall -bool true"
+execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
+CriticalUpdateInstall -bool true"
+
+# Set Brave as default browser via Launch Services
+if [[ -z "$CI" ]]; then
+    execute "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/\
+LaunchServices.framework/Versions/A/Support/lsregister -f ~/Applications/Brave\ Browser.app"
+    execute "defaults write com.apple.LaunchServices/com.apple.launchservices.secure \
+LSHandlers -array-add '{LSHandlerRoleAll=\"com.brave.Browser\";\
+LSHandlerURLScheme=\"http\";}' '{LSHandlerRoleAll=\"com.brave.Browser\";\
+LSHandlerURLScheme=\"https\";}'"
+fi
+
+###############################################################################
+# Spotlight                                                                   #
+###############################################################################
+
+# Disable all Spotlight search categories for minimal indexing
+execute "defaults write com.apple.spotlight orderedItems -array \
+'{enabled = 0; name = APPLICATIONS;}' \
+'{enabled = 0; name = \"MENU_SPOTLIGHT_SUGGESTIONS\";}' \
+'{enabled = 0; name = \"MENU_CONVERSION\";}' \
+'{enabled = 0; name = \"MENU_EXPRESSION\";}' \
+'{enabled = 0; name = \"MENU_DEFINITION\";}' \
+'{enabled = 0; name = \"SYSTEM_PREFS\";}' \
+'{enabled = 0; name = DOCUMENTS;}' \
+'{enabled = 0; name = DIRECTORIES;}' \
+'{enabled = 0; name = PRESENTATIONS;}' \
+'{enabled = 0; name = SPREADSHEETS;}' \
+'{enabled = 0; name = PDF;}' \
+'{enabled = 0; name = MESSAGES;}' \
+'{enabled = 0; name = CONTACT;}' \
+'{enabled = 0; name = \"EVENT_TODO\";}' \
+'{enabled = 0; name = IMAGES;}' \
+'{enabled = 0; name = BOOKMARKS;}' \
+'{enabled = 0; name = MUSIC;}' \
+'{enabled = 0; name = MOVIES;}' \
+'{enabled = 0; name = FONTS;}' \
+'{enabled = 0; name = \"MENU_OTHER\";}'"
+
+# Ensure Spotlight indexing is enabled for the main volume
+execute "sudo mdutil -i on /"
+
+# Rebuild Spotlight index from scratch
+execute "sudo mdutil -E /"
+
+# Restart metadata service, Finder and clear preference cache to apply changes
+if [[ -z "$CI" ]]; then
+    execute "killall cfprefsd"
+    execute "killall Finder"
+fi
+
+###############################################################################
+# Manual Configuration Prompts                                                #
+###############################################################################
+
+# Function to print colored bullet messages
+message() {
+    local -r bullet_color="$1" message="$2"
+    local -rA colors=([black]=0 [red]=1 [green]=2 [yellow]=3 [blue]=4 [magenta]=5 [cyan]=6 [white]=7)
+    if [[ -n "${colors[$bullet_color]+x}" ]]; then
+        echo -e "$(tput setaf "${colors[$bullet_color]}")•$(tput sgr0) ${message}"
+    else
+        echo "${FUNCNAME[0]}: '${bullet_color}' is not a valid color."
+        return 1
+    fi
+}
+
+# Function to prompt user to open an app with arguments
+ask_gui() {
+    # message 'yellow' "${1}"
+    # open -Wa "${2}" --args "${@:3}"
+    print_msg "$1" "warning"
+}
+
+# Function to prompt user to adjust System Settings
+ask_system_settings() {
+    # open "${2}"
+    ask_gui "$1" 'System Settings'
+}
+
+# Run manual configuration steps
+if [[ -z "$CI" ]]; then
+    ask_system_settings 'Turn off unnecessary apps from iCloud' \
+        'x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane?iCloud'
+    ask_system_settings 'Turn off all notifs except Message' \
+        'x-apple.systempreferences:com.apple.preference.notifications'
+    ask_system_settings 'Night Shift... -> Sunset to Sunrise' \
+        'x-apple.systempreferences:com.apple.preference.displays'
+    ask_system_settings 'Input Sources -> Edit... -> Persian -> keyboard shortcuts -> On keyboard shortcuts' \
+        'x-apple.systempreferences:com.apple.preference.keyboard?InputSources'
+fi
