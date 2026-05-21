@@ -1,0 +1,51 @@
+[core]
+	excludesfile = "~/.config/git/ignore"
+	editor = "code --wait" # Optional if use VS Code
+
+[credential]
+	helper = "osxkeychain" # Better for macOS than "cache"
+
+[init]
+	defaultBranch = "main"
+
+[pull]
+	rebase = false # Consider changing to true for cleaner history
+
+[push]
+	followTags = true
+	autoSetupRemote = true # Adds upstream automatically
+
+[fetch]
+	prune = true # Cleans up deleted branches
+
+[alias]
+	sweep = "!git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D"
+
+[rebase]
+	autoStash = true # Stashes dirty worktree before rebase
+
+[rerere]
+	enabled = true # Remembers conflict resolutions
+
+[diff]
+	algorithm = histogram # Better diff output than default "myers"
+	colorMoved = default   # Highlight moved lines differently
+
+[merge]
+	conflictstyle = zdiff3 # Shows base version in conflicts
+
+[column]
+	ui = auto # Columnar output for branch lists
+
+[branch]
+	sort = -committerdate # Show most recent branches first
+
+[tag]
+	sort = version:refname # Natural version sorting for tags
+
+[log]
+	date = iso # ISO date format in git log
+
+[user]
+	email = {{ .git.email | quote }}
+	name = "Farid Rashidi"
