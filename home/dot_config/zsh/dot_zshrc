@@ -1,0 +1,117 @@
+#!/usr/bin/env zsh
+
+###############################################################################
+# 1. Initialization & Path Setup                                              #
+###############################################################################
+
+# Deduplicate path arrays
+typeset -U path fpath manpath
+
+# Non-login interactive shells still need XDG defaults for cached init and app loaders.
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+
+# Cache a tool's init output; regenerate when the binary (or -w watch file) updates
+# Uses $commands[] (zsh hash table) instead of $(command -v) to avoid subshell forks
+_cached_eval() {
+    local watch=""
+    [[ "$1" == "-w" ]] && {
+        watch=$2
+        shift 2
+    }
+    local cmd=$1 cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/${1}.zsh"
+    shift
+    if [[ ! -f "$cache" || "${commands[$cmd]}" -nt "$cache" ]] ||
+        [[ -n "$watch" && "$watch" -nt "$cache" ]]; then
+        mkdir -p "${cache:h}"
+        command "$cmd" "$@" >"$cache" || {
+            rm -f "$cache"
+            return 1
+        }
+    fi
+    source "$cache"
+}
+
+###############################################################################
+# 2. Plugin Management                                                        #
+###############################################################################
+
+# Queue compdef calls so plugins loaded before compinit don't lose completions
+typeset -a _compdef_replay=()
+compdef() { _compdef_replay+=("$*"); }
+
+# Cache sheldon output; regenerate when plugins.toml changes
+if (($+commands[sheldon])); then
+    local _sc="${XDG_CONFIG_HOME:-$HOME/.config}/sheldon"
+    _cached_eval -w "$_sc/plugins.toml" sheldon source
+fi
+unfunction compdef
+
+###############################################################################
+# 3. Completions & Shell Options                                              #
+###############################################################################
+
+# Initialize completions — only rebuild dump once every 24 h
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
+
+# Replay queued compdef calls from plugin loading
+for _def in "${_compdef_replay[@]}"; do eval "compdef $_def"; done
+unset _compdef_replay _def
+
+# Menu-select widget for completion menus
+zmodload zsh/complist
+
+# Completion matching: exact → case-insensitive → partial-word → substring
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select
+
+# ─── History ────────────────────────────────────────────────────────────────
+setopt EXTENDED_HISTORY     # Save timestamp and duration
+setopt HIST_IGNORE_ALL_DUPS # Remove older duplicate when adding new
+setopt HIST_REDUCE_BLANKS   # Remove superfluous blanks before saving
+setopt HIST_IGNORE_SPACE    # Don't save commands starting with space
+setopt HIST_SAVE_NO_DUPS    # Don't write duplicates to history file
+setopt HIST_FIND_NO_DUPS    # Don't show duplicates when searching
+setopt SHARE_HISTORY        # Share history between sessions (implies INC_APPEND_HISTORY)
+
+# ─── Directory Navigation ──────────────────────────────────────────────────
+setopt AUTOCD            # cd into directory by typing its name
+setopt AUTO_PUSHD        # Push dirs to stack on cd
+setopt PUSHD_IGNORE_DUPS # Don't push duplicate directories
+setopt PUSHD_SILENT      # Don't print dir stack after pushd/popd
+
+# ─── Misc ───────────────────────────────────────────────────────────────────
+setopt CORRECT              # Offer spelling correction for commands
+setopt INTERACTIVE_COMMENTS # Allow comments in interactive shell
+setopt NO_BEEP              # Disable terminal beep
+
+###############################################################################
+# 4. Key Bindings                                                             #
+###############################################################################
+
+bindkey -e
+bindkey -r "^G"
+
+###############################################################################
+# 5. Reserved Config Load Order                                               #
+###############################################################################
+
+_source_named_configs() {
+    local name file
+    for name in "$@"; do
+        file="$ZDOTDIR/$name"
+        [[ -f "$file" ]] && source "$file"
+        for file in "$XDG_CONFIG_HOME"/*/"$name"(N); do
+            [[ "${file:h:t}" == zsh ]] && continue
+            source "$file"
+        done
+    done
+}
+
+_source_named_configs completions.zsh functions.zsh init.zsh aliases.zsh binders.zsh
+unfunction _source_named_configs
