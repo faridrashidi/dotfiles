@@ -1,0 +1,17 @@
+customCommands:
+  - key: "<c-g>"
+    context: "files"
+    description: "Commit changes with gitmoji"
+    loadingText: "Creating Gitmoji commit..."
+    prompts:
+      - type: "menuFromCommand"
+        key: "emoji"
+        title: "Choose a Gitmoji"
+        command: "gitmoji -l"
+        filter: "^(?P<emoji>.*?) - (:.*?:) - (?P<description>.*)$"
+        valueFormat: "{{ .emoji }}"
+        labelFormat: "{{ .emoji }} {{ .description }}"
+      - type: "input"
+        key: "message"
+        title: "Enter a capitalized commit title"
+    command: "git commit -m '{{ .Form.emoji }} {{ .Form.message }}'"
