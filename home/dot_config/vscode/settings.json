@@ -303,10 +303,6 @@
     { "text": "Use 5 words maximum." }
   ],
 
-  // Gemini
-  "geminicodeassist.project": "eighth-case-llsq8",
-  "geminicodeassist.displayInlineContextHint": false,
-
   // Claude
   "claudeCode.allowDangerouslySkipPermissions": true,
   "claudeCode.preferredLocation": "panel"
