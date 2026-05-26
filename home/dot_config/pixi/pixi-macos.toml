@@ -45,3 +45,9 @@ channels = ["conda-forge"]
 platform = "osx-arm64"
 dependencies = { go-shfmt = "*" }
 exposed = { shfmt = "shfmt" }
+
+[envs.rclone]
+channels = ["conda-forge"]
+platform = "osx-arm64"
+dependencies = { rclone = "*" }
+exposed = { rclone = "rclone" }
