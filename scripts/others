@@ -10,7 +10,8 @@ npm -g install \
     @google/gemini-cli \
     gitmoji-cli
 pipx install \
-    dooti
+    dooti \
+    llmfit
 
 curl -L https://raw.githubusercontent.com/fboender/multi-git-status/master/mgitstatus -o ~/.local/bin/mgitstatus && chmod +x ~/.local/bin/mgitstatus
 curl -L https://raw.githubusercontent.com/mklement0/fileicon/master/bin/fileicon -o ~/.local/bin/fileicon && chmod +x ~/.local/bin/fileicon
@@ -20,3 +21,4 @@ OP_VER="$(curl -fsSL https://app-updates.agilebits.com/product_history/CLI2 | gr
 sudo cp "${HOME}/Dropbox/Resources/Mac/Settings/Dotfiles/ghostty/sudo" /private/etc/pam.d/
 fileicon set "${HOME}/Dropbox" "${HOME}/Dropbox/Resources/Mac/Settings/Dotfiles/finder/dropbox.png"
 ln -s "${HOME}/Resources/Mac/Settings/Dotfiles/scripts/apps-private" "${HOME}/Developer/dotfiles/scripts"
+mkdir -p "${HOME}/.ssh" && cp -R "${HOME}/Resources/Mac/Settings/Dotfiles/ssh/." "${HOME}/.ssh/"
