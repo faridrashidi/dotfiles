@@ -1,1 +1,1 @@
-alias gs="mgitstatus -e -f"
+alias gs="mgitstatus -e -f -d 3"
