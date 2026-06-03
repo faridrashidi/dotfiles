@@ -111,7 +111,7 @@
   // # Python
   // ----------------------------------------------------------------------
   "python.languageServer": "Pylance",
-  "python.defaultInterpreterPath": "${env:PIXI_HOME}/envs/python/bin/python",
+  "python.defaultInterpreterPath": "${userHome}/.pixi/envs/python/bin/python",
   "python-envs.defaultEnvManager": "ms-python.python:system",
   "python.analysis.typeCheckingMode": "off",
   "python.testing.pytestEnabled": true,
