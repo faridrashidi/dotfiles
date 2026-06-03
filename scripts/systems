@@ -28,6 +28,7 @@ EOF
 execute() { run "$@" "$DRY_RUN"; }
 
 DRY_RUN=true
+SUDO_KEEPALIVE_PID=""
 
 for arg in "$@"; do
     case $arg in
@@ -36,6 +37,34 @@ for arg in "$@"; do
     esac
 done
 
+cleanup_sudo_keepalive() {
+    if [[ -n "$SUDO_KEEPALIVE_PID" ]]; then
+        kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true
+        wait "$SUDO_KEEPALIVE_PID" 2>/dev/null || true
+    fi
+}
+
+setup_sudo() {
+    if [[ "$DRY_RUN" == "true" ]]; then
+        execute "sudo -v"
+        return
+    fi
+
+    if sudo -v; then
+        print_msg "sudo -v" "success"
+    else
+        print_msg "sudo authentication failed" "error"
+        exit 1
+    fi
+
+    while true; do
+        sleep 60
+        sudo -n -v >/dev/null 2>&1 || exit
+    done &
+    SUDO_KEEPALIVE_PID=$!
+    trap cleanup_sudo_keepalive EXIT
+}
+
 ###############################################################################
 # Initial Setup                                                               #
 ###############################################################################
@@ -43,7 +72,7 @@ done
 execute "osascript -e 'tell application \"System Settings\" to quit'"
 
 # Request sudo privileges upfront
-execute "sudo -v"
+setup_sudo
 
 ###############################################################################
 # Security and Login                                                          #
