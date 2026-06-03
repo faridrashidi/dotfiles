@@ -166,6 +166,7 @@
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "shfmt.executablePath": "${userHome}/.pixi/bin/shfmt",
   "shfmt.executableArgs": ["-i=4", "-ci"],
   "yaml.maxItemsComputed": 100000,
 
