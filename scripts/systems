@@ -78,6 +78,9 @@ setup_sudo
 # Security and Login                                                          #
 ###############################################################################
 
+# Use zsh as the login shell
+execute "sudo chsh -s /bin/zsh \"${SUDO_USER:-$USER}\""
+
 # Disable guest account login for security
 execute "sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false"
 
