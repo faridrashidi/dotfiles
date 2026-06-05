@@ -1,5 +1,10 @@
 {
   // ----------------------------------------------------------------------
+  // # Settings sync
+  // ----------------------------------------------------------------------
+  "settingsSync.ignoredSettings": ["todo-tree.ripgrep.ripgrep"],
+
+  // ----------------------------------------------------------------------
   // # General & Window
   // ----------------------------------------------------------------------
   "window.newWindowDimensions": "maximized",
@@ -201,6 +206,7 @@
     }
   ],
   "todo-tree.general.tags": ["TODO:", "FIXME:", "NOTE:"],
+  "todo-tree.ripgrep.ripgrep": "/Users/$USER/.pixi/bin/rg",
   "todo-tree.tree.sortTagsOnlyViewAlphabetically": true,
 
   // gitlens
