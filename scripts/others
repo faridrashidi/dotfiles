@@ -4,11 +4,8 @@ mkdir -p "$HOME/.local/bin"
 
 npm -g install \
     sharp-cli \
-    @github/copilot \
     @openai/codex \
-    @anthropic-ai/claude-code \
-    @google/gemini-cli \
-    gitmoji-cli
+    @anthropic-ai/claude-code
 pipx install \
     dooti \
     llmfit
