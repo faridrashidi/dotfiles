@@ -30,6 +30,7 @@ notify-on-command-finish-after = 30s
 # Shell Integration & Behavior
 shell-integration-features = no-cursor
 clipboard-trim-trailing-spaces = true
+copy-on-select = clipboard
 
 # Quick Terminal
 # keybind = global:control+space=toggle_quick_terminal
