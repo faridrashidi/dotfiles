@@ -10,7 +10,7 @@ function jobstat() {
         return 1
     fi
 
-    local fields="jobid,jobidarray,jobname,state,start_time,elapsed_time,timelimit,cpu_max,cpus,mem_max,mem"
+    local fields="jobid,jobname,elapsed_time,timelimit,cpu_max,cpus,mem_max,mem"
     case "$1" in
         failed)
             dashboard_cli jobs --joblist "$2_" --fields "$fields" --order start_time | grep 'FAILED\|TIMEOUT'
