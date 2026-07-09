@@ -156,9 +156,8 @@ show_default_environment = true
 # symbol = "\uF270 "
 # style = "purple"
 
-# [gcloud]
-# symbol = "\uF7B7 "
-# style = "purple"
+[gcloud]
+disabled = true
 
 # [azure]
 # symbol = "\uFD03 "
