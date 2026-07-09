@@ -11,7 +11,11 @@ function jobstat() {
     fi
 
     local fields="jobid,jobname,elapsed_time,timelimit,cpu_max,cpus,mem_max,mem"
+    local pending_fields="jobid,jobname,timelimit,cpus,mem"
     case "$1" in
+        pending)
+            dashboard_cli jobs --fields "$pending_fields" --pending
+            ;;
         failed)
             dashboard_cli jobs --joblist "$2_" --fields "$fields" --order start_time | grep 'FAILED\|TIMEOUT'
             ;;
@@ -20,9 +24,6 @@ function jobstat() {
             ;;
         maxmem)
             dashboard_cli jobs --joblist "$2_" --fields "$fields" --order mem_max --desc | head
-            ;;
-        pending)
-            dashboard_cli jobs --fields "$fields" --pending
             ;;
         done)
             echo $(dashboard_cli jobs --joblist "$2_" --fields "$fields" | grep COMPLETED | wc -l) - 0 | bc -l
