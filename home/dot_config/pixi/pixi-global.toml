@@ -80,6 +80,11 @@ channels = ["conda-forge"]
 dependencies = { gh = "*" }
 exposed = { gh = "gh" }
 
+[envs.gcloud]
+channels = ["conda-forge"]
+dependencies = { google-cloud-sdk = "*" }
+exposed = { gcloud = "gcloud", gsutil = "gsutil", bq = "bq" }
+
 [envs.lazydocker]
 channels = ["conda-forge"]
 dependencies = { lazydocker = "==0.24.4" }
