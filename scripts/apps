@@ -4,6 +4,7 @@ mac_casks=(
     "1password"
     "brave-browser"
     "clop"
+    "conductor"
     "copilot-money"
     "ghostty"
     "google-chrome"
