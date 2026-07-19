@@ -1,9 +1,9 @@
 ---
-name: grillme
-description: Interview the user relentlessly about a plan, design, architecture, decision, or idea to expose assumptions and resolve every material branch before action. Use when the user invokes $grillme, asks to be grilled, requests a stress test, wants assumptions challenged, asks what they are missing, or seeks rigorous plan feedback.
+name: grill-me
+description: Interview the user relentlessly about a plan, design, architecture, decision, or idea to expose assumptions and resolve every material branch before action. Use when the user invokes /grill-me, asks to be grilled, requests a stress test, wants assumptions challenged, asks what they are missing, or seeks rigorous plan feedback.
 ---
 
-# Grill Me
+# grill-me
 
 Run a focused interview until the user's thinking is precise, internally consistent, and ready for a separate action phase.
 

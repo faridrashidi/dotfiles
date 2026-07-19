@@ -1,26 +1,27 @@
 ---
 name: gitmoji
-description: Apply the Gitmoji convention to a requested commit message or Git commit. Use only when explicitly invoked.
+description: Apply the gitmoji convention to a requested commit message or Git commit. Use only when explicitly invoked.
 disable-model-invocation: true
 ---
 
-# Gitmoji
+# gitmoji
 
-Apply the Gitmoji convention without broadening the requested action. If the user asks only for a commit message, do not stage or commit changes. If the user asks to create a commit, follow the requested scope.
+Apply the gitmoji convention without broadening the requested action. If the user asks only for a commit message, do not stage or commit changes. If the user asks to create a commit, include only the relevant changes.
 
 ## Commit message rules
 
-- Choose exactly one best-matching Gitmoji from the reference below.
+- Choose exactly one best-matching gitmoji per commit from the reference below.
 - Use sentence case for the subject.
-- Capitalize the first word after the emoji and optional scope.
+- Capitalize the first word after the emoji.
 - Write the subject in imperative mood.
 - Do not add a trailing period.
-- Use at most five words for the subject, excluding the emoji and optional scope.
-- Without a scope, use: `<emoji> <Subject in imperative mood>`.
-- With a scope, use: `<emoji> (<scope>): <Subject in imperative mood>`.
+- Use at most five words for the subject, excluding the emoji.
+- Use only: `<emoji> <Subject in imperative mood>`.
+- Do not include a scope or any text between the emoji and subject.
+- When creating commits, split the changes into multiple atomic commits when necessary, such as when many changes cover independent concerns. Otherwise, create one commit.
 - If a repository requires an incompatible commit format, do not commit; explain the conflict first.
 
-## Gitmoji reference
+## gitmoji reference
 
 - 🎨 Improve structure / format of the code.
 - ⚡️ Improve performance.
