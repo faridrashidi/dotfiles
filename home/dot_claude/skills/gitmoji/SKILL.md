@@ -1,9 +1,10 @@
 ---
-name: gitmoji-commit
-description: Apply the Gitmoji convention to a requested commit message or Git commit. Use only when the user explicitly invokes $gitmoji-commit.
+name: gitmoji
+description: Apply the Gitmoji convention to a requested commit message or Git commit. Use only when explicitly invoked.
+disable-model-invocation: true
 ---
 
-# Gitmoji Commit
+# Gitmoji
 
 Apply the Gitmoji convention without broadening the requested action. If the user asks only for a commit message, do not stage or commit changes. If the user asks to create a commit, follow the requested scope.
 
