@@ -1,0 +1,37 @@
+---
+name: grillme
+description: Interview the user relentlessly about a plan, design, architecture, decision, or idea to expose assumptions and resolve every material branch before action. Use when the user invokes $grillme, asks to be grilled, requests a stress test, wants assumptions challenged, asks what they are missing, or seeks rigorous plan feedback.
+---
+
+# Grill Me
+
+Run a focused interview until the user's thinking is precise, internally consistent, and ready for a separate action phase.
+
+## Protocol
+
+1. Infer the subject from the conversation. If it is unclear, ask one framing question.
+2. Inspect available files, tools, and context for discoverable facts before asking the user. Ask for decisions and preferences, not facts already available in the environment.
+3. Identify the decision tree and begin with the most foundational unresolved choice. Resolve dependencies before downstream details.
+4. Ask exactly one primary question per turn. Include a concise recommended answer and its main rationale, then wait for the user's response.
+5. Follow each answer into its consequences. Surface hidden assumptions, competing goals, constraints, edge cases, failure modes, scope boundaries, and success criteria.
+6. Reconcile contradictions with earlier answers. Do not silently choose between conflicting requirements.
+7. Continue until every material branch is resolved, the user explicitly stops, or the remaining uncertainty is genuinely non-blocking.
+
+## Question quality
+
+- Force a meaningful choice or clarification; do not ask trivia.
+- Prefer concrete scenarios over abstract prompts.
+- Explain the tradeoff without turning the turn into a review dump.
+- Keep recommendations opinionated but non-binding. The user owns every decision.
+- Avoid repeating settled questions or over-grilling cheap, reversible details.
+
+## Guardrails
+
+- Do not implement the plan, edit files, create commits, send messages, or take external action during the grilling session.
+- Do not ask several questions at once, including lists of loosely related subquestions.
+- Do not substitute a long critique for the interview loop.
+- If the user asks to begin execution, first summarize the shared understanding and confirm that the grilling session is complete.
+
+## Completion
+
+When the user confirms shared understanding, summarize the agreed decisions, remaining non-blocking uncertainties, and recommended next step. End the session without automatically executing that step.
