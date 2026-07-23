@@ -150,6 +150,11 @@ channels = ["conda-forge"]
 dependencies = { starship = "*" }
 exposed = { starship = "starship" }
 
+[envs.superfile]
+channels = ["conda-forge"]
+dependencies = { superfile = "*" }
+exposed = { spf = "spf" }
+
 [envs.tldr]
 channels = ["conda-forge"]
 dependencies = { tealdeer = "*" }
@@ -164,11 +169,6 @@ exposed = { tmux = "tmux" }
 channels = ["conda-forge"]
 dependencies = { uv = "*" }
 exposed = { uv = "uv", uvx = "uvx" }
-
-[envs.yazi]
-channels = ["conda-forge"]
-dependencies = { yazi = "*" }
-exposed = { yazi = "yazi" }
 
 [envs.zoxide]
 channels = ["conda-forge"]
