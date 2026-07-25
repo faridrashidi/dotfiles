@@ -139,37 +139,6 @@ function ytdl() {
 }
 alias ytdl="noglob ytdl"
 
-function adown() {
-    if [[ $# -ne 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: adown <url>"
-        echo "  Downloads file using aria2c with optimized settings."
-        return 1
-    fi
-
-    if ! command -v aria2c &>/dev/null; then
-        echo "Error: aria2c is not installed."
-        return 1
-    fi
-
-    local url="$1"
-    if [[ ! "$url" =~ ^https?:// ]]; then
-        echo "Error: Invalid URL scheme. Must be http or https."
-        return 1
-    fi
-
-    aria2c --max-connection-per-server=16 \
-        --split=16 \
-        --console-log-level=error \
-        --continue=true \
-        --summary-interval=0 \
-        "$url" || {
-        echo "Error: Download failed for $url"
-        return 1
-    }
-
-    echo "Download completed: $url"
-}
-
 function archive() {
     if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: archive <format> <folder>"
