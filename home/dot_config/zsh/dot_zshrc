@@ -68,7 +68,10 @@ zmodload zsh/complist
 
 # Completion matching: exact → case-insensitive → partial-word → substring
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*' menu select
+
+# Suppress zsh's built-in menu so fzf-tab can capture the unambiguous prefix.
+# See .config/fzf/completions.zsh for the fzf-tab styles themselves.
+zstyle ':completion:*' menu no
 
 # ─── History ────────────────────────────────────────────────────────────────
 setopt EXTENDED_HISTORY     # Save timestamp and duration
