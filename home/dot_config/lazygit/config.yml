@@ -1,3 +1,30 @@
+gui:
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showRandomTip: false
+  filterMode: fuzzy
+  showDivergenceFromBaseBranch: onlyArrow
+  theme:
+    activeBorderColor: ["#a9b665", "bold"]
+    inactiveBorderColor: ["#928374"]
+    searchingActiveBorderColor: ["#d8a657", "bold"]
+    optionsTextColor: ["#7daea3"]
+    selectedLineBgColor: ["#3c3836"]
+    cherryPickedCommitFgColor: ["#282828"]
+    cherryPickedCommitBgColor: ["#89b482"]
+    unstagedChangesColor: ["#ea6962"]
+    defaultFgColor: ["#d4be98"]
+
+git:
+  parseEmoji: true
+  autoFetch: true
+
+os:
+  editPreset: "nvim"
+  copyToClipboardCmd: "pbcopy"
+
+promptToReturnFromSubprocess: false
+
 customCommands:
   - key: "<c-g>"
     context: "files"
