@@ -117,7 +117,6 @@
   // ----------------------------------------------------------------------
   "python.languageServer": "Pylance",
   "python.defaultInterpreterPath": "${userHome}/.pixi/envs/python/bin/python",
-  "python-envs.defaultEnvManager": "ms-python.python:system",
   "python.analysis.typeCheckingMode": "off",
   "python.testing.pytestEnabled": true,
   "python.testing.autoTestDiscoverOnSaveEnabled": false,
@@ -178,7 +177,6 @@
   // ----------------------------------------------------------------------
   // # Extensions & Tools
   // ----------------------------------------------------------------------
-  "extensions.autoUpdate": false,
   "extensions.ignoreRecommendations": true,
 
   // Code Runner
