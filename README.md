@@ -13,7 +13,7 @@ cd dotfiles
 ## Update
 
 ```bash
-pixi self-update && pixi-global-outdated && pixi-global-sync
+pixi self-update && pixi-global-outdated && pixi-global-sync && pixi global update
 npm -g outdated && npm -g update
 pipx upgrade-all
 apps -o && apps -u
