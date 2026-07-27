@@ -27,7 +27,7 @@ exposed = { rustc = "rustc", cargo = "cargo", rustdoc = "rustdoc", rustfmt = "ru
 
 [envs.go]
 channels = ["conda-forge"]
-dependencies = { go = "==1.25.7" }
+dependencies = { go = "==1.26.1" }
 exposed = { go = "go", gofmt = "gofmt" }
 
 [envs.atuin]
