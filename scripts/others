@@ -9,6 +9,8 @@ npm -g install \
 pipx install \
     dooti \
     llmfit
+go install \
+    github.com/ryanlewis/things-cli/cmd/things@latest
 
 curl -L https://raw.githubusercontent.com/fboender/multi-git-status/master/mgitstatus -o ~/.local/bin/mgitstatus && chmod +x ~/.local/bin/mgitstatus
 curl -L https://raw.githubusercontent.com/mklement0/fileicon/master/bin/fileicon -o ~/.local/bin/fileicon && chmod +x ~/.local/bin/fileicon
