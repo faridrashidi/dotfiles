@@ -1,3 +1,6 @@
+# herdr plugin install thanhdat77/herdr-navigator
+# herdr plugin install smarzban/herdr-file-viewer
+
 [update]
 version_check = false
 
