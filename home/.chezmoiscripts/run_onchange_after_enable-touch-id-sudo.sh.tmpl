@@ -1,0 +1,17 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+target=/private/etc/pam.d/sudo_local
+
+if grep -Eq '^auth[[:space:]]+sufficient[[:space:]]+pam_tid\.so' \
+    "$target" 2>/dev/null; then
+    exit 0
+fi
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+sed 's/^#auth/auth/' /private/etc/pam.d/sudo_local.template > "$tmp"
+sudo install -o root -g wheel -m 0444 "$tmp" "$target"
+{{ end -}}
