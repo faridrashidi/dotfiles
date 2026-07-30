@@ -78,6 +78,16 @@ fi
 print_step "Syncing pixi global environments"
 "$PIXI_SYNC_BIN"
 
+export PATH="${PIXI_HOME}/bin:${PATH}"
+MISE_BIN="${PIXI_HOME}/bin/mise"
+if [[ ! -x "$MISE_BIN" ]]; then
+    print_error "pixi global did not expose mise at ${MISE_BIN}."
+    exit 1
+fi
+
+print_step "Installing mise-managed tools"
+"$MISE_BIN" install
+
 echo ""
 print_step "Bootstrap complete"
 if [[ "$(uname)" == "Darwin" ]]; then

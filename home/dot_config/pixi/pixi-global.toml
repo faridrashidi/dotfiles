@@ -95,6 +95,11 @@ channels = ["conda-forge"]
 dependencies = { lazygit = "==0.58.1" }
 exposed = { lazygit = "lazygit" }
 
+[envs.mise]
+channels = ["https://prefix.dev/github-releases"]
+dependencies = { mise = "*" }
+exposed = { mise = "mise" }
+
 [envs.mutool]
 channels = ["conda-forge"]
 dependencies = { mupdf = "*" }

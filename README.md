@@ -1,6 +1,6 @@
 # dotfiles
 
-My personal dotfiles and macOS/Linux setup automation, managed with [pixi](https://github.com/prefix-dev/pixi) and [chezmoi](https://github.com/twpayne/chezmoi).
+My personal dotfiles and macOS/Linux setup automation, managed with [pixi](https://github.com/prefix-dev/pixi), [mise](https://github.com/jdx/mise), and [chezmoi](https://github.com/twpayne/chezmoi).
 
 ## Installation
 
@@ -13,8 +13,7 @@ cd dotfiles
 ## Update
 
 ```bash
-pixi self-update && pixi-global-outdated && pixi-global-sync && pixi global update
-npm -g outdated && npm -g update
-pipx upgrade-all
+pixi self-update && pixi global outdated && pixi global update
+mise outdated && mise upgrade
 apps -o && apps -u
 ```

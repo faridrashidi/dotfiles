@@ -1,0 +1,36 @@
+[tools]
+"1password" = { version = "latest", os = ["macos"] }
+"aqua:anthropics/claude-code" = "latest"
+"aqua:openai/codex" = "latest"
+"github:AlexsJones/llmfit" = "latest"
+"go:github.com/ryanlewis/things-cli/cmd/things" = { version = "latest", os = ["macos"] }
+"http:fileicon" = { version = "latest", os = ["macos"], url = "https://raw.githubusercontent.com/mklement0/fileicon/v{{ version }}/bin/fileicon", version_list_url = "https://api.github.com/repos/mklement0/fileicon/tags?per_page=1", version_json_path = ".[].name", bin = "fileicon" }
+"http:mgitstatus" = { version = "latest", url = "https://raw.githubusercontent.com/fboender/multi-git-status/{{ version }}/mgitstatus", version_list_url = "https://api.github.com/repos/fboender/multi-git-status/tags?per_page=1", version_json_path = ".[].name", bin = "mgitstatus" }
+"npm:sharp-cli" = "latest"
+"pipx:dooti" = { version = "latest", os = ["macos"] }
+
+[tools."http:mole"]
+version = "latest"
+os = ["macos"]
+url = "https://github.com/tw93/Mole/archive/refs/tags/{{ version }}.tar.gz"
+version_list_url = "https://api.github.com/repos/tw93/Mole/releases/latest"
+version_json_path = ".tag_name"
+strip_components = 1
+bin_path = "."
+postinstall = """
+cd "$MISE_TOOL_INSTALL_PATH"
+version="$(sed -n 's/^VERSION="\\([^"]*\\)"$/\\1/p' mole | head -n 1)"
+arch="$(uname -m)"
+[ "$arch" = "x86_64" ] && arch="amd64"
+tag="V${version}"
+checksums="$(curl -fsSL "https://github.com/tw93/Mole/releases/download/${tag}/SHA256SUMS")"
+for helper in analyze status; do
+    asset="${helper}-darwin-${arch}"
+    target="bin/${helper}-go"
+    curl -fsSL "https://github.com/tw93/Mole/releases/download/${tag}/${asset}" -o "$target"
+    expected="$(printf '%s\n' "$checksums" | awk -v asset="$asset" '$2 == asset { print $1; exit }')"
+    actual="$(shasum -a 256 "$target" | awk '{ print $1 }')"
+    [ -n "$expected" ] && [ "$actual" = "$expected" ]
+    chmod +x "$target"
+done
+"""
