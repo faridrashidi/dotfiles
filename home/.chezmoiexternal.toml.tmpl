@@ -1,0 +1,56 @@
+{{- $fontDir := ".local/share/fonts" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{- $fontDir = "Library/Fonts" -}}
+{{- end }}
+{{- range $font := list
+    "FiraCode-Bold.ttf"
+    "FiraCode-Light.ttf"
+    "FiraCode-Medium.ttf"
+    "FiraCode-Regular.ttf"
+    "FiraCode-Retina.ttf"
+    "FiraCode-SemiBold.ttf"
+}}
+["{{ $fontDir }}/{{ $font }}"]
+    type = "archive-file"
+    url = "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+    path = "ttf/{{ $font }}"
+    checksum.sha256 = "0949915ba8eb24d89fd93d10a7ff623f42830d7c5ffc3ecbf960e4ecad3e3e79"
+{{- end }}
+
+{{- range $font := list
+    "MesloLGL-Bold.ttf"
+    "MesloLGL-BoldItalic.ttf"
+    "MesloLGL-Italic.ttf"
+    "MesloLGL-Regular.ttf"
+}}
+["{{ $fontDir }}/{{ $font }}"]
+    type = "archive-file"
+    url = "https://raw.githubusercontent.com/andreberg/Meslo-Font/13c883cfac6205e92bae5ac1bc2d4f93e2882a7d/dist/v1.2/Meslo%20LG%20v1.2.zip"
+    path = "Meslo LG v1.2/{{ $font }}"
+    checksum.sha256 = "5504dddf443a3bc6f27422d148e3ace53a2f62ef34140122e53174134fe15aad"
+{{- end }}
+
+{{- range $font := list
+    "Sahel-Black.ttf"
+    "Sahel-Bold.ttf"
+    "Sahel-Light.ttf"
+    "Sahel-SemiBold.ttf"
+    "Sahel.ttf"
+}}
+["{{ $fontDir }}/{{ $font }}"]
+    type = "archive-file"
+    url = "https://github.com/rastikerdar/sahel-font/releases/download/v3.4.0/sahel-font-v3.4.0.zip"
+    path = "{{ $font }}"
+    checksum.sha256 = "3437606dbc3044289310dde3a9b63decdc7727e10dd01a4889cf5a04dfe070ad"
+{{- end }}
+
+["{{ $fontDir }}/SymbolsNerdFontMono-Regular.ttf"]
+    type = "archive-file"
+    url = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/NerdFontsSymbolsOnly.zip"
+    path = "SymbolsNerdFontMono-Regular.ttf"
+    checksum.sha256 = "8e617904b980fe3648a4b116808788fe50c99d2d495376cb7c0badbd8a564c47"
+
+["{{ $fontDir }}/Vazirmatn[wght].ttf"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/google/fonts/6f9713a50c628d79f60259319d05fa0a239a9a7f/ofl/vazirmatn/Vazirmatn%5Bwght%5D.ttf"
+    checksum.sha256 = "696249a2c74b39ffdef55de4df2809c5b639d3ff80d618d8160a095d2fd49dca"
