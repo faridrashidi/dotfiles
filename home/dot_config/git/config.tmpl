@@ -1,9 +1,11 @@
 [core]
 	excludesfile = "~/.config/git/ignore"
 
+{{ if eq .chezmoi.os "darwin" -}}
 [credential]
 	helper = "osxkeychain" # Better for macOS than "cache"
 
+{{ end -}}
 [init]
 	defaultBranch = "main"
 
