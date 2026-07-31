@@ -1,8 +1,15 @@
 {{- $gitName := promptStringOnce . "git_name" "Git name" "" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email" "" -}}
-{{- $defaultPixiHome := printf "/data/%s/.pixi" (env "USER") -}}
-{{- if eq .chezmoi.os "darwin" -}}
-{{- $defaultPixiHome = printf "%s/.pixi" (env "HOME") -}}
+{{- $hpc := false -}}
+{{- if ne .chezmoi.os "darwin" -}}
+{{- $hpc = promptBoolOnce . "hpc" "Use HPC settings?" false -}}
+{{- end -}}
+{{- $defaultPixiHome := printf "%s/.pixi" (env "HOME") -}}
+{{- if $hpc -}}
+{{- $defaultPixiHome = printf "/data/%s/.pixi" (env "USER") -}}
+{{- end -}}
+{{- if env "PIXI_HOME" -}}
+{{- $defaultPixiHome = env "PIXI_HOME" -}}
 {{- end -}}
 {{- $pixiHome := promptStringOnce . "pixi_home" "PIXI_HOME" $defaultPixiHome -}}
 
@@ -10,6 +17,7 @@ mode = "symlink"
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
+hpc = {{ $hpc }}
 pixi_home = {{ $pixiHome | quote }}
 
 [data.git]

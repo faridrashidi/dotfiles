@@ -18,6 +18,11 @@ cd dotfiles
 ./bootstrap
 ```
 
+On a new Linux installation, bootstrap asks `Use HPC settings? [y/N]`.
+The default uses `~/.pixi` and excludes the Biowulf configuration. Answering
+yes uses `/data/$USER/.pixi` and enables that configuration. An existing
+`PIXI_HOME` always takes precedence.
+
 ## What bootstrap installs
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the

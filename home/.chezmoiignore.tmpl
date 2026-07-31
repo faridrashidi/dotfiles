@@ -1,5 +1,7 @@
-{{- if eq .chezmoi.os "darwin" }}
+{{- if not (get . "hpc") }}
 .config/biowulf/**
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
 .bash_profile
 .bashrc
 {{- else }}

@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HPC_SELECTION=""
 if [[ -n "${PIXI_HOME:-}" ]]; then
     PIXI_BIN="${PIXI_HOME}/bin/pixi"
 elif command -v pixi >/dev/null 2>&1; then
@@ -12,7 +13,23 @@ elif [[ "$(uname)" == "Darwin" ]]; then
     export PIXI_HOME="${HOME}/.pixi"
     PIXI_BIN="${PIXI_HOME}/bin/pixi"
 else
-    export PIXI_HOME="/data/${USER}/.pixi"
+    HPC_SELECTION=false
+    if [[ -t 0 && -t 1 ]]; then
+        read -r -p "Use HPC settings? [y/N] " hpc_reply
+        case "${hpc_reply}" in
+            y | Y | yes | YES | Yes) HPC_SELECTION=true ;;
+            "" | n | N | no | NO | No) ;;
+            *)
+                printf 'Error: expected y or n.\n' >&2
+                exit 1
+                ;;
+        esac
+    fi
+    if [[ "$HPC_SELECTION" == "true" ]]; then
+        export PIXI_HOME="/data/${USER}/.pixi"
+    else
+        export PIXI_HOME="${HOME}/.pixi"
+    fi
     PIXI_BIN="${PIXI_HOME}/bin/pixi"
 fi
 
@@ -64,6 +81,9 @@ fi
 
 print_step "Applying chezmoi source from ${ROOT_DIR}"
 CHEZMOI_INIT_ARGS=(init --apply --source="$ROOT_DIR" --promptString "PIXI_HOME=$PIXI_HOME")
+if [[ -n "$HPC_SELECTION" ]]; then
+    CHEZMOI_INIT_ARGS+=(--promptBool "Use HPC settings?=$HPC_SELECTION")
+fi
 if [[ ! -t 0 || ! -t 1 ]]; then
     print_step "No TTY detected, using default answers for first-run chezmoi prompts"
     CHEZMOI_INIT_ARGS+=(--promptDefaults --no-tty)

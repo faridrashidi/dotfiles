@@ -3,10 +3,8 @@ export ZDOTDIR=$HOME/.config/zsh
 {{- $pixiHome := get . "pixi_home" -}}
 {{- if $pixiHome }}
 export PIXI_HOME={{ $pixiHome | quote }}
-{{- else if eq .chezmoi.os "darwin" }}
-export PIXI_HOME="$HOME/.pixi"
 {{- else }}
-export PIXI_HOME="/data/$USER/.pixi"
+export PIXI_HOME="$HOME/.pixi"
 {{- end }}
 
 export PATH="{{ .chezmoi.workingTree }}/scripts:$PATH"
