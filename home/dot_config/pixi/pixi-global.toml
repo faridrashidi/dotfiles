@@ -184,8 +184,3 @@ exposed = { uv = "uv", uvx = "uvx" }
 channels = ["conda-forge"]
 dependencies = { zoxide = "*" }
 exposed = { zoxide = "zoxide" }
-
-[envs.zsh]
-channels = ["conda-forge"]
-dependencies = { zsh = "*" }
-exposed = { zsh = "zsh" }

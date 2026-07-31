@@ -1,0 +1,8 @@
+if [[ $- == *i* ]] && [[ "$BASH_EXEC_ZSH" != 1 ]]; then
+    ZSH_PATH=$(which zsh)
+    if [ -x "$ZSH_PATH" ]; then
+        export BASH_EXEC_ZSH=1
+        export SHELL="$ZSH_PATH"
+        exec "$ZSH_PATH" -l
+    fi
+fi
