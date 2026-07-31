@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CPU=8 TIME="0-2:00:00" MEM=50 NAME="helper" MY_EMAIL="$USER@nih.gov" DIR=$(pwd)
+CPU=8 TIME="0-2:00:00" MEM=50 NAME="helper" DIR=$(pwd)
 
 usage() {
     cat <<EOF
@@ -63,7 +63,6 @@ case "$COMMAND" in
 #SBATCH --output=${DIR}/_sbatch.log
 #SBATCH --error=${DIR}/_sbatch.log
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=${MY_EMAIL}
 #SBATCH --ntasks-per-core=1
 #SBATCH --ntasks=1
 
@@ -85,7 +84,7 @@ EOF
 #	--threads-per-process 1 \\
 #	--module GATK/4.2.0.0 \\
 #	--bundle 1 --partition ccr,norm,largemem --processes-per-subjob 1 --noht \\
-#	--sbatch "--mail-type=BEGIN,END,FAIL --mail-user=${MY_EMAIL} --job-name=${NAME}"
+#	--sbatch "--mail-type=BEGIN,END,FAIL --job-name=${NAME}"
 
 echo hello && echo Done
 EOF
@@ -105,7 +104,6 @@ EOF
 #PBS -o ${DIR}/_qsub.log
 #PBS -e ${DIR}/_qsub.log
 #PBS -m a
-#PBS -M ${MY_EMAIL}
 #PBS -l nodes=1
 
 module load snpEff/5.0
