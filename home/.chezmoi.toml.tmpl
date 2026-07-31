@@ -1,3 +1,4 @@
+{{- $gitName := promptStringOnce . "git_name" "Git name" "" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email" "" -}}
 {{- $defaultPixiHome := printf "/data/%s/.pixi" (env "USER") -}}
 {{- if eq .chezmoi.os "darwin" -}}
@@ -12,4 +13,5 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
 pixi_home = {{ $pixiHome | quote }}
 
 [data.git]
+name = {{ $gitName | quote }}
 email = {{ $gitEmail | quote }}

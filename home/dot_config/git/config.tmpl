@@ -47,4 +47,4 @@
 
 [user]
 	email = {{ .git.email | quote }}
-	name = "Farid Rashidi"
+	name = {{ get .git "name" | quote }}
