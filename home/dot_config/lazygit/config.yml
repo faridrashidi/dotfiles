@@ -21,7 +21,6 @@ git:
 
 os:
   editPreset: "nvim"
-  copyToClipboardCmd: "pbcopy"
 
 promptToReturnFromSubprocess: false
 

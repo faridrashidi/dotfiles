@@ -5,7 +5,7 @@ export FZF_DEFAULT_OPTS="
   --color=fg:#d4be98,header:#ea6962,info:#d8a657,pointer:#89b482
   --color=marker:#89b482,fg+:#d4be98,prompt:#d8a657,hl+:#ea6962
   --color=border:#504945
-  --bind 'ctrl-/:toggle-preview,ctrl-a:select-all,ctrl-y:execute-silent(pbcopy <<< {})'
+  --bind 'ctrl-/:toggle-preview,ctrl-a:select-all'
   --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down'
   --tmux center,90%,70%
   --scheme=path
