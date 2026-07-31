@@ -55,6 +55,11 @@ channels = ["conda-forge"]
 dependencies = { direnv = "*" }
 exposed = { direnv = "direnv" }
 
+[envs.docker]
+channels = ["conda-forge"]
+dependencies = { docker-cli = "==29.6.2" }
+exposed = { docker = "docker" }
+
 [envs.eza]
 channels = ["conda-forge"]
 dependencies = { eza = "*" }

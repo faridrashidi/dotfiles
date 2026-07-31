@@ -8,11 +8,6 @@ channels = ["conda-forge"]
 dependencies = { colima = "*" }
 exposed = { colima = "colima" }
 
-[envs.docker]
-channels = ["conda-forge"]
-dependencies = { docker-cli = "==29.6.2" }
-exposed = { docker = "docker" }
-
 [envs.vercel]
 channels = ["conda-forge"]
 dependencies = { vercel-cli = "*" }
