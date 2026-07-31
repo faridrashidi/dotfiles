@@ -1,4 +1,8 @@
-{{ if eq .chezmoi.os "darwin" -}}
+{{- $touchIDSudo := true -}}
+{{- if hasKey . "touch_id_sudo" -}}
+{{- $touchIDSudo = get . "touch_id_sudo" -}}
+{{- end -}}
+{{ if and (eq .chezmoi.os "darwin") $touchIDSudo -}}
 #!/bin/sh
 set -eu
 

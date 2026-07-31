@@ -23,6 +23,9 @@ The default uses `~/.pixi` and excludes the Biowulf configuration. Answering
 yes uses `/data/$USER/.pixi` and enables that configuration. An existing
 `PIXI_HOME` always takes precedence.
 
+On macOS, bootstrap also asks whether to enable Touch ID for `sudo`. The
+default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
+
 ## What bootstrap installs
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the

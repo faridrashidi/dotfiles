@@ -1,5 +1,9 @@
 {{- $gitName := promptStringOnce . "git_name" "Git name" "" -}}
 {{- $gitEmail := promptStringOnce . "git_email" "Git email" "" -}}
+{{- $touchIDSudo := false -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{- $touchIDSudo = promptBoolOnce . "touch_id_sudo" "Enable Touch ID for sudo?" true -}}
+{{- end -}}
 {{- $hpc := false -}}
 {{- if ne .chezmoi.os "darwin" -}}
 {{- $hpc = promptBoolOnce . "hpc" "Use HPC settings?" false -}}
@@ -19,6 +23,7 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
 [data]
 hpc = {{ $hpc }}
 pixi_home = {{ $pixiHome | quote }}
+touch_id_sudo = {{ $touchIDSudo }}
 
 [data.git]
 name = {{ $gitName | quote }}
