@@ -5,3 +5,4 @@ fileicon set "${HOME}/Dropbox" "${HOME}/Dropbox/Resources/Mac/Settings/Dotfiles/
 ln -s "${HOME}/Resources/Mac/Settings/Dotfiles/scripts/apps-private" "${HOME}/Developer/dotfiles/scripts"
 mkdir -p "${HOME}/.ssh" && cp -R "${HOME}/Resources/Mac/Settings/Dotfiles/ssh/." "${HOME}/.ssh/"
 plists --install
+dooti apply --dynamic
