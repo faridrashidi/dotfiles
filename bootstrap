@@ -110,10 +110,3 @@ print_step "Installing mise-managed tools"
 
 echo ""
 print_step "Bootstrap complete"
-if [[ "$(uname)" == "Darwin" ]]; then
-    echo "Next steps:"
-    echo "  ${ROOT_DIR}/scripts/apps -i"
-    echo "  ${ROOT_DIR}/scripts/systems -i"
-else
-    echo "No additional post-bootstrap steps are required."
-fi
