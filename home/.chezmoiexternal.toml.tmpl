@@ -1,3 +1,4 @@
+{{- if not (get . "hpc") }}
 {{- $fontDir := ".local/share/fonts" -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $fontDir = "Library/Fonts" -}}
@@ -54,3 +55,4 @@
     type = "file"
     url = "https://raw.githubusercontent.com/google/fonts/6f9713a50c628d79f60259319d05fa0a239a9a7f/ofl/vazirmatn/Vazirmatn%5Bwght%5D.ttf"
     checksum.sha256 = "696249a2c74b39ffdef55de4df2809c5b639d3ff80d618d8160a095d2fd49dca"
+{{- end }}
