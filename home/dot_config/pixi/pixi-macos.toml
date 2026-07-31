@@ -10,7 +10,7 @@ exposed = { colima = "colima" }
 
 [envs.docker]
 channels = ["conda-forge"]
-dependencies = { docker-cli = "*" }
+dependencies = { docker-cli = "==29.6.2" }
 exposed = { docker = "docker" }
 
 [envs.vercel]
