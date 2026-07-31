@@ -2,6 +2,14 @@
 
 My personal dotfiles and macOS/Linux setup automation.
 
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/1f5b0d7a-825b-4cca-8339-6768af8d7e47"
+    alt="Dotfiles environment"
+    width="1200"
+  >
+</p>
+
 ## Installation
 
 ```bash
