@@ -1,5 +1,7 @@
 --smart-case
 --hidden
+--colors=match:style:nobold
+--colors=path:style:nobold
 
 # Don't print lines longer than 150 characters (prevents minified code from flooding terminal)
 --max-columns=150
