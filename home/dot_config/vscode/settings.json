@@ -55,7 +55,7 @@
 
   // Custom Terminal Colors
   "workbench.colorCustomizations": {
-    "terminal.ansiBlack": "#32302f",
+    "terminal.ansiBlack": "#282828",
     "terminal.ansiRed": "#ea6962",
     "terminal.ansiGreen": "#a9b665",
     "terminal.ansiYellow": "#d8a657",
@@ -63,24 +63,24 @@
     "terminal.ansiMagenta": "#d3869b",
     "terminal.ansiCyan": "#89b482",
     "terminal.ansiWhite": "#d4be98",
-    "terminal.ansiBrightBlack": "#504945",
-    "terminal.ansiBrightRed": "#f87070",
-    "terminal.ansiBrightGreen": "#bac249",
-    "terminal.ansiBrightYellow": "#e3ad44",
-    "terminal.ansiBrightBlue": "#8fb9af",
-    "terminal.ansiBrightMagenta": "#e0a0b5",
-    "terminal.ansiBrightCyan": "#9dc09b",
-    "terminal.ansiBrightWhite": "#e2d7b0",
+    "terminal.ansiBrightBlack": "#7c6f64",
+    "terminal.ansiBrightRed": "#ea6962",
+    "terminal.ansiBrightGreen": "#a9b665",
+    "terminal.ansiBrightYellow": "#d8a657",
+    "terminal.ansiBrightBlue": "#7daea3",
+    "terminal.ansiBrightMagenta": "#d3869b",
+    "terminal.ansiBrightCyan": "#89b482",
+    "terminal.ansiBrightWhite": "#ddc7a1",
     "terminal.background": "#282828",
     "terminal.foreground": "#d4be98",
+    "terminal.selectionBackground": "#d4be98",
+    "terminal.selectionForeground": "#282828",
     "terminalCursor.foreground": "#d4be98",
-    "terminalCursor.background": "#a9b665",
-    "[Gruvbox Dark Medium]": {
-      "notebook.cellEditorBackground": "#282828",
-      "notebook.inactiveFocusedCellBorder": "#282828",
-      "notebook.focusedCellBorder": "#282828",
-      "notebook.focusedEditorBorder": "#d4be98"
-    }
+    "terminalCursor.background": "#282828",
+    "notebook.cellEditorBackground": "#282828",
+    "notebook.inactiveFocusedCellBorder": "#282828",
+    "notebook.focusedCellBorder": "#282828",
+    "notebook.focusedEditorBorder": "#d4be98"
   },
 
   // ----------------------------------------------------------------------
@@ -88,6 +88,7 @@
   // ----------------------------------------------------------------------
   "terminal.integrated.fontFamily": "'Meslo LG L', 'Symbols Nerd Font Mono'",
   "terminal.integrated.fontSize": 16,
+  "terminal.integrated.minimumContrastRatio": 1,
 
   // ----------------------------------------------------------------------
   // # Testing
@@ -173,6 +174,14 @@
   "shfmt.executablePath": "${userHome}/.pixi/bin/shfmt",
   "shfmt.executableArgs": ["-i=4", "-ci"],
   "yaml.maxItemsComputed": 100000,
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml"
+  ],
 
   // ----------------------------------------------------------------------
   // # Extensions & Tools
