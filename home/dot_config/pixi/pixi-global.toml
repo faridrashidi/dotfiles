@@ -82,7 +82,7 @@ exposed = { fzf = "fzf" }
 
 [envs.gh]
 channels = ["conda-forge"]
-dependencies = { gh = "*" }
+dependencies = { gh = "==2.96.0" }
 exposed = { gh = "gh" }
 
 [envs.gcloud]
