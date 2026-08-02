@@ -230,6 +230,7 @@
   "editor.inlineSuggest.enabled": false,
   "github.copilot.nextEditSuggestions.enabled": false,
   "chat.editor.fontSize": 16,
+  "chat.fontSize": 14,
   "chat.viewSessions.orientation": "stacked",
   "chat.tools.terminal.enableAutoApprove": true,
   "chat.tools.global.autoApprove": true,
