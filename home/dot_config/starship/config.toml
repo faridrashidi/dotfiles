@@ -85,6 +85,21 @@ esac
 style = "blue"
 format = " [$output]($style)"
 
+[custom.giturl]
+description = "Display symbol for remote Git server"
+command = """
+case "$(git config --get remote.origin.url 2>/dev/null)" in
+    *github*)    echo "\uF408" ;;
+    *gitlab*)    echo "\uF296" ;;
+    *bitbucket*) echo "\uF171" ;;
+    *git*)       echo "\uF7A1" ;;
+    *)           echo "\uF1D2" ;;
+esac
+"""
+style = "green"
+detect_folders = [".git"]
+format = "[$output]($style) "
+
 [python]
 symbol = "\uE73C "
 style = "purple"
@@ -163,21 +178,6 @@ disabled = true
 # symbol = "\uFD03 "
 # style = "purple"
 
-[custom.giturl]
-description = "Display symbol for remote Git server"
-command = """
-case "$(git config --get remote.origin.url 2>/dev/null)" in
-    *github*)    echo "\uF408" ;;
-    *gitlab*)    echo "\uF296" ;;
-    *bitbucket*) echo "\uF171" ;;
-    *git*)       echo "\uF7A1" ;;
-    *)           echo "\uF1D2" ;;
-esac
-"""
-style = "green"
-detect_folders = [".git"]
-format = "[$output]($style) "
-
 [git_branch]
 symbol = "\uF126 "
 style = "green"
@@ -194,17 +194,17 @@ style = "green"
 style = "green"
 format = "[$all_status$ahead_behind]($style)"
 ignore_submodules = true
-conflicted = "\uF46e $count "                 # cross sign
-ahead = "\uF4f2 $count "                      # arrow up
-behind = "\uF4ef $count "                     # arrow down
-diverged = "\uF47F $count "                   # branch split
-untracked = "\uF196 $count "                  # plus sign
-stashed = "\uF01C $count "                    # archive box
-modified = "\uF044 $count "                   # pencil/edit
-staged = "\uF474 $count "                     # slash sign
-renamed = "\uF45a $count "                    # arrow right
-deleted = "\uF147 $count "                    # minus sign
-typechanged = "\uF0EC $count "                # exchange arrows
+conflicted = "\uF46e $count "  # cross sign
+ahead = "\uF4f2 $count "  # arrow up
+behind = "\uF4ef $count "  # arrow down
+diverged = "\uF47F $count "  # branch split
+untracked = "\uF196 $count "  # plus sign
+stashed = "\uF01C $count "  # archive box
+modified = "\uF044 $count "  # pencil/edit
+staged = "\uF474 $count "  # slash sign
+renamed = "\uF45a $count "  # arrow right
+deleted = "\uF147 $count "  # minus sign
+typechanged = "\uF0EC $count "  # exchange arrows
 
 [jobs]
 symbol = "\uF46A "
