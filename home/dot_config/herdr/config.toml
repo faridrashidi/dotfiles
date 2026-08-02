@@ -7,12 +7,6 @@ version_check = false
 [keys]
 prefix = "ctrl+a"
 
-[theme]
-name = "gruvbox"
-
-[ui.toast]
-delivery = "herdr"
-
 [[keys.command]]
 key = "prefix+t"
 type = "plugin_action"
@@ -30,3 +24,9 @@ key = "prefix+shift+f"
 type = "plugin_action"
 command = "herdr-file-viewer.open-file-viewer-tab"
 description = "open file viewer in tab"
+
+[theme]
+name = "gruvbox"
+
+[ui.toast]
+delivery = "herdr"
