@@ -28,7 +28,7 @@ redhat.vscode-yaml
 ritwickdey.liveserver
 rubymaniac.vscode-paste-and-indent
 sirtori.indenticator
-tamasfe.even-better-toml
+tombi-toml.tombi
 tomoki1207.pdf
 tyriar.sort-lines
 usernamehw.errorlens
