@@ -89,6 +89,7 @@
   "terminal.integrated.fontFamily": "'Meslo LG L', 'Symbols Nerd Font Mono'",
   "terminal.integrated.fontSize": 16,
   "terminal.integrated.minimumContrastRatio": 1,
+  "terminal.integrated.defaultLocation": "editor",
 
   // ----------------------------------------------------------------------
   // # Testing

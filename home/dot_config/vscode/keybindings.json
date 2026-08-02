@@ -44,10 +44,6 @@
     "command": "-actions.findWithSelection"
   },
   {
-    "key": "shift+cmd+t",
-    "command": "workbench.action.terminal.toggleTerminal"
-  },
-  {
     "key": "ctrl+`",
     "command": "-workbench.action.terminal.toggleTerminal"
   },
@@ -111,7 +107,7 @@
     "command": "-editor.unfoldAll",
     "when": "editorTextFocus && foldingEnabled"
   },
-  // Disable default line insertions if desired
+  // Disable default line insertion shortcuts
   {
     "key": "shift+cmd+enter",
     "command": "-editor.action.insertLineBefore",
@@ -135,10 +131,6 @@
     "command": "workbench.action.reopenClosedEditor"
   },
   {
-    "key": "shift+cmd+t",
-    "command": "-workbench.action.reopenClosedEditor"
-  },
-  {
     "key": "shift+cmd+o",
     "command": "workbench.action.openRecent"
   },
@@ -150,25 +142,90 @@
     "key": "ctrl+r",
     "command": "-workbench.action.openRecent"
   },
+
   // Editor Tabs
-  { "key": "cmd+1", "command": "workbench.action.openEditorAtIndex1" },
-  { "key": "cmd+2", "command": "workbench.action.openEditorAtIndex2" },
-  { "key": "cmd+3", "command": "workbench.action.openEditorAtIndex3" },
-  { "key": "cmd+4", "command": "workbench.action.openEditorAtIndex4" },
-  { "key": "cmd+5", "command": "workbench.action.openEditorAtIndex5" },
-  { "key": "cmd+6", "command": "workbench.action.openEditorAtIndex6" },
-  { "key": "cmd+7", "command": "workbench.action.openEditorAtIndex7" },
-  { "key": "cmd+8", "command": "workbench.action.openEditorAtIndex8" },
-  { "key": "cmd+9", "command": "workbench.action.openEditorAtIndex9" },
+  {
+    "key": "cmd+1",
+    "command": "workbench.action.openEditorAtIndex1"
+  },
+  {
+    "key": "cmd+2",
+    "command": "workbench.action.openEditorAtIndex2"
+  },
+  {
+    "key": "cmd+3",
+    "command": "workbench.action.openEditorAtIndex3"
+  },
+  {
+    "key": "cmd+4",
+    "command": "workbench.action.openEditorAtIndex4"
+  },
+  {
+    "key": "cmd+5",
+    "command": "workbench.action.openEditorAtIndex5"
+  },
+  {
+    "key": "cmd+6",
+    "command": "workbench.action.openEditorAtIndex6"
+  },
+  {
+    "key": "cmd+7",
+    "command": "workbench.action.openEditorAtIndex7"
+  },
+  {
+    "key": "cmd+8",
+    "command": "workbench.action.openEditorAtIndex8"
+  },
+  {
+    "key": "cmd+9",
+    "command": "workbench.action.openEditorAtIndex9"
+  },
 
   // ----------------------------------------------------------------------
-  // # Language Specific
+  // # Terminal
+  // ----------------------------------------------------------------------
+  {
+    "key": "shift+cmd+t",
+    "command": "-workbench.action.reopenClosedEditor"
+  },
+  {
+    "key": "shift+cmd+t",
+    "command": "-mergeEditor.toggleBetweenInputs",
+    "when": "isMergeEditor"
+  },
+  {
+    "key": "shift+cmd+t",
+    "command": "-claude-vscode.reopenClosedSession",
+    "when": "claude-vscode.lastClosedWasSession && config.claudeCode.enableReopenClosedSessionShortcut"
+  },
+  {
+    "key": "shift+cmd+t",
+    "command": "-workbench.action.chat.focusTodosView",
+    "when": "inChatInput && chatAgentKind == 'agent' || inChatTodoList && chatAgentKind == 'agent'"
+  },
+  {
+    "key": "shift+cmd+t",
+    "command": "workbench.action.terminal.new",
+    "when": "terminalProcessSupported || terminalWebExtensionContributedProfile"
+  },
+  {
+    "key": "ctrl+shift+`",
+    "command": "-workbench.action.terminal.new",
+    "when": "terminalProcessSupported || terminalWebExtensionContributedProfile"
+  },
+
+  // ----------------------------------------------------------------------
+  // # Language-Specific
   // ----------------------------------------------------------------------
   {
     "key": "shift+enter",
     "command": "-python.execSelectionInTerminal",
     "when": "editorFocus && !findInputFocussed && !replaceInputFocussed && editorLangId == 'python'"
   },
+
+  // ----------------------------------------------------------------------
+  // # Sort Lines
+  // ----------------------------------------------------------------------
   {
     "key": "f5",
     "command": "-workbench.action.debug.continue",
