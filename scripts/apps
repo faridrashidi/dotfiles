@@ -12,11 +12,9 @@ mac_casks=(
     "keka"
     "netnewswire"
     "raycast"
-    "shottr"
     "sublime-text"
     "telegram"
     "visual-studio-code"
-    "wispr-flow"
     "zotero"
 )
 
