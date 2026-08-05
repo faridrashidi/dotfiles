@@ -420,7 +420,7 @@ execute "defaults write com.apple.finder SidebarTagsSctionDisclosedState -bool t
 
 # Finder learns a custom tag's color from tagged items, not FavoriteTagNames.
 # Keep one unobtrusive seed per tag in Library so a new Mac learns the same
-# red/yellow/blue mapping without tagging any of the user's real files.
+# blue/yellow/gray mapping without tagging any of the user's real files.
 configure_finder_tag_color() {
     local tag_name="$1"
     local color_index="$2"
@@ -459,11 +459,11 @@ ${color_index}" "${tag_plist}" ||
 }
 
 if [[ "$DRY_RUN" == "true" ]]; then
-    print_msg "Configure Finder tag colors: Focus (red), Review (yellow), Waiting (blue)" "default"
+    print_msg "Configure Finder tag colors: Focus (blue), Review (yellow), Waiting (gray)" "default"
 else
-    configure_finder_tag_color "Focus" 6
+    configure_finder_tag_color "Focus" 4
     configure_finder_tag_color "Review" 5
-    configure_finder_tag_color "Waiting" 4
+    configure_finder_tag_color "Waiting" 1
 fi
 unset -f configure_finder_tag_color
 
