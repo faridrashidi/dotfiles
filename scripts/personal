@@ -12,7 +12,6 @@ PRIVATE_APPS_TARGET="${SCRIPT_DIR}/apps-private"
 dooti apply --dynamic
 
 # Requires external files
-fileicon set "${HOME}/Dropbox" "${PRIVATE_DOTFILES_DIR}/finder/dropbox.png"
 if [[ ! -e "$PRIVATE_APPS_TARGET" && ! -L "$PRIVATE_APPS_TARGET" ]]; then
     ln -s "$PRIVATE_APPS_SOURCE" "$PRIVATE_APPS_TARGET"
 fi

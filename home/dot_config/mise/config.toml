@@ -7,7 +7,6 @@
 
 "1password" = { version = "latest", os = ["macos"] }
 "github:AlexsJones/llmfit" = "latest"
-"http:fileicon" = { version = "latest", os = ["macos"], url = "https://raw.githubusercontent.com/mklement0/fileicon/v{{ version }}/bin/fileicon", version_list_url = "https://api.github.com/repos/mklement0/fileicon/tags?per_page=1", version_json_path = ".[].name", bin = "fileicon" }
 "http:mgitstatus" = { version = "latest", url = "https://raw.githubusercontent.com/fboender/multi-git-status/{{ version }}/mgitstatus", version_list_url = "https://api.github.com/repos/fboender/multi-git-status/tags?per_page=1", version_json_path = ".[].name", bin = "mgitstatus" }
 "pipx:dooti" = { version = "latest", os = ["macos"] }
 "go:github.com/ryanlewis/things-cli/cmd/things" = { version = "latest", os = ["macos"] }
