@@ -412,6 +412,9 @@ execute "defaults write com.apple.finder NewWindowTarget -string \"PfLo\""
 execute "defaults write com.apple.finder NewWindowTargetPath -string \
 \"file://${HOME}/Dropbox/Projects\""
 
+# Open folders in tabs instead of new Finder windows
+execute "defaults write com.apple.finder FinderSpawnTab -bool true"
+
 # Keep only the workflow tags in Finder's sidebar. Their order also maps
 # Control-1 through Control-3 to Focus, Review, and Waiting respectively.
 execute "defaults write com.apple.finder FavoriteTagNames -array \"\" \
