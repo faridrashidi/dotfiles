@@ -468,7 +468,7 @@ fi
 unset -f configure_finder_tag_color
 
 # Replace Finder Favorites with the exact desired folders and order. A small
-# inert bundle generated below registers three active and two optional SF Symbols.
+# inert bundle generated below registers five custom SF Symbols.
 configure_finder_favorites() {
     local icon_destination="${HOME}/Library/Application Support/Dotfiles/FinderSidebarIcons.app"
     local icon_contents="${icon_destination}/Contents"
@@ -520,6 +520,8 @@ configure_finder_favorites() {
         "${HOME}/Dropbox"
         "${HOME}/Downloads"
         "${HOME}/Desktop"
+        "${HOME}/Dropbox/Archive"
+        "${HOME}/Dropbox/Resources"
     )
 
     for favorite_path in "${favorite_paths[@]}"; do
@@ -569,6 +571,8 @@ function run(paths) {
         { name: "Dropbox", path: paths[3], osType: "DDb0" },
         { name: "Downloads", path: paths[4], osType: null },
         { name: "Desktop", path: paths[5], osType: null },
+        { name: "Archive", path: paths[6], osType: "DAr0" },
+        { name: "Resources", path: paths[7], osType: "DRe0" },
     ];
 
     const list = $.LSSharedFileListCreate(null, $.kLSSharedFileListFavoriteItems, null);
@@ -603,7 +607,7 @@ function run(paths) {
 }
 JXA
     )"; then
-        print_msg "Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop" "success"
+        print_msg "Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop, Archive, Resources" "success"
     else
         print_msg "Could not configure Finder Favorites" "error"
         echo "${output}"
@@ -612,7 +616,7 @@ JXA
 }
 
 if [[ "$DRY_RUN" == "true" ]]; then
-    print_msg "Replace Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop" "default"
+    print_msg "Replace Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop, Archive, Resources" "default"
 else
     configure_finder_favorites
 fi
