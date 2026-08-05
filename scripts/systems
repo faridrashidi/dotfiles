@@ -410,7 +410,213 @@ execute "defaults write com.apple.finder FXEnableExtensionChangeWarning -bool fa
 # Set new Finder windows to open in the Dropbox folder
 execute "defaults write com.apple.finder NewWindowTarget -string \"PfLo\""
 execute "defaults write com.apple.finder NewWindowTargetPath -string \
-\"file://${HOME}/Dropbox/\""
+\"file://${HOME}/Dropbox/Projects\""
+
+# Keep only the workflow tags in Finder's sidebar. Their order also maps
+# Control-1 through Control-3 to Focus, Review, and Waiting respectively.
+execute "defaults write com.apple.finder FavoriteTagNames -array \"\" \
+\"Focus\" \"Review\" \"Waiting\""
+execute "defaults write com.apple.finder SidebarTagsSctionDisclosedState -bool true"
+
+# Finder learns a custom tag's color from tagged items, not FavoriteTagNames.
+# Keep one unobtrusive seed per tag in Library so a new Mac learns the same
+# red/yellow/blue mapping without tagging any of the user's real files.
+configure_finder_tag_color() {
+    local tag_name="$1"
+    local color_index="$2"
+    local seed_root="${HOME}/Library/Application Support/Dotfiles/Finder Tags"
+    local seed_path="${seed_root}/${tag_name}"
+    local tag_temp_dir
+    local tag_plist
+    local tag_hex
+    local finder_info
+
+    mkdir -p "${seed_path}"
+    tag_temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/finder-tag.XXXXXX")" || return 1
+    tag_plist="${tag_temp_dir}/tag.plist"
+
+    if ! /usr/libexec/PlistBuddy -c "Clear array" "${tag_plist}" >/dev/null ||
+        ! /usr/libexec/PlistBuddy -c "Add : string ${tag_name}
+${color_index}" "${tag_plist}" ||
+        ! plutil -convert binary1 "${tag_plist}"; then
+        print_msg "Could not build Finder tag metadata: ${tag_name}" "error"
+        rm -rf "${tag_temp_dir}"
+        return
+    fi
+
+    tag_hex="$(xxd -p "${tag_plist}" | tr -d '\n')"
+    finder_info="$(printf '%018d%02x%044d' 0 "$((color_index << 1))" 0)"
+
+    if xattr -wx com.apple.metadata:_kMDItemUserTags "${tag_hex}" "${seed_path}" &&
+        xattr -wx com.apple.FinderInfo "${finder_info}" "${seed_path}"; then
+        mdimport "${seed_path}" >/dev/null 2>&1 || true
+        print_msg "Finder tag: ${tag_name}" "success"
+    else
+        print_msg "Could not configure Finder tag: ${tag_name}" "error"
+    fi
+
+    rm -rf "${tag_temp_dir}"
+}
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    print_msg "Configure Finder tag colors: Focus (red), Review (yellow), Waiting (blue)" "default"
+else
+    configure_finder_tag_color "Focus" 6
+    configure_finder_tag_color "Review" 5
+    configure_finder_tag_color "Waiting" 4
+fi
+unset -f configure_finder_tag_color
+
+# Replace Finder Favorites with the exact desired folders and order. A small
+# inert bundle generated below registers three active and two optional SF Symbols.
+configure_finder_favorites() {
+    local icon_destination="${HOME}/Library/Application Support/Dotfiles/FinderSidebarIcons.app"
+    local icon_contents="${icon_destination}/Contents"
+    local icon_executable="${icon_contents}/MacOS/FinderSidebarIcons"
+    local icon_plist="${icon_contents}/Info.plist"
+    local lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+    local output
+    local icon_declarations='[
+        {
+            "UTTypeConformsTo": ["public.folder"],
+            "UTTypeDescription": "Inbox sidebar icon",
+            "UTTypeIcons": {"UTTypeSymbolName": "tray.full"},
+            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.inbox",
+            "UTTypeTagSpecification": {"com.apple.ostype": ["DIn0"]}
+        },
+        {
+            "UTTypeConformsTo": ["public.folder"],
+            "UTTypeDescription": "Projects sidebar icon",
+            "UTTypeIcons": {"UTTypeSymbolName": "folder.badge.gearshape"},
+            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.projects",
+            "UTTypeTagSpecification": {"com.apple.ostype": ["DPr0"]}
+        },
+        {
+            "UTTypeConformsTo": ["public.folder"],
+            "UTTypeDescription": "Dropbox sidebar icon",
+            "UTTypeIcons": {"UTTypeSymbolName": "shippingbox.fill"},
+            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.dropbox",
+            "UTTypeTagSpecification": {"com.apple.ostype": ["DDb0"]}
+        },
+        {
+            "UTTypeConformsTo": ["public.folder"],
+            "UTTypeDescription": "Archive sidebar icon",
+            "UTTypeIcons": {"UTTypeSymbolName": "archivebox.fill"},
+            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.archive",
+            "UTTypeTagSpecification": {"com.apple.ostype": ["DAr0"]}
+        },
+        {
+            "UTTypeConformsTo": ["public.folder"],
+            "UTTypeDescription": "Resources sidebar icon",
+            "UTTypeIcons": {"UTTypeSymbolName": "books.vertical.fill"},
+            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.resources",
+            "UTTypeTagSpecification": {"com.apple.ostype": ["DRe0"]}
+        }
+    ]'
+    local favorite_paths=(
+        "${HOME}/Dropbox/Inbox"
+        "${HOME}/Dropbox/Projects"
+        "${HOME}/Developer"
+        "${HOME}/Dropbox"
+        "${HOME}/Downloads"
+        "${HOME}/Desktop"
+    )
+
+    for favorite_path in "${favorite_paths[@]}"; do
+        if [[ ! -d "${favorite_path}" ]]; then
+            print_msg "Finder favorite does not exist: ${favorite_path}" "warning"
+            return 1
+        fi
+    done
+
+    if [[ ! -x "${lsregister}" ]]; then
+        print_msg "Launch Services registration is unavailable" "error"
+        return 1
+    fi
+
+    if ! mkdir -p "${icon_contents}/MacOS" ||
+        ! printf '#!/bin/sh\nexit 0\n' >"${icon_executable}" ||
+        ! chmod 755 "${icon_executable}" ||
+        ! plutil -create xml1 "${icon_plist}" ||
+        ! plutil -insert CFBundleExecutable -string "FinderSidebarIcons" "${icon_plist}" ||
+        ! plutil -insert CFBundleIdentifier -string \
+            "com.farid.dotfiles.FinderSidebarIcons" "${icon_plist}" ||
+        ! plutil -insert CFBundleName -string "Finder Sidebar Icons" "${icon_plist}" ||
+        ! plutil -insert CFBundlePackageType -string "APPL" "${icon_plist}" ||
+        ! plutil -insert CFBundleShortVersionString -string "1.1.0" "${icon_plist}" ||
+        ! plutil -insert CFBundleVersion -string "2" "${icon_plist}" ||
+        ! plutil -insert LSBackgroundOnly -bool true "${icon_plist}" ||
+        ! plutil -insert LSMinimumSystemVersion -string "13.0" "${icon_plist}" ||
+        ! plutil -insert LSUIElement -bool true "${icon_plist}" ||
+        ! plutil -insert UTExportedTypeDeclarations -json \
+            "${icon_declarations}" "${icon_plist}" ||
+        ! codesign --force --sign - "${icon_destination}" >/dev/null 2>&1 ||
+        ! "${lsregister}" -f "${icon_destination}" >/dev/null 2>&1; then
+        print_msg "Could not register the Finder sidebar icons" "error"
+        return 1
+    fi
+
+    if output="$(
+        osascript -l JavaScript - "${favorite_paths[@]}" 2>&1 <<'JXA'
+ObjC.import("Foundation");
+ObjC.import("CoreServices");
+
+function run(paths) {
+    const favorites = [
+        { name: "Inbox", path: paths[0], osType: "DIn0" },
+        { name: "Projects", path: paths[1], osType: "DPr0" },
+        { name: "Developer", path: paths[2], osType: null },
+        { name: "Dropbox", path: paths[3], osType: "DDb0" },
+        { name: "Downloads", path: paths[4], osType: null },
+        { name: "Desktop", path: paths[5], osType: null },
+    ];
+
+    const list = $.LSSharedFileListCreate(null, $.kLSSharedFileListFavoriteItems, null);
+    if (!list) throw new Error("Finder's Favorites list is unavailable.");
+
+    const clearStatus = $.LSSharedFileListRemoveAllItems(list);
+    if (clearStatus !== 0) {
+        throw new Error(`Could not clear Finder Favorites (error ${clearStatus}).`);
+    }
+
+    // A null anchor inserts before the first row, so work backwards.
+    for (let index = favorites.length - 1; index >= 0; index--) {
+        const favorite = favorites[index];
+        const properties = favorite.osType
+            ? $.NSDictionary.dictionaryWithObjectForKey(
+                  $(favorite.osType),
+                  $("com.apple.LSSharedFileList.OverrideIcon.OSType"),
+              )
+            : null;
+        const item = $.LSSharedFileListInsertItemURL(
+            list,
+            null,
+            $(favorite.name),
+            null,
+            $.NSURL.fileURLWithPath($(favorite.path)),
+            properties,
+            null,
+        );
+
+        if (!item) throw new Error(`Could not add ${favorite.name} to Finder Favorites.`);
+    }
+}
+JXA
+    )"; then
+        print_msg "Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop" "success"
+    else
+        print_msg "Could not configure Finder Favorites" "error"
+        echo "${output}"
+        return 1
+    fi
+}
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    print_msg "Replace Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop" "default"
+else
+    configure_finder_favorites
+fi
+unset -f configure_finder_favorites
 
 # Show all file extensions in Finder
 execute "defaults write NSGlobalDomain AppleShowAllExtensions -bool true"
