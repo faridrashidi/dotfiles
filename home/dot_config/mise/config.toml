@@ -1,3 +1,6 @@
+[settings]
+minimum_release_age = "0s"
+
 [tools]
 "aqua:openai/codex" = "latest"
 "aqua:anthropics/claude-code" = "latest"
