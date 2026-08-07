@@ -5,55 +5,54 @@
   "settingsSync.ignoredSettings": ["todo-tree.ripgrep.ripgrep"],
 
   // ----------------------------------------------------------------------
-  // # General & Window
+  // # Application, Window & Security
   // ----------------------------------------------------------------------
+  "security.promptForLocalFileProtocolHandling": false,
+  "security.workspace.trust.enabled": false,
+  "update.mode": "none",
+  "window.autoDetectColorScheme": false,
+  "window.commandCenter": false,
   "window.newWindowDimensions": "maximized",
   "window.zoomLevel": -0.5,
-  "window.commandCenter": false,
-  "update.mode": "none",
-  "security.workspace.trust.enabled": false,
-  "security.promptForLocalFileProtocolHandling": false,
 
   // ----------------------------------------------------------------------
   // # Editor & Formatting
   // ----------------------------------------------------------------------
+  "editor.accessibilitySupport": "off",
   "editor.fontFamily": "FiraCode-Retina, Symbols Nerd Font Mono, Vazirmatn",
   "editor.fontLigatures": true,
-  "editor.renderControlCharacters": true,
   "editor.fontSize": 16,
   "editor.formatOnSave": true,
+  "editor.hover.enabled": "on",
+  "editor.inlineSuggest.enabled": false,
   "editor.minimap.enabled": false,
   "editor.multiCursorModifier": "ctrlCmd",
+  "editor.renderControlCharacters": true,
   "editor.rulers": [88],
   "editor.stickyScroll.enabled": true,
   "editor.suggestSelection": "first",
-  "editor.accessibilitySupport": "off",
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "editor.unicodeHighlight.invisibleCharacters": false,
 
   // ----------------------------------------------------------------------
-  // # Git
-  // ----------------------------------------------------------------------
-  "git.openRepositoryInParentFolders": "never",
-
-  // ----------------------------------------------------------------------
   // # Workbench & Appearance
   // ----------------------------------------------------------------------
-  "window.autoDetectColorScheme": false,
-  "workbench.secondarySideBar.showLabels": false,
-  "workbench.colorTheme": "Gruvbox Dark Medium",
-  "workbench.preferredDarkColorTheme": "Gruvbox Dark Medium",
-  "workbench.preferredLightColorTheme": "Gruvbox Light Soft",
-  "workbench.iconTheme": "material-icon-theme",
-  "workbench.startupEditor": "none",
-  "workbench.editor.openSideBySideDirection": "down",
-  "workbench.panel.defaultLocation": "bottom",
-  "workbench.panel.showLabels": false,
-  "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" },
   "breadcrumbs.enabled": true,
   "outline.collapseItems": "alwaysCollapse",
+  "workbench.browser.showInTitleBar": true,
+  "workbench.colorTheme": "Gruvbox Dark Medium",
+  "workbench.editor.openSideBySideDirection": "down",
+  "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" },
+  "workbench.experimental.modernUI": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.panel.showLabels": false,
+  "workbench.preferredDarkColorTheme": "Gruvbox Dark Medium",
+  "workbench.preferredLightColorTheme": "Gruvbox Light Soft",
+  "workbench.secondarySideBar.showLabels": false,
+  "workbench.startupEditor": "none",
 
-  // Custom Terminal Colors
+  // Custom terminal and notebook colors
   "workbench.colorCustomizations": {
     "terminal.ansiBlack": "#282828",
     "terminal.ansiRed": "#ea6962",
@@ -86,10 +85,10 @@
   // ----------------------------------------------------------------------
   // # Terminal
   // ----------------------------------------------------------------------
+  "terminal.integrated.defaultLocation": "editor",
   "terminal.integrated.fontFamily": "'Meslo LG L', 'Symbols Nerd Font Mono'",
   "terminal.integrated.fontSize": 16,
   "terminal.integrated.minimumContrastRatio": 1,
-  "terminal.integrated.defaultLocation": "editor",
 
   // ----------------------------------------------------------------------
   // # Testing
@@ -99,19 +98,24 @@
   // ----------------------------------------------------------------------
   // # Files & Explorer
   // ----------------------------------------------------------------------
-  "files.insertFinalNewline": true,
-  "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
   "explorer.excludeGitIgnore": true,
+  "files.insertFinalNewline": true,
   "search.exclude": { "**/*.svg": true },
 
   // ----------------------------------------------------------------------
   // # Git & Version Control
   // ----------------------------------------------------------------------
+  "diffEditor.codeLens": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "git.autofetch": true,
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
   "git.ignoreLegacyWarning": true,
+  "git.openRepositoryInParentFolders": "never",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
   "githubPullRequests.fileListLayout": "tree",
 
   // ----------------------------------------------------------------------
@@ -156,23 +160,23 @@
   // ----------------------------------------------------------------------
   // # Web & Other Languages (Formatters)
   // ----------------------------------------------------------------------
-  "prettier.resolveGlobalModules": true,
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[shellscript]": { "editor.defaultFormatter": "mkhl.shfmt" },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.wordWrap": "on"
   },
-  "[github-actions-workflow]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[shellscript]": { "editor.defaultFormatter": "mkhl.shfmt" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "prettier.resolveGlobalModules": true,
   "shfmt.executablePath": "${userHome}/.pixi/bin/shfmt",
   "shfmt.executableArgs": ["-i=4", "-ci"],
   "yaml.maxItemsComputed": 100000,
@@ -192,16 +196,16 @@
 
   // Code Runner
   "code-runner.clearPreviousOutput": true,
-  "code-runner.showExecutionMessage": true,
-  "code-runner.fileDirectoryAsCwd": true,
-  "code-runner.ignoreSelection": true,
-  "code-runner.runInTerminal": false,
-  "code-runner.saveFileBeforeRun": true,
   "code-runner.enableAppInsights": false,
   "code-runner.executorMap": {
     "python": "$pythonPath -u $fullFileName",
     "r": "Rscript"
   },
+  "code-runner.fileDirectoryAsCwd": true,
+  "code-runner.ignoreSelection": true,
+  "code-runner.runInTerminal": false,
+  "code-runner.saveFileBeforeRun": true,
+  "code-runner.showExecutionMessage": true,
 
   // Todo Highlight & Tree
   "todohighlight.isEnable": true,
@@ -218,23 +222,20 @@
   "todo-tree.ripgrep.ripgrep": "/Users/$USER/.pixi/bin/rg",
   "todo-tree.tree.sortTagsOnlyViewAlphabetically": true,
 
-  // gitlens
-  "diffEditor.codeLens": true,
-  "diffEditor.ignoreTrimWhitespace": false,
-  "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
-
   // ----------------------------------------------------------------------
-  // # Copilot & AI
+  // # AI Assistants
   // ----------------------------------------------------------------------
-  "github.copilot.enable": { "*": true },
-  "editor.inlineSuggest.enabled": false,
-  "github.copilot.nextEditSuggestions.enabled": false,
+  // Chat
   "chat.editor.fontSize": 16,
   "chat.fontSize": 16,
-  "chat.viewSessions.orientation": "stacked",
-  "chat.tools.terminal.enableAutoApprove": true,
   "chat.tools.global.autoApprove": true,
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.titleBar.openInAgentsWindow.enabled": false,
+  "chat.viewSessions.orientation": "stacked",
+
+  // GitHub Copilot
+  "github.copilot.enable": { "*": true },
+  "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     { "text": "Use gitmoji style." },
     { "text": "Choose the single best matching gitmoji from this list:" },
