@@ -28,6 +28,12 @@ dir = "plugins/aliases"
 use = ["*.plugin.zsh"]
 apply = ["defer"]
 
+[plugins.ohmyzsh-python]
+github = "ohmyzsh/ohmyzsh"
+dir = "plugins/python"
+use = ["*.plugin.zsh"]
+apply = ["defer"]
+
 # === Utilities ===
 
 [plugins.zsh-you-should-use]
