@@ -9,6 +9,7 @@ minimum_release_age = "0s"
 
 
 "1password" = { version = "latest", os = ["macos"] }
+"github:google-antigravity/antigravity-cli" = { version = "latest", rename_exe = { antigravity = "agy" } }
 "github:AlexsJones/llmfit" = "latest"
 "http:mgitstatus" = { version = "latest", url = "https://raw.githubusercontent.com/fboender/multi-git-status/{{ version }}/mgitstatus", version_list_url = "https://api.github.com/repos/fboender/multi-git-status/tags?per_page=1", version_json_path = ".[].name", bin = "mgitstatus" }
 "pipx:dooti" = { version = "latest", os = ["macos"] }

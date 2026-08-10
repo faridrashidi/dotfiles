@@ -53,7 +53,7 @@ default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
 
 ### mise-managed tools
 
-- Cross-platform: [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [llmfit](https://github.com/AlexsJones/llmfit) · [multi-git-status](https://github.com/fboender/multi-git-status)
+- Cross-platform: [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) · [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [llmfit](https://github.com/AlexsJones/llmfit) · [multi-git-status](https://github.com/fboender/multi-git-status)
 - macOS only: [1Password CLI](https://github.com/1Password/install-cli-action)† · [dooti](https://github.com/lkubb/dooti) · [Things CLI](https://github.com/ryanlewis/things-cli) · [Mole](https://github.com/tw93/Mole)
 
 ### Fonts
