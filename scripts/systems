@@ -413,7 +413,11 @@ execute "defaults write com.apple.finder NewWindowTargetPath -string \
 \"file://${HOME}/Dropbox/Projects\""
 
 # Open folders in tabs instead of new Finder windows
-execute "defaults write com.apple.finder FinderSpawnTab -bool true"
+# FIXME: When another Desktop already has a Finder window, this causes new
+# Finder windows on the current Desktop to open very small instead of reusing
+# the previous window size. Find a workaround that preserves both behaviors.
+# For now I disabled it to false.
+execute "defaults write com.apple.finder FinderSpawnTab -bool false"
 
 # Keep only the workflow tags in Finder's sidebar. Their order also maps
 # Control-1 through Control-3 to Focus, Review, and Waiting respectively.
