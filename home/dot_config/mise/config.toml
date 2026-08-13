@@ -6,6 +6,7 @@ minimum_release_age = "0s"
 "aqua:anthropics/claude-code" = "latest"
 "aqua:ogulcancelik/herdr" = "latest"
 "npm:sharp-cli" = "latest"
+"npm:skills" = "latest"
 
 
 "1password" = { version = "latest", os = ["macos"] }
