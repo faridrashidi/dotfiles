@@ -9,6 +9,17 @@ PRIVATE_APPS_TARGET="${SCRIPT_DIR}/apps-private"
 
 "${SCRIPT_DIR}/apps" --install
 "${SCRIPT_DIR}/systems" --install
+
+zsh <<'ZSH'
+setopt ERR_EXIT
+source "${HOME}/.config/zsh/functions.zsh"
+finder-sidebar-icon ~/Dropbox/Inbox tray.full
+finder-sidebar-icon ~/Dropbox/Projects folder.badge.gearshape
+finder-sidebar-icon ~/Dropbox shippingbox.fill
+finder-sidebar-icon ~/Dropbox/Archive archivebox.fill
+finder-sidebar-icon ~/Dropbox/Resources books.vertical.fill
+ZSH
+
 dooti apply --dynamic
 
 # Requires external files

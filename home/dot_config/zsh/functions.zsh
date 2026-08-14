@@ -316,3 +316,190 @@ function dsize() {
         du -ah --max-depth=1 "$target" | sort -hr
     fi
 }
+
+function finder-sidebar-icon() {
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        echo "Usage: finder-sidebar-icon <folder> <sf-symbol>"
+        echo "Example: finder-sidebar-icon ~/Dropbox/Notes note.text"
+        echo "Catalog: https://developer.apple.com/sf-symbols/"
+        return 0
+    fi
+    if [[ $# -ne 2 ]]; then
+        echo "Usage: finder-sidebar-icon <folder> <sf-symbol>"
+        return 1
+    fi
+
+    if [[ "$OSTYPE" != darwin* ]]; then
+        echo "Error: Finder sidebar icons are only available on macOS."
+        return 1
+    fi
+
+    local folder="${1:A}"
+    local symbol="$2"
+    if [[ ! -d "$folder" ]]; then
+        echo "Error: Directory '$folder' does not exist."
+        return 1
+    fi
+    if [[ -z "$symbol" || "$symbol" == *[^A-Za-z0-9._-]* ]]; then
+        echo "Error: Invalid SF Symbol name '$symbol'."
+        return 1
+    fi
+
+    if ! osascript -l JavaScript - "$symbol" >/dev/null 2>&1 <<'JXA'; then
+ObjC.import("AppKit");
+
+function run(args) {
+    const symbol = args[0];
+    const image = $.NSImage.imageWithSystemSymbolNameAccessibilityDescription(
+        $(symbol),
+        $(symbol),
+    );
+    if (!image || image.isNil()) throw new Error(`Unknown SF Symbol: ${symbol}`);
+}
+JXA
+        echo "Error: '$symbol' is not an SF Symbol available on this Mac."
+        return 1
+    fi
+
+    local bundle="$HOME/Library/Application Support/Dotfiles/FinderSidebarCustomIcons.app"
+    local contents="$bundle/Contents"
+    local executable="$contents/MacOS/FinderSidebarCustomIcons"
+    local plist="$contents/Info.plist"
+    local lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+
+    if [[ ! -x "$lsregister" ]]; then
+        echo "Error: Launch Services registration is unavailable."
+        return 1
+    fi
+
+    if [[ ! -f "$plist" ]]; then
+        if ! mkdir -p "$contents/MacOS" ||
+            ! printf '#!/bin/sh\nexit 0\n' >"$executable" ||
+            ! chmod 755 "$executable" ||
+            ! plutil -create xml1 "$plist" ||
+            ! plutil -insert CFBundleExecutable -string "FinderSidebarCustomIcons" "$plist" ||
+            ! plutil -insert CFBundleIdentifier -string \
+                "com.farid.dotfiles.FinderSidebarCustomIcons" "$plist" ||
+            ! plutil -insert CFBundleName -string "Finder Sidebar Custom Icons" "$plist" ||
+            ! plutil -insert CFBundlePackageType -string "APPL" "$plist" ||
+            ! plutil -insert CFBundleShortVersionString -string "1.0.0" "$plist" ||
+            ! plutil -insert CFBundleVersion -string "1" "$plist" ||
+            ! plutil -insert LSBackgroundOnly -bool true "$plist" ||
+            ! plutil -insert LSMinimumSystemVersion -string "13.0" "$plist" ||
+            ! plutil -insert LSUIElement -bool true "$plist" ||
+            ! plutil -insert UTExportedTypeDeclarations -array "$plist"; then
+            echo "Error: Could not create the Finder sidebar icon bundle."
+            return 1
+        fi
+    fi
+
+    local symbol_hash identifier code existing_id existing_code candidate_hash declaration
+    local -i count index salt used
+    symbol_hash="$(printf '%s' "$symbol" | shasum -a 256 | awk '{print $1}')"
+    identifier="com.farid.dotfiles.FinderSidebarCustomIcons.${symbol_hash[1,16]}"
+    count="$(plutil -extract UTExportedTypeDeclarations raw -o - "$plist")" || {
+        echo "Error: Could not read the Finder sidebar icon bundle."
+        return 1
+    }
+
+    for ((index = 0; index < count; index++)); do
+        existing_id="$(plutil -extract \
+            "UTExportedTypeDeclarations.$index.UTTypeIdentifier" raw -o - "$plist")"
+        if [[ "$existing_id" == "$identifier" ]]; then
+            code="$(/usr/libexec/PlistBuddy -c \
+                "Print :UTExportedTypeDeclarations:$index:UTTypeTagSpecification:com.apple.ostype:0" \
+                "$plist")"
+            break
+        fi
+    done
+
+    if [[ -z "$code" ]]; then
+        for ((salt = 0; salt < 1000; salt++)); do
+            candidate_hash="$(printf '%s:%d' "$symbol" "$salt" | shasum -a 256 | awk '{print $1}')"
+            code="${candidate_hash[1,4]}"
+            used=0
+
+            for ((index = 0; index < count; index++)); do
+                existing_code="$(/usr/libexec/PlistBuddy -c \
+                    "Print :UTExportedTypeDeclarations:$index:UTTypeTagSpecification:com.apple.ostype:0" \
+                    "$plist")"
+                if [[ "$existing_code" == "$code" ]]; then
+                    used=1
+                    break
+                fi
+            done
+
+            ((used == 0)) && break
+            code=""
+        done
+
+        if [[ -z "$code" ]]; then
+            echo "Error: Could not allocate an icon identifier."
+            return 1
+        fi
+
+        declaration="{
+            \"UTTypeConformsTo\": [\"public.folder\"],
+            \"UTTypeDescription\": \"Custom Finder sidebar icon: $symbol\",
+            \"UTTypeIcons\": {\"UTTypeSymbolName\": \"$symbol\"},
+            \"UTTypeIdentifier\": \"$identifier\",
+            \"UTTypeTagSpecification\": {\"com.apple.ostype\": [\"$code\"]}
+        }"
+
+        if ! plutil -insert "UTExportedTypeDeclarations.$count" -json "$declaration" "$plist" ||
+            ! plutil -replace CFBundleVersion -string "$((count + 2))" "$plist"; then
+            echo "Error: Could not register SF Symbol '$symbol'."
+            return 1
+        fi
+    fi
+
+    if ! codesign --force --sign - "$bundle" >/dev/null 2>&1 ||
+        ! "$lsregister" -f "$bundle" >/dev/null 2>&1; then
+        echo "Error: Could not register the Finder sidebar icon bundle."
+        return 1
+    fi
+
+    if osascript -l JavaScript - "$folder" "$code" <<'JXA'; then
+ObjC.import("Foundation");
+ObjC.import("CoreServices");
+
+function run(args) {
+    const [path, code] = args;
+    const wanted = ObjC.unwrap(
+        $.NSURL.fileURLWithPath($(path)).URLByStandardizingPath.path,
+    );
+    const list = $.LSSharedFileListCreate(
+        null,
+        $.kLSSharedFileListFavoriteItems,
+        null,
+    );
+    if (!list) throw new Error("Finder's Favorites list is unavailable.");
+
+    const items = $.LSSharedFileListCopySnapshot(list, null);
+    for (let index = 0; index < $.CFArrayGetCount(items); index++) {
+        const item = ObjC.castRefToObject($.CFArrayGetValueAtIndex(items, index));
+        const urlRef = $.LSSharedFileListItemCopyResolvedURL(item, 0, null);
+        if (!urlRef) continue;
+
+        const url = ObjC.castRefToObject(urlRef);
+        const actual = ObjC.unwrap(url.URLByStandardizingPath.path);
+        if (actual !== wanted) continue;
+
+        const status = $.LSSharedFileListItemSetProperty(
+            item,
+            $("com.apple.LSSharedFileList.OverrideIcon.OSType"),
+            $(code),
+        );
+        if (status !== 0) throw new Error(`Could not set icon (error ${status}).`);
+        return;
+    }
+
+    throw new Error("Folder is not currently in Finder Favorites.");
+}
+JXA
+        killall Finder
+        echo "Finder sidebar icon for '$folder' set to '$symbol'."
+    else
+        return 1
+    fi
+}

@@ -474,52 +474,9 @@ else
 fi
 unset -f configure_finder_tag_color
 
-# Replace Finder Favorites with the exact desired folders and order. A small
-# inert bundle generated below registers five custom SF Symbols.
+# Replace Finder Favorites with the exact desired folders and order.
 configure_finder_favorites() {
-    local icon_destination="${HOME}/Library/Application Support/Dotfiles/FinderSidebarIcons.app"
-    local icon_contents="${icon_destination}/Contents"
-    local icon_executable="${icon_contents}/MacOS/FinderSidebarIcons"
-    local icon_plist="${icon_contents}/Info.plist"
-    local lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
     local output
-    local icon_declarations='[
-        {
-            "UTTypeConformsTo": ["public.folder"],
-            "UTTypeDescription": "Inbox sidebar icon",
-            "UTTypeIcons": {"UTTypeSymbolName": "tray.full"},
-            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.inbox",
-            "UTTypeTagSpecification": {"com.apple.ostype": ["DIn0"]}
-        },
-        {
-            "UTTypeConformsTo": ["public.folder"],
-            "UTTypeDescription": "Projects sidebar icon",
-            "UTTypeIcons": {"UTTypeSymbolName": "folder.badge.gearshape"},
-            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.projects",
-            "UTTypeTagSpecification": {"com.apple.ostype": ["DPr0"]}
-        },
-        {
-            "UTTypeConformsTo": ["public.folder"],
-            "UTTypeDescription": "Dropbox sidebar icon",
-            "UTTypeIcons": {"UTTypeSymbolName": "shippingbox.fill"},
-            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.dropbox",
-            "UTTypeTagSpecification": {"com.apple.ostype": ["DDb0"]}
-        },
-        {
-            "UTTypeConformsTo": ["public.folder"],
-            "UTTypeDescription": "Archive sidebar icon",
-            "UTTypeIcons": {"UTTypeSymbolName": "archivebox.fill"},
-            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.archive",
-            "UTTypeTagSpecification": {"com.apple.ostype": ["DAr0"]}
-        },
-        {
-            "UTTypeConformsTo": ["public.folder"],
-            "UTTypeDescription": "Resources sidebar icon",
-            "UTTypeIcons": {"UTTypeSymbolName": "books.vertical.fill"},
-            "UTTypeIdentifier": "com.farid.dotfiles.FinderSidebarIcons.resources",
-            "UTTypeTagSpecification": {"com.apple.ostype": ["DRe0"]}
-        }
-    ]'
     local favorite_paths=(
         "${HOME}/Dropbox/Inbox"
         "${HOME}/Dropbox/Projects"
@@ -538,33 +495,6 @@ configure_finder_favorites() {
         fi
     done
 
-    if [[ ! -x "${lsregister}" ]]; then
-        print_msg "Launch Services registration is unavailable" "error"
-        return 1
-    fi
-
-    if ! mkdir -p "${icon_contents}/MacOS" ||
-        ! printf '#!/bin/sh\nexit 0\n' >"${icon_executable}" ||
-        ! chmod 755 "${icon_executable}" ||
-        ! plutil -create xml1 "${icon_plist}" ||
-        ! plutil -insert CFBundleExecutable -string "FinderSidebarIcons" "${icon_plist}" ||
-        ! plutil -insert CFBundleIdentifier -string \
-            "com.farid.dotfiles.FinderSidebarIcons" "${icon_plist}" ||
-        ! plutil -insert CFBundleName -string "Finder Sidebar Icons" "${icon_plist}" ||
-        ! plutil -insert CFBundlePackageType -string "APPL" "${icon_plist}" ||
-        ! plutil -insert CFBundleShortVersionString -string "1.1.0" "${icon_plist}" ||
-        ! plutil -insert CFBundleVersion -string "2" "${icon_plist}" ||
-        ! plutil -insert LSBackgroundOnly -bool true "${icon_plist}" ||
-        ! plutil -insert LSMinimumSystemVersion -string "13.0" "${icon_plist}" ||
-        ! plutil -insert LSUIElement -bool true "${icon_plist}" ||
-        ! plutil -insert UTExportedTypeDeclarations -json \
-            "${icon_declarations}" "${icon_plist}" ||
-        ! codesign --force --sign - "${icon_destination}" >/dev/null 2>&1 ||
-        ! "${lsregister}" -f "${icon_destination}" >/dev/null 2>&1; then
-        print_msg "Could not register the Finder sidebar icons" "error"
-        return 1
-    fi
-
     if output="$(
         osascript -l JavaScript - "${favorite_paths[@]}" 2>&1 <<'JXA'
 ObjC.import("Foundation");
@@ -572,14 +502,14 @@ ObjC.import("CoreServices");
 
 function run(paths) {
     const favorites = [
-        { name: "Inbox", path: paths[0], osType: "DIn0" },
-        { name: "Projects", path: paths[1], osType: "DPr0" },
-        { name: "Developer", path: paths[2], osType: null },
-        { name: "Dropbox", path: paths[3], osType: "DDb0" },
-        { name: "Downloads", path: paths[4], osType: null },
-        { name: "Desktop", path: paths[5], osType: null },
-        { name: "Archive", path: paths[6], osType: "DAr0" },
-        { name: "Resources", path: paths[7], osType: "DRe0" },
+        { name: "Inbox", path: paths[0] },
+        { name: "Projects", path: paths[1] },
+        { name: "Developer", path: paths[2] },
+        { name: "Dropbox", path: paths[3] },
+        { name: "Downloads", path: paths[4] },
+        { name: "Desktop", path: paths[5] },
+        { name: "Archive", path: paths[6] },
+        { name: "Resources", path: paths[7] },
     ];
 
     const list = $.LSSharedFileListCreate(null, $.kLSSharedFileListFavoriteItems, null);
@@ -593,19 +523,13 @@ function run(paths) {
     // A null anchor inserts before the first row, so work backwards.
     for (let index = favorites.length - 1; index >= 0; index--) {
         const favorite = favorites[index];
-        const properties = favorite.osType
-            ? $.NSDictionary.dictionaryWithObjectForKey(
-                  $(favorite.osType),
-                  $("com.apple.LSSharedFileList.OverrideIcon.OSType"),
-              )
-            : null;
         const item = $.LSSharedFileListInsertItemURL(
             list,
             null,
             $(favorite.name),
             null,
             $.NSURL.fileURLWithPath($(favorite.path)),
-            properties,
+            null,
             null,
         );
 
