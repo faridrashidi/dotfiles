@@ -58,7 +58,7 @@ default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
 
 ### Fonts
 
-- [Fira Code](https://github.com/tonsky/FiraCode) · [Inter](https://github.com/rsms/inter) · [Meslo LG](https://github.com/andreberg/Meslo-Font) · [Sahel](https://github.com/rastikerdar/sahel-font) · [Symbols Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts) · [Vazirmatn](https://github.com/rastikerdar/vazirmatn)
+- [Fira Code](https://github.com/tonsky/FiraCode) · [Inter](https://github.com/rsms/inter) · [Lalezar](https://github.com/google/fonts/tree/main/ofl/lalezar) · [Meslo LG](https://github.com/andreberg/Meslo-Font) · [Sahel](https://github.com/rastikerdar/sahel-font) · [Symbols Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts) · [Vazirmatn](https://github.com/rastikerdar/vazirmatn)
 
 † A maintained GitHub mirror, package feedstock, or official installer is linked
 when the upstream project does not publish a canonical public GitHub repository.
