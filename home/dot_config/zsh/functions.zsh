@@ -191,9 +191,9 @@ function archive() {
     esac
 }
 
-function convert() {
+function ffconv() {
     if [[ $# -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: convert <output_format> <input_file>"
+        echo "Usage: ffconv <output_format> <input_file>"
         echo "Supported formats: mp3, mp4"
         return 1
     fi
