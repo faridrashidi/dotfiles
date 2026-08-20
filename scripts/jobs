@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 CPU=8 TIME="0-2:00:00" MEM=50 NAME="helper" DIR=$(pwd)
 
 usage() {

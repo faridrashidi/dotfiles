@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 mac_casks=(
     "1password"
     "brave-browser"
