@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SKILL_SOURCES=(
+    "https://github.com/blader/humanizer"
+    "https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me"
+    "https://github.com/cursor/plugins/tree/main/pstack/skills/unslop"
+    "https://github.com/jezweb/claude-skills/tree/main/plugins/frontend/skills/design-loop"
+    # "https://github.com/ryanlewis/things-cli"
+)
+
+SKILL_AGENTS=(
+    "claude-code"
+    "codex"
+    "antigravity-cli"
+)
+
+usage() {
+    cat <<'EOF'
+Usage: skm [--install|-i]
+
+Without an option, list the globally installed skills.
+
+Options:
+  --install, -i  Install the configured skills.
+  --help, -h     Display this help message.
+EOF
+}
+
+fail() {
+    printf 'Error: %s\n' "$1" >&2
+    exit 1
+}
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 || fail "$1 is not installed."
+}
+
+sync_remote_skills() {
+    local skill_source
+
+    for skill_source in "${SKILL_SOURCES[@]}"; do
+        skills add "$skill_source" \
+            --global \
+            --copy \
+            --yes \
+            --agent "${SKILL_AGENTS[@]}"
+    done
+}
+
+if [[ $# -gt 1 ]]; then
+    fail "expected at most one option"
+fi
+
+case "${1:-}" in
+    "")
+        require_command skills
+        skills list --global
+        ;;
+    -i | --install)
+        require_command skills
+        sync_remote_skills
+        ;;
+    -h | --help)
+        usage
+        ;;
+    *)
+        fail "unknown option: $1"
+        ;;
+esac
