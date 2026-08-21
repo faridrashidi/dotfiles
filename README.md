@@ -18,10 +18,13 @@ cd dotfiles
 ./bootstrap
 ```
 
-On a new Linux installation, bootstrap asks `Use HPC settings? [y/N]`.
+Requires Git, Bash, Zsh, and curl. macOS also requires Xcode Command Line Tools.
+On first run, bootstrap asks for your Git name and email.
+
+On Linux, bootstrap asks `Use HPC settings? [y/N]`.
 The default uses `~/.pixi` and excludes the Biowulf configuration. Answering
 yes uses `/data/$USER/.pixi` and enables that configuration. An existing
-`PIXI_HOME` always takes precedence.
+`PIXI_HOME` always takes precedence. Fonts are skipped in HPC mode.
 
 On macOS, bootstrap also asks whether to enable Touch ID for `sudo`. The
 default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
