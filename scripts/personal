@@ -9,6 +9,7 @@ PRIVATE_APPS_TARGET="${SCRIPT_DIR}/apps-private"
 
 "${SCRIPT_DIR}/apps" --install
 "${SCRIPT_DIR}/systems" --install
+"${SCRIPT_DIR}/skm" --install
 
 zsh <<'ZSH'
 setopt ERR_EXIT
