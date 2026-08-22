@@ -200,3 +200,4 @@ site/
 *.tfstate.*
 .vagrant/
 *.box
+**/.claude/.cc-writes/
