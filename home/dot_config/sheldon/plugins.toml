@@ -40,9 +40,10 @@ apply = ["defer"]
 github = "michaelaquilina/zsh-you-should-use"
 apply = ["defer"]
 
-# Loaded eagerly (before compinit) — hooks into the completion system
+# Loaded after compinit and before completion widget wrappers
 [plugins.fzf-tab]
 github = "aloxaf/fzf-tab"
+apply = ["defer"]
 
 # === Completions ===
 
