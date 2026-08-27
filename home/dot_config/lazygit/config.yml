@@ -31,13 +31,13 @@ customCommands:
     loadingText: "Creating Gitmoji commit..."
     prompts:
       - type: "menuFromCommand"
-        key: "emoji"
+        key: "gitmoji"
         title: "Choose a Gitmoji"
         command: "gitmoji -l"
-        filter: "^(?P<emoji>.*?) - (:.*?:) - (?P<description>.*)$"
-        valueFormat: "{{ .emoji }}"
+        filter: "^(?P<emoji>.*?) - (?P<code>:.*?:) - (?P<description>.*)$"
+        valueFormat: "{{ .code }}"
         labelFormat: "{{ .emoji }} {{ .description }}"
       - type: "input"
         key: "message"
         title: "Enter a capitalized commit title"
-    command: "git commit -m '{{ .Form.emoji }} {{ .Form.message }}'"
+    command: 'git commit -m {{ printf "%s %s" .Form.gitmoji .Form.message | quote }}'

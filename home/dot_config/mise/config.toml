@@ -5,6 +5,7 @@ minimum_release_age = "0s"
 "aqua:openai/codex" = "latest"
 "aqua:anthropics/claude-code" = "latest"
 "aqua:ogulcancelik/herdr" = "latest"
+"npm:gitmoji-cli" = "latest"
 "npm:sharp-cli" = "latest"
 "npm:skills" = "latest"
 "npm:wrangler" = { version = "latest", allow_builds = ["esbuild", "workerd"] }
