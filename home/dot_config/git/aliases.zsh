@@ -1,1 +1,1 @@
-alias gs="mgitstatus -e -f -d 2 ~/Developer"
+alias gs="gitoverit -f -w 'status != \"clean\" or remote == \"-\" or dir.startswith(\"! \")' ~/Developer"
