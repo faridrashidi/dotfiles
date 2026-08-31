@@ -71,7 +71,7 @@ fi
 
 if [[ ! -x "$CHEZMOI_BIN" ]]; then
     print_step "Installing chezmoi with pixi global"
-    PIXI_HOME="$PIXI_HOME" "$PIXI_BIN" global install --channel conda-forge --environment chezmoi --expose chezmoi "chezmoi==2.69.4"
+    PIXI_HOME="$PIXI_HOME" "$PIXI_BIN" global install --channel conda-forge --environment chezmoi --expose chezmoi chezmoi
 fi
 
 if [[ ! -x "$CHEZMOI_BIN" ]]; then
