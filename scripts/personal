@@ -13,7 +13,15 @@ if [[ -f "$PRIVATE_APPS_SOURCE" && ! -e "$PRIVATE_APPS_TARGET" && ! -L "$PRIVATE
 fi
 
 "${SCRIPT_DIR}/apps" --install
-"${SCRIPT_DIR}/systems" --install
+"${SCRIPT_DIR}/systems" --install --favorites-paths \
+    "${HOME}/Dropbox/Inbox" \
+    "${HOME}/Dropbox/Projects" \
+    "${HOME}/Developer" \
+    "${HOME}/Dropbox" \
+    "${HOME}/Downloads" \
+    "${HOME}/Desktop" \
+    "${HOME}/Dropbox/Archive" \
+    "${HOME}/Dropbox/Resources"
 "${SCRIPT_DIR}/skm" --install
 
 zsh <<'ZSH'

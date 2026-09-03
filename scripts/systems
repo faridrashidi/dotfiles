@@ -18,11 +18,12 @@ help() {
     cat <<EOF
 Systems Installation Tool
 
-Usage: $0 [--install|-i] [--help|-h]
+Usage: $0 [--install|-i] [--favorites-paths <path> ...] [--help|-h]
 
 Options:
-  --install, -i   Install all the system settings
-  --help, -h      Display this help message
+  --install, -i                 Install all the system settings
+  --favorites-paths <paths...>  Set Finder Favorites to specified folder paths
+  --help, -h                    Display this help message
 EOF
     exit 0
 }
@@ -31,11 +32,42 @@ execute() { run "$@" "$DRY_RUN"; }
 
 DRY_RUN=true
 SUDO_KEEPALIVE_PID=""
+FAVORITE_PATHS=()
 
-for arg in "$@"; do
-    case $arg in
-        -i | --install) DRY_RUN=false ;;
-        -h | --help) help ;;
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -i | --install)
+            DRY_RUN=false
+            shift
+            ;;
+        --favorites-paths)
+            shift
+            while [[ $# -gt 0 && "$1" != -* ]]; do
+                IFS=',' read -ra split_paths <<< "$1"
+                for p in "${split_paths[@]}"; do
+                    p="${p#"${p%%[![:space:]]*}"}"
+                    p="${p%"${p##*[![:space:]]}"}"
+                    [[ -n "$p" ]] && FAVORITE_PATHS+=("$p")
+                done
+                shift
+            done
+            ;;
+        --favorites-paths=*)
+            IFS=',' read -ra split_paths <<< "${1#*=}"
+            for p in "${split_paths[@]}"; do
+                p="${p#"${p%%[![:space:]]*}"}"
+                p="${p%"${p##*[![:space:]]}"}"
+                [[ -n "$p" ]] && FAVORITE_PATHS+=("$p")
+            done
+            shift
+            ;;
+        -h | --help)
+            help
+            ;;
+        *)
+            print_msg "Unknown option: $1" "error"
+            exit 1
+            ;;
     esac
 done
 
@@ -493,42 +525,45 @@ unset -f configure_finder_tag_color
 
 # Replace Finder Favorites with the exact desired folders and order.
 configure_finder_favorites() {
-    local output
-    local favorite_paths=(
-        "${HOME}/Dropbox/Inbox"
-        "${HOME}/Dropbox/Projects"
-        "${HOME}/Developer"
-        "${HOME}/Dropbox"
-        "${HOME}/Downloads"
-        "${HOME}/Desktop"
-        "${HOME}/Dropbox/Archive"
-        "${HOME}/Dropbox/Resources"
-    )
+    if [[ ${#FAVORITE_PATHS[@]} -eq 0 ]]; then
+        return 0
+    fi
 
-    for favorite_path in "${favorite_paths[@]}"; do
-        if [[ ! -d "${favorite_path}" ]]; then
-            print_msg "Finder favorite does not exist: ${favorite_path}" "warning"
-            return 1
+    local valid_paths=()
+    for favorite_path in "${FAVORITE_PATHS[@]}"; do
+        favorite_path="${favorite_path/#\~/$HOME}"
+        if [[ -d "${favorite_path}" ]]; then
+            valid_paths+=("${favorite_path}")
+        else
+            print_msg "Finder favorite path does not exist (skipping): ${favorite_path}" "warning"
         fi
     done
 
+    if [[ ${#valid_paths[@]} -eq 0 ]]; then
+        print_msg "No valid directories found for Finder Favorites" "warning"
+        return 0
+    fi
+
+    local names=()
+    for p in "${valid_paths[@]}"; do
+        names+=("$(basename "$p")")
+    done
+    local display_names
+    display_names=$(printf "%s, " "${names[@]}")
+    display_names="${display_names%, }"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_msg "Replace Finder Favorites: ${display_names}" "default"
+        return 0
+    fi
+
+    local output
     if output="$(
-        osascript -l JavaScript - "${favorite_paths[@]}" 2>&1 <<'JXA'
+        osascript -l JavaScript - "${valid_paths[@]}" 2>&1 <<'JXA'
 ObjC.import("Foundation");
 ObjC.import("CoreServices");
 
 function run(paths) {
-    const favorites = [
-        { name: "Inbox", path: paths[0] },
-        { name: "Projects", path: paths[1] },
-        { name: "Developer", path: paths[2] },
-        { name: "Dropbox", path: paths[3] },
-        { name: "Downloads", path: paths[4] },
-        { name: "Desktop", path: paths[5] },
-        { name: "Archive", path: paths[6] },
-        { name: "Resources", path: paths[7] },
-    ];
-
     const list = $.LSSharedFileListCreate(null, $.kLSSharedFileListFavoriteItems, null);
     if (!list) throw new Error("Finder's Favorites list is unavailable.");
 
@@ -538,24 +573,25 @@ function run(paths) {
     }
 
     // A null anchor inserts before the first row, so work backwards.
-    for (let index = favorites.length - 1; index >= 0; index--) {
-        const favorite = favorites[index];
+    for (let index = paths.length - 1; index >= 0; index--) {
+        const filePath = paths[index];
+        const name = $(filePath).lastPathComponent;
         const item = $.LSSharedFileListInsertItemURL(
             list,
             null,
-            $(favorite.name),
+            name,
             null,
-            $.NSURL.fileURLWithPath($(favorite.path)),
+            $.NSURL.fileURLWithPath($(filePath)),
             null,
             null,
         );
 
-        if (!item) throw new Error(`Could not add ${favorite.name} to Finder Favorites.`);
+        if (!item) throw new Error(`Could not add ${ObjC.unwrap(name)} to Finder Favorites.`);
     }
 }
 JXA
     )"; then
-        print_msg "Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop, Archive, Resources" "success"
+        print_msg "Finder Favorites: ${display_names}" "success"
     else
         print_msg "Could not configure Finder Favorites" "error"
         echo "${output}"
@@ -563,11 +599,7 @@ JXA
     fi
 }
 
-if [[ "$DRY_RUN" == "true" ]]; then
-    print_msg "Replace Finder Favorites: Inbox, Projects, Developer, Dropbox, Downloads, Desktop, Archive, Resources" "default"
-else
-    configure_finder_favorites
-fi
+configure_finder_favorites
 unset -f configure_finder_favorites
 
 # Show all file extensions in Finder
