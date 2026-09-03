@@ -4,32 +4,35 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HPC_SELECTION=""
-if [[ -n "${PIXI_HOME:-}" ]]; then
+if [[ -z "${PIXI_HOME:-}" ]]; then
+    if [[ "$(uname)" == "Darwin" ]]; then
+        export PIXI_HOME="${HOME}/.pixi"
+    else
+        HPC_SELECTION=false
+        if [[ -t 0 && -t 1 ]]; then
+            read -r -p "Use HPC settings? [y/N] " hpc_reply
+            case "${hpc_reply}" in
+                y | Y | yes | YES | Yes) HPC_SELECTION=true ;;
+                "" | n | N | no | NO | No) ;;
+                *)
+                    printf 'Error: expected y or n.\n' >&2
+                    exit 1
+                    ;;
+            esac
+        fi
+        if [[ "$HPC_SELECTION" == "true" ]]; then
+            export PIXI_HOME="/data/${USER}/.pixi"
+        else
+            export PIXI_HOME="${HOME}/.pixi"
+        fi
+    fi
+fi
+
+if [[ -x "${PIXI_HOME}/bin/pixi" ]]; then
     PIXI_BIN="${PIXI_HOME}/bin/pixi"
 elif command -v pixi >/dev/null 2>&1; then
     PIXI_BIN="$(command -v pixi)"
-    export PIXI_HOME="$(cd "$(dirname "${PIXI_BIN}")/.." && pwd)"
-elif [[ "$(uname)" == "Darwin" ]]; then
-    export PIXI_HOME="${HOME}/.pixi"
-    PIXI_BIN="${PIXI_HOME}/bin/pixi"
 else
-    HPC_SELECTION=false
-    if [[ -t 0 && -t 1 ]]; then
-        read -r -p "Use HPC settings? [y/N] " hpc_reply
-        case "${hpc_reply}" in
-            y | Y | yes | YES | Yes) HPC_SELECTION=true ;;
-            "" | n | N | no | NO | No) ;;
-            *)
-                printf 'Error: expected y or n.\n' >&2
-                exit 1
-                ;;
-        esac
-    fi
-    if [[ "$HPC_SELECTION" == "true" ]]; then
-        export PIXI_HOME="/data/${USER}/.pixi"
-    else
-        export PIXI_HOME="${HOME}/.pixi"
-    fi
     PIXI_BIN="${PIXI_HOME}/bin/pixi"
 fi
 
