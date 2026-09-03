@@ -1,15 +1,5 @@
 #!/usr/bin/env zsh
 
-# Add custom binary paths
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$PIXI_HOME/bin:$PATH"
-
-# XDG environment defaults
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
-
 _source_named_configs() {
     local name file
     for name in "$@"; do

@@ -1,4 +1,13 @@
-export ZDOTDIR=$HOME/.config/zsh
+# Deduplicate path arrays across all shells
+typeset -U path fpath manpath
+
+export ZDOTDIR="$HOME/.config/zsh"
+
+# XDG environment defaults
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 {{- $pixiHome := get . "pixi_home" -}}
 {{- if $pixiHome }}
@@ -7,7 +16,13 @@ export PIXI_HOME={{ $pixiHome | quote }}
 export PIXI_HOME="$HOME/.pixi"
 {{- end }}
 
-export PATH="{{ .chezmoi.workingTree }}/scripts:$PATH"
+# Add core binary paths
+path=(
+    "{{ .chezmoi.workingTree }}/scripts"
+    "$HOME/.local/bin"
+    "$PIXI_HOME/bin"
+    $path
+)
 
 export LANG="en_US.UTF-8"
 export COLORTERM=truecolor
