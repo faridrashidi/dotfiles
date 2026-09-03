@@ -16,13 +16,9 @@ export PIXI_HOME={{ $pixiHome | quote }}
 export PIXI_HOME="$HOME/.pixi"
 {{- end }}
 
-# Add core binary paths
-path=(
-    "{{ .chezmoi.workingTree }}/scripts"
-    "$HOME/.local/bin"
-    "$PIXI_HOME/bin"
-    $path
-)
+# Load core binary paths in all shells. Login shells load this again from
+# .zprofile after macOS path_helper rebuilds PATH.
+[[ -f "$ZDOTDIR/path.zsh" ]] && source "$ZDOTDIR/path.zsh"
 
 export LANG="en_US.UTF-8"
 export COLORTERM=truecolor

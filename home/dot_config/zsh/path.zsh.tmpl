@@ -1,0 +1,8 @@
+# /etc/zprofile runs path_helper, which rebuilds PATH with /etc/paths* first.
+# Prepend the core paths again; typeset -U keeps only these leading copies.
+path=(
+    "{{ .chezmoi.workingTree }}/scripts"
+    "$HOME/.local/bin"
+    "$PIXI_HOME/bin"
+    $path
+)
