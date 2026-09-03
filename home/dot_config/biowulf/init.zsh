@@ -28,4 +28,4 @@ _biowulf_atuin_setup() {
 _biowulf_atuin_setup
 unfunction _biowulf_atuin_setup
 
-[[ -d "$DATA" ]] && cd "$DATA"
+[[ "$PWD" == "$HOME" && -d "$DATA" ]] && cd "$DATA"
