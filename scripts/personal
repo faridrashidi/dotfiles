@@ -32,4 +32,6 @@ install -d -m 0700 "${HOME}/.ssh"
 if [[ -d "${PRIVATE_DOTFILES_DIR}/ssh" ]]; then
     rsync -a "${PRIVATE_DOTFILES_DIR}/ssh/" "${HOME}/.ssh/"
 fi
-"${SCRIPT_DIR}/plists" --install
+if [[ -d "${PRIVATE_DOTFILES_DIR}/plists" ]]; then
+    "${SCRIPT_DIR}/plists" --install --dir "${PRIVATE_DOTFILES_DIR}/plists"
+fi

@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils.sh"
 
 PREF_DIR="$HOME/Library/Preferences"
-PLISTS_DIR="$HOME/Dropbox/Resources/Mac/Settings/Dotfiles/plists"
+PLISTS_DIR="${PLISTS_DIR:-}"
 
 ACTION="install"
 DRY_RUN=true
@@ -15,12 +15,13 @@ help() {
     cat <<EOF
 Plists Maintenance Tool
 
-Usage: $0 [--install|-i] [--backup|-b] [--help|-h]
+Usage: $0 [--install|-i] [--backup|-b] [--dir|-d <path>] [--help|-h]
 
 Options:
-  --install, -i   Copy tracked plist files into ~/Library/Preferences
-  --backup, -b    Refresh tracked plist files from ~/Library/Preferences
-  --help, -h      Display this help message
+  --install, -i      Copy tracked plist files into ~/Library/Preferences
+  --backup, -b       Refresh tracked plist files from ~/Library/Preferences
+  --dir, -d <path>   Directory containing tracked plist files
+  --help, -h         Display this help message
 EOF
     exit 0
 }
@@ -35,6 +36,10 @@ require_macos() {
 }
 
 require_plists_dir() {
+    if [[ -z "$PLISTS_DIR" ]]; then
+        print_msg "Plists directory not specified. Use --dir <path> or set \$PLISTS_DIR." "error"
+        exit 1
+    fi
     if [[ ! -d "$PLISTS_DIR" ]]; then
         print_msg "Plists directory not found at ${PLISTS_DIR}." "error"
         exit 1
@@ -59,21 +64,35 @@ backup_plists() {
     done < <(find "$PLISTS_DIR" -type f ! -name '.DS_Store' -print0)
 }
 
-for arg in "$@"; do
-    case "$arg" in
+while [[ $# -gt 0 ]]; do
+    case "$1" in
         -i | --install)
             ACTION="install"
             DRY_RUN=false
+            shift
             ;;
         -b | --backup)
             ACTION="backup"
             DRY_RUN=false
+            shift
+            ;;
+        -d | --dir)
+            if [[ $# -lt 2 || "$2" == -* ]]; then
+                print_msg "Option $1 requires a directory path." "error"
+                exit 1
+            fi
+            PLISTS_DIR="$2"
+            shift 2
+            ;;
+        --dir=*)
+            PLISTS_DIR="${1#*=}"
+            shift
             ;;
         -h | --help)
             help
             ;;
         *)
-            print_msg "Unknown option: ${arg}" "error"
+            print_msg "Unknown option: $1" "error"
             exit 1
             ;;
     esac
