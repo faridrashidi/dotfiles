@@ -33,35 +33,32 @@ _cached_eval() {
 }
 
 ###############################################################################
-# 2. Plugin Management                                                        #
+# 2. Plugin & Completion Management                                           #
 ###############################################################################
 
-# Queue compdef calls so plugins loaded before compinit don't lose completions
-typeset -a _compdef_replay=()
-compdef() { _compdef_replay+=("$*"); }
-
-# Cache sheldon output; regenerate when plugins.toml changes
+# Initialize plugins and completions via sheldon; regenerate when plugins.toml changes
 if (($+commands[sheldon])); then
     local _sc="${XDG_CONFIG_HOME:-$HOME/.config}/sheldon"
     _cached_eval -w "$_sc/plugins.toml" sheldon source
 fi
-unfunction compdef
 
-###############################################################################
-# 3. Completions & Shell Options                                              #
-###############################################################################
-
-# Initialize completions — only rebuild dump once every 24 h
-autoload -Uz compinit
-if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
-    compinit
-else
-    compinit -C
+# Fallback: sheldon absent, or `sheldon source` failed — completions must still work
+if (( ! $+functions[compdef] )); then
+    autoload -Uz compinit
+    () {
+        local dumpfile=${ZDOTDIR:-$HOME}/.zcompdump
+        local stale=( ${~dumpfile}(N.mh+24) )
+        if (( $#stale )); then
+            compinit && touch "$dumpfile" # compinit won't refresh an unchanged dump
+        else
+            compinit -C
+        fi
+    }
 fi
 
-# Replay queued compdef calls from plugin loading
-for _def in "${_compdef_replay[@]}"; do eval "compdef $_def"; done
-unset _compdef_replay _def
+###############################################################################
+# 3. Shell Options & Styles                                                   #
+###############################################################################
 
 # Menu-select widget for completion menus
 zmodload zsh/complist

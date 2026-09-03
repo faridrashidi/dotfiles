@@ -40,18 +40,31 @@ apply = ["defer"]
 github = "michaelaquilina/zsh-you-should-use"
 apply = ["defer"]
 
-# Loaded after compinit and before completion widget wrappers
-[plugins.fzf-tab]
-github = "aloxaf/fzf-tab"
-apply = ["defer"]
-
 # === Completions ===
 
-# Only adds to fpath — actual initialization happens via compinit in zshrc
+# Only adds to fpath — actual initialization happens via compinit
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
 dir = "src"
 apply = ["fpath"]
+
+[plugins.compinit]
+inline = '''
+autoload -Uz compinit
+() {
+    local dumpfile=${ZDOTDIR:-$HOME}/.zcompdump
+    local stale=( ${~dumpfile}(N.mh+24) )
+    if (( $#stale )); then
+        compinit && touch "$dumpfile" # compinit won't refresh an unchanged dump
+    else
+        compinit -C
+    fi
+}
+'''
+
+# Loaded synchronously after compinit and before widget wrappers
+[plugins.fzf-tab]
+github = "aloxaf/fzf-tab"
 
 # === Syntax Highlighting & Autosuggestions ===
 
