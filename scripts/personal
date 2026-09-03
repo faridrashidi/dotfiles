@@ -13,15 +13,21 @@ if [[ -f "$PRIVATE_APPS_SOURCE" && ! -e "$PRIVATE_APPS_TARGET" && ! -L "$PRIVATE
 fi
 
 "${SCRIPT_DIR}/apps" --install
-"${SCRIPT_DIR}/systems" --install --favorites-paths \
-    "${HOME}/Dropbox/Inbox" \
-    "${HOME}/Dropbox/Projects" \
-    "${HOME}/Developer" \
-    "${HOME}/Dropbox" \
-    "${HOME}/Downloads" \
-    "${HOME}/Desktop" \
-    "${HOME}/Dropbox/Archive" \
-    "${HOME}/Dropbox/Resources"
+"${SCRIPT_DIR}/systems" --install \
+    --lock-message "If found, please call 000-000-0000." \
+    --languages "en" "fa" \
+    --input-sources "U.S." "Persian-ISIRI 2901" \
+    --new-window-target-path "${HOME}/Dropbox/Projects" \
+    --browser "brave" \
+    --favorites-paths \
+        "${HOME}/Dropbox/Inbox" \
+        "${HOME}/Dropbox/Projects" \
+        "${HOME}/Developer" \
+        "${HOME}/Dropbox" \
+        "${HOME}/Downloads" \
+        "${HOME}/Desktop" \
+        "${HOME}/Dropbox/Archive" \
+        "${HOME}/Dropbox/Resources"
 "${SCRIPT_DIR}/skm" --install
 
 zsh <<'ZSH'

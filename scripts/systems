@@ -18,12 +18,17 @@ help() {
     cat <<EOF
 Systems Installation Tool
 
-Usage: $0 [--install|-i] [--favorites-paths <path> ...] [--help|-h]
+Usage: $0 [--install|-i] [OPTIONS]
 
 Options:
-  --install, -i                 Install all the system settings
-  --favorites-paths <paths...>  Set Finder Favorites to specified folder paths
-  --help, -h                    Display this help message
+  --install, -i                     Install all the system settings
+  --lock-message <text>             Set lock screen message on login window
+  --languages <lang...>             Set preferred system languages (e.g. en fa)
+  --input-sources <source...>       Set enabled keyboard input sources (e.g. "U.S." "Persian-ISIRI 2901")
+  --new-window-target-path <path>   Set default folder for new Finder windows
+  --browser <name|bundle_id>        Set default HTTP/HTTPS browser (e.g. brave, chrome, safari)
+  --favorites-paths <paths...>      Set Finder Favorites to specified folder paths
+  --help, -h                        Display this help message
 EOF
     exit 0
 }
@@ -33,11 +38,94 @@ execute() { run "$@" "$DRY_RUN"; }
 DRY_RUN=true
 SUDO_KEEPALIVE_PID=""
 FAVORITE_PATHS=()
+LOCK_MESSAGE=""
+LANGUAGES=()
+INPUT_SOURCES=()
+NEW_WINDOW_TARGET_PATH=""
+DEFAULT_BROWSER=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -i | --install)
             DRY_RUN=false
+            shift
+            ;;
+        --lock-message)
+            if [[ $# -lt 2 || "$2" == -* ]]; then
+                print_msg "Option $1 requires a message string." "error"
+                exit 1
+            fi
+            LOCK_MESSAGE="$2"
+            shift 2
+            ;;
+        --lock-message=*)
+            LOCK_MESSAGE="${1#*=}"
+            shift
+            ;;
+        --languages)
+            shift
+            while [[ $# -gt 0 && "$1" != -* ]]; do
+                IFS=',' read -ra split_langs <<< "$1"
+                for l in "${split_langs[@]}"; do
+                    l="${l#"${l%%[![:space:]]*}"}"
+                    l="${l%"${l##*[![:space:]]}"}"
+                    [[ -n "$l" ]] && LANGUAGES+=("$l")
+                done
+                shift
+            done
+            ;;
+        --languages=*)
+            IFS=',' read -ra split_langs <<< "${1#*=}"
+            for l in "${split_langs[@]}"; do
+                l="${l#"${l%%[![:space:]]*}"}"
+                l="${l%"${l##*[![:space:]]}"}"
+                [[ -n "$l" ]] && LANGUAGES+=("$l")
+            done
+            shift
+            ;;
+        --input-sources)
+            shift
+            while [[ $# -gt 0 && "$1" != -* ]]; do
+                IFS=',' read -ra split_sources <<< "$1"
+                for s in "${split_sources[@]}"; do
+                    s="${s#"${s%%[![:space:]]*}"}"
+                    s="${s%"${s##*[![:space:]]}"}"
+                    [[ -n "$s" ]] && INPUT_SOURCES+=("$s")
+                done
+                shift
+            done
+            ;;
+        --input-sources=*)
+            IFS=',' read -ra split_sources <<< "${1#*=}"
+            for s in "${split_sources[@]}"; do
+                s="${s#"${s%%[![:space:]]*}"}"
+                s="${s%"${s##*[![:space:]]}"}"
+                [[ -n "$s" ]] && INPUT_SOURCES+=("$s")
+            done
+            shift
+            ;;
+        --new-window-target-path | --new-window-target)
+            if [[ $# -lt 2 || "$2" == -* ]]; then
+                print_msg "Option $1 requires a folder path." "error"
+                exit 1
+            fi
+            NEW_WINDOW_TARGET_PATH="$2"
+            shift 2
+            ;;
+        --new-window-target-path=* | --new-window-target=*)
+            NEW_WINDOW_TARGET_PATH="${1#*=}"
+            shift
+            ;;
+        --browser | --default-browser)
+            if [[ $# -lt 2 || "$2" == -* ]]; then
+                print_msg "Option $1 requires a browser name or bundle ID." "error"
+                exit 1
+            fi
+            DEFAULT_BROWSER="$2"
+            shift 2
+            ;;
+        --browser=* | --default-browser=*)
+            DEFAULT_BROWSER="${1#*=}"
             shift
             ;;
         --favorites-paths)
@@ -118,9 +206,11 @@ execute "sudo chsh -s /bin/zsh \"${SUDO_USER:-$USER}\""
 # Disable guest account login for security
 execute "sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false"
 
-# Add a custom message to the login window
-execute "sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText \
-\"If found, please call 000-000-0000.\""
+# Add a custom message to the login window if specified
+if [[ -n "$LOCK_MESSAGE" ]]; then
+    execute "sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText \
+\"$LOCK_MESSAGE\""
+fi
 
 # Disable guest access for Apple File Server
 execute "defaults write com.apple.AppleFileServer guestAccess -bool false"
@@ -173,7 +263,7 @@ execute "defaults write com.apple.LaunchServices LSQuarantine -bool false"
 execute "defaults write com.apple.CrashReporter DialogType -string \"none\""
 
 # Enable network time synchronization using Apple's time server
-[[ -z "$CI" ]] && execute "sudo systemsetup -setusingnetworktime on"
+[[ -z "${CI:-}" ]] && execute "sudo systemsetup -setusingnetworktime on"
 
 # Display the menu bar clock in analog format
 execute "defaults write com.apple.menuextra.clock IsAnalog -bool true"
@@ -245,23 +335,59 @@ execute "defaults write NSGlobalDomain KeyRepeat -int 2"
 # Set fast keyboard repeat rate (InitialKeyRepeat = delay before repeating)
 execute "defaults write NSGlobalDomain InitialKeyRepeat -int 15"
 
-# Set preferred languages to English and Persian
-execute "defaults write NSGlobalDomain AppleLanguages -array \"en\" \"fa\""
+# Set preferred languages if specified
+if [[ ${#LANGUAGES[@]} -gt 0 ]]; then
+    lang_entries=()
+    for l in "${LANGUAGES[@]}"; do
+        lang_entries+=("\"$l\"")
+    done
+    execute "defaults write NSGlobalDomain AppleLanguages -array ${lang_entries[*]}"
+fi
 
-# Configure input sources: U.S. and Persian keyboards, plus some input methods
-execute "defaults write com.apple.HIToolbox.plist AppleEnabledInputSources -array \
-\"<dict><key>InputSourceKind</key><string>Keyboard Layout</string>\
-<key>KeyboardLayout ID</key><integer>0</integer>\
-<key>KeyboardLayout Name</key><string>U.S.</string></dict>\" \
-\"<dict><key>InputSourceKind</key><string>Keyboard Layout</string>\
-<key>KeyboardLayout ID</key><integer>-2901</integer>\
-<key>KeyboardLayout Name</key><string>Persian-ISIRI 2901</string></dict>\" \
-\"<dict><key>Bundle ID</key><string>com.apple.CharacterPaletteIM</string>\
-<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\" \
-\"<dict><key>Bundle ID</key><string>com.apple.KeyboardViewer</string>\
-<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\" \
-\"<dict><key>Bundle ID</key><string>com.apple.PressAndHold</string>\
-<key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\""
+# Configure input sources if specified
+configure_input_sources() {
+    if [[ ${#INPUT_SOURCES[@]} -eq 0 ]]; then
+        return 0
+    fi
+
+    local source_entries=()
+    for src in "${INPUT_SOURCES[@]}"; do
+        local layout_id="" layout_name=""
+        if [[ "$src" =~ ^(-?[0-9]+):(.*)$ ]]; then
+            layout_id="${BASH_REMATCH[1]}"
+            layout_name="${BASH_REMATCH[2]}"
+        else
+            case "$src" in
+                "U.S." | "US" | "en")
+                    layout_id="0"
+                    layout_name="U.S."
+                    ;;
+                "Persian-ISIRI 2901" | "Persian" | "fa")
+                    layout_id="-2901"
+                    layout_name="Persian-ISIRI 2901"
+                    ;;
+                *)
+                    layout_id="0"
+                    layout_name="$src"
+                    ;;
+            esac
+        fi
+        source_entries+=(
+            "\"<dict><key>InputSourceKind</key><string>Keyboard Layout</string><key>KeyboardLayout ID</key><integer>${layout_id}</integer><key>KeyboardLayout Name</key><string>${layout_name}</string></dict>\""
+        )
+    done
+
+    source_entries+=(
+        "\"<dict><key>Bundle ID</key><string>com.apple.CharacterPaletteIM</string><key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\""
+        "\"<dict><key>Bundle ID</key><string>com.apple.KeyboardViewer</string><key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\""
+        "\"<dict><key>Bundle ID</key><string>com.apple.PressAndHold</string><key>InputSourceKind</key><string>Non Keyboard Input Method</string></dict>\""
+    )
+
+    execute "defaults write com.apple.HIToolbox.plist AppleEnabledInputSources -array ${source_entries[*]}"
+}
+
+configure_input_sources
+unset -f configure_input_sources
 
 # Disable all service shortcut keys
 execute "defaults write pbs NSServicesStatus -dict"
@@ -456,10 +582,12 @@ execute "defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true"
 # Disable extension change warning
 execute "defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false"
 
-# Set new Finder windows to open in the Dropbox folder
-execute "defaults write com.apple.finder NewWindowTarget -string \"PfLo\""
-execute "defaults write com.apple.finder NewWindowTargetPath -string \
-\"file://${HOME}/Dropbox/Projects\""
+# Set new Finder windows target folder if specified
+if [[ -n "$NEW_WINDOW_TARGET_PATH" ]]; then
+    NEW_WINDOW_TARGET_PATH="${NEW_WINDOW_TARGET_PATH/#\~/$HOME}"
+    execute "defaults write com.apple.finder NewWindowTarget -string \"PfLo\""
+    execute "defaults write com.apple.finder NewWindowTargetPath -string \"file://${NEW_WINDOW_TARGET_PATH}\""
+fi
 
 # Open folders in tabs instead of new Finder windows
 # FIXME: When another Desktop already has a Finder window, this causes new
@@ -653,7 +781,7 @@ execute "/usr/libexec/PlistBuddy -c \
 function set_plist_entry() {
     local key="$1"
     local type="$2"
-    local value="$3"
+    local value="${3:-}"
     local plist="${HOME}/Library/Preferences/com.apple.finder.plist"
 
     if /usr/libexec/PlistBuddy -c "Print :${key}" "${plist}" &>/dev/null; then
@@ -791,15 +919,44 @@ ConfigDataInstall -bool true"
 execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
 CriticalUpdateInstall -bool true"
 
-# Set Brave as default browser via Launch Services
-if [[ -z "$CI" ]]; then
-    execute "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/\
-LaunchServices.framework/Versions/A/Support/lsregister -f ~/Applications/Brave\ Browser.app"
+# Set default browser via Launch Services if specified
+configure_default_browser() {
+    if [[ -z "$DEFAULT_BROWSER" || -n "${CI:-}" ]]; then
+        return 0
+    fi
+
+    local bundle_id=""
+    case "$DEFAULT_BROWSER" in
+        [Bb]rave* | com.brave.Browser)
+            bundle_id="com.brave.Browser"
+            for app in "$HOME/Applications/Brave Browser.app" "/Applications/Brave Browser.app"; do
+                if [[ -d "$app" ]]; then
+                    execute "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -f \"$app\""
+                    break
+                fi
+            done
+            ;;
+        [Cc]hrome* | com.google.Chrome)
+            bundle_id="com.google.Chrome"
+            ;;
+        [Ff]irefox* | org.mozilla.firefox)
+            bundle_id="org.mozilla.firefox"
+            ;;
+        [Ss]afari* | com.apple.Safari)
+            bundle_id="com.apple.Safari"
+            ;;
+        *)
+            bundle_id="$DEFAULT_BROWSER"
+            ;;
+    esac
+
     execute "defaults write com.apple.LaunchServices/com.apple.launchservices.secure \
-LSHandlers -array-add '{LSHandlerRoleAll=\"com.brave.Browser\";\
-LSHandlerURLScheme=\"http\";}' '{LSHandlerRoleAll=\"com.brave.Browser\";\
-LSHandlerURLScheme=\"https\";}'"
-fi
+LSHandlers -array-add '{LSHandlerRoleAll=\"${bundle_id}\";LSHandlerURLScheme=\"http\";}' \
+'{LSHandlerRoleAll=\"${bundle_id}\";LSHandlerURLScheme=\"https\";}'"
+}
+
+configure_default_browser
+unset -f configure_default_browser
 
 ###############################################################################
 # Spotlight                                                                   #
@@ -835,7 +992,7 @@ execute "sudo mdutil -i on /"
 execute "sudo mdutil -E /"
 
 # Restart metadata service, Finder and clear preference cache to apply changes
-if [[ -z "$CI" ]]; then
+if [[ -z "${CI:-}" ]]; then
     execute "killall cfprefsd"
     execute "killall Finder"
 fi
@@ -870,7 +1027,7 @@ ask_system_settings() {
 }
 
 # Run manual configuration steps
-if [[ -z "$CI" ]]; then
+if [[ -z "${CI:-}" ]]; then
     ask_system_settings 'Turn off unnecessary apps from iCloud' \
         'x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane?iCloud'
     ask_system_settings 'Turn off all notifs except Message' \
