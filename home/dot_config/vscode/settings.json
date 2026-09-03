@@ -33,6 +33,8 @@
   "editor.suggestSelection": "first",
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "editor.unicodeHighlight.invisibleCharacters": false,
+  "editor.guides.indentation": true,
+  "editor.guides.bracketPairs": "active",
 
   // ----------------------------------------------------------------------
   // # Workbench & Appearance
