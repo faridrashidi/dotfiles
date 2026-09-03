@@ -221,8 +221,8 @@ install_or_update_downloaded_app() {
             ;;
         update)
             print_msg "$name updated (v$installed_version -> v$downloaded_version)" "success"
-            cp -R "$downloaded_dir/$name.app" "$app_dir"
-            rm -rf "$downloaded_dir/$name.app"
+            rm -rf "$app_dir/$name.app"
+            mv -f "$downloaded_dir/$name.app" "$app_dir"
             ;;
         *)
             print_msg "$name already up-to-date (v$installed_version)" "default"
