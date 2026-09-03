@@ -2,19 +2,53 @@
 
 set -euo pipefail
 
-SKILL_SOURCES=(
-    "https://github.com/blader/humanizer"
-    "https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me"
-    "https://github.com/cursor/plugins/tree/main/pstack/skills/unslop"
-    "https://github.com/jezweb/claude-skills/tree/main/plugins/frontend/skills/design-loop"
-    # "https://github.com/ryanlewis/things-cli"
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/skm"
+REPO_CONFIG_DIR="${SCRIPT_DIR}/../home/dot_config/skm"
 
-SKILL_AGENTS=(
-    "claude-code"
-    "codex"
-    "antigravity-cli"
-)
+SKILL_SOURCES=()
+SKILL_AGENTS=()
+
+parse_config_file() {
+    local file="$1"
+    [[ ! -f "$file" ]] && return 0
+    local current_section=""
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%%[[:space:]]#*}"
+        line="${line%"${line##*[![:space:]]}"}"
+        [[ -z "$line" || "$line" == \#* ]] && continue
+        if [[ "$line" =~ ^\[(.*)\]$ ]]; then
+            current_section="${BASH_REMATCH[1]}"
+            continue
+        fi
+        [[ "$current_section" == "sources" ]] && SKILL_SOURCES+=("$line")
+        [[ "$current_section" == "agents" ]] && SKILL_AGENTS+=("$line")
+    done < "$file"
+}
+
+load_skm_config() {
+    local primary_file=""
+    if [[ -f "${CONFIG_DIR}/config" ]]; then
+        primary_file="${CONFIG_DIR}/config"
+    elif [[ -f "${REPO_CONFIG_DIR}/config" ]]; then
+        primary_file="${REPO_CONFIG_DIR}/config"
+    fi
+
+    local local_file=""
+    if [[ -f "${CONFIG_DIR}/config.local" ]]; then
+        local_file="${CONFIG_DIR}/config.local"
+    elif [[ -f "${REPO_CONFIG_DIR}/config.local" ]]; then
+        local_file="${REPO_CONFIG_DIR}/config.local"
+    fi
+
+    [[ -n "$primary_file" ]] && parse_config_file "$primary_file"
+    [[ -n "$local_file" ]] && parse_config_file "$local_file"
+
+    if [[ ${#SKILL_AGENTS[@]} -eq 0 ]]; then
+        SKILL_AGENTS=("claude-code" "codex" "antigravity-cli")
+    fi
+}
 
 usage() {
     cat <<'EOF'
@@ -38,8 +72,14 @@ require_command() {
 }
 
 sync_remote_skills() {
-    local skill_source
+    load_skm_config
 
+    if [[ ${#SKILL_SOURCES[@]} -eq 0 ]]; then
+        printf 'No skills configured in %s or %s.\n' "$CONFIG_DIR" "$REPO_CONFIG_DIR"
+        return 0
+    fi
+
+    local skill_source
     for skill_source in "${SKILL_SOURCES[@]}"; do
         skills add "$skill_source" \
             --global \

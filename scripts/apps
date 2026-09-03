@@ -2,40 +2,15 @@
 
 set -euo pipefail
 
-mac_casks=(
-    "1password"
-    "brave-browser"
-    "clop"
-    "copilot-money"
-    "ghostty"
-    "google-chrome"
-    "iina"
-    "istat-menus"
-    "keka"
-    "netnewswire"
-    "raycast"
-    "sublime-text"
-    "telegram"
-    "visual-studio-code"
-    "zotero"
-)
-
-mac_mases=(
-    "Amphetamine:937984704"
-    "Infuse:1136220934"
-    "Microsoft Outlook:985367838"
-    "Keynote Creator Studio:361285480"
-    "Numbers Creator Studio:361304891"
-    "Pages Creator Studio:361309726"
-)
-
 ###############################################################################
-# Functions                                                                   #
+# Configuration                                                               #
 ###############################################################################
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils.sh"
 
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/apps"
+REPO_CONFIG_DIR="${SCRIPT_DIR}/../home/dot_config/apps"
 APP_DIR="$HOME/Applications"
 CASK_DIR="/tmp/casks"
 PRIVATE_APPS_SCRIPT="${SCRIPT_DIR}/apps-private"
@@ -44,6 +19,51 @@ CHECK_OUTDATED=false
 UPDATE_APPS=false
 INSTALL_APPS=false
 DRY_RUN=true
+
+mac_casks=()
+mac_mases=()
+
+parse_config_file() {
+    local file="$1"
+    [[ ! -f "$file" ]] && return 0
+    local current_section=""
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%%[[:space:]]#*}"
+        line="${line%"${line##*[![:space:]]}"}"
+        [[ -z "$line" || "$line" == \#* ]] && continue
+        if [[ "$line" =~ ^\[(.*)\]$ ]]; then
+            current_section="${BASH_REMATCH[1]}"
+            continue
+        fi
+        [[ "$current_section" == "casks" ]] && mac_casks+=("$line")
+        [[ "$current_section" == "mas" ]] && mac_mases+=("$line")
+    done < "$file"
+}
+
+load_apps_config() {
+    local primary_file=""
+    if [[ -f "${CONFIG_DIR}/config" ]]; then
+        primary_file="${CONFIG_DIR}/config"
+    elif [[ -f "${REPO_CONFIG_DIR}/config" ]]; then
+        primary_file="${REPO_CONFIG_DIR}/config"
+    fi
+
+    local local_file=""
+    if [[ -f "${CONFIG_DIR}/config.local" ]]; then
+        local_file="${CONFIG_DIR}/config.local"
+    elif [[ -f "${REPO_CONFIG_DIR}/config.local" ]]; then
+        local_file="${REPO_CONFIG_DIR}/config.local"
+    fi
+
+    [[ -n "$primary_file" ]] && parse_config_file "$primary_file"
+    [[ -n "$local_file" ]] && parse_config_file "$local_file"
+    return 0
+}
+
+###############################################################################
+# Functions                                                                   #
+###############################################################################
 
 get_version_from_dot_app() {
     local app_path="$1"
@@ -241,41 +261,50 @@ manage_cask() {
 }
 
 run_public_apps_script() {
+    load_apps_config
+
     if [[ "$DRY_RUN" == "false" ]]; then
         mkdir -p "$APP_DIR"
+    fi
+
+    if [[ ${#mac_casks[@]} -eq 0 && ${#mac_mases[@]} -eq 0 ]]; then
+        print_msg "No applications configured in ${CONFIG_DIR} or ${REPO_CONFIG_DIR}." "warning"
+        return 0
     fi
 
     if [[ "$CHECK_OUTDATED" == "true" || "$DRY_RUN" == "true" ]]; then
         print_table_header "App:18" "Current:14" "Latest:14" "Link:107"
     fi
 
-    for cask in "${mac_casks[@]}"; do
-        IFS='|' read -r name url remote_version <<<"$(get_app_info_from_brew "$cask")"
-        local app_dir=$(get_app_dir "$name")
-        local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
-        local difference=$(check_versions_difference "$installed_version" "$remote_version")
-        if [[ "$CHECK_OUTDATED" == "true" ]]; then
-            if [[ "$difference" == "update" ]]; then
+    if [[ ${#mac_casks[@]} -gt 0 ]]; then
+        for cask in "${mac_casks[@]}"; do
+            IFS='|' read -r name url remote_version <<<"$(get_app_info_from_brew "$cask")"
+            local app_dir=$(get_app_dir "$name")
+            local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
+            local difference=$(check_versions_difference "$installed_version" "$remote_version")
+            if [[ "$CHECK_OUTDATED" == "true" ]]; then
+                if [[ "$difference" == "update" ]]; then
+                    print_table_row "$name" "$installed_version" "$remote_version" "$url"
+                fi
+                continue
+            fi
+            if [[ "$DRY_RUN" == "true" ]]; then
                 print_table_row "$name" "$installed_version" "$remote_version" "$url"
+                continue
             fi
-            continue
-        fi
-        if [[ "$DRY_RUN" == "true" ]]; then
-            print_table_row "$name" "$installed_version" "$remote_version" "$url"
-            continue
-        fi
-        if [[ "$difference" == "install" ]]; then
-            if [[ "$INSTALL_APPS" == "true" ]]; then
-                manage_cask "$name" "$url"
+            if [[ "$difference" == "install" ]]; then
+                if [[ "$INSTALL_APPS" == "true" ]]; then
+                    manage_cask "$name" "$url"
+                fi
+            elif [[ "$difference" == "update" ]]; then
+                if [[ "$UPDATE_APPS" == "true" ]]; then
+                    manage_cask "$name" "$url"
+                fi
             fi
-        elif [[ "$difference" == "update" ]]; then
-            if [[ "$UPDATE_APPS" == "true" ]]; then
-                manage_cask "$name" "$url"
-            fi
-        fi
-    done
+        done
+    fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ "$DRY_RUN" == "true" && ${#mac_mases[@]} -gt 0 ]]; then
         for item in "${mac_mases[@]}"; do
             if [[ "$item" == *":"* ]]; then
                 mas="${item%%:*}"
