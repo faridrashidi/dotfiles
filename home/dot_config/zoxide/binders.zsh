@@ -20,7 +20,7 @@ function _zoxide_fzf_widget() {
 
     # 4. Handle selection
     if [ -n "$dir" ]; then
-        BUFFER="cd \"$dir\""
+        BUFFER="cd ${(q)dir}"
         zle accept-line
     else
         zle reset-prompt

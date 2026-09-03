@@ -7,6 +7,11 @@ PRIVATE_DOTFILES_DIR="${HOME}/Dropbox/Resources/Mac/Settings/Dotfiles"
 PRIVATE_APPS_SOURCE="${PRIVATE_DOTFILES_DIR}/scripts/apps-private"
 PRIVATE_APPS_TARGET="${SCRIPT_DIR}/apps-private"
 
+# Requires external files
+if [[ -f "$PRIVATE_APPS_SOURCE" && ! -e "$PRIVATE_APPS_TARGET" && ! -L "$PRIVATE_APPS_TARGET" ]]; then
+    ln -s "$PRIVATE_APPS_SOURCE" "$PRIVATE_APPS_TARGET"
+fi
+
 "${SCRIPT_DIR}/apps" --install
 "${SCRIPT_DIR}/systems" --install
 "${SCRIPT_DIR}/skm" --install
@@ -23,10 +28,8 @@ ZSH
 
 dooti apply --dynamic
 
-# Requires external files
-if [[ ! -e "$PRIVATE_APPS_TARGET" && ! -L "$PRIVATE_APPS_TARGET" ]]; then
-    ln -s "$PRIVATE_APPS_SOURCE" "$PRIVATE_APPS_TARGET"
-fi
 install -d -m 0700 "${HOME}/.ssh"
-rsync -a "${PRIVATE_DOTFILES_DIR}/ssh/" "${HOME}/.ssh/"
+if [[ -d "${PRIVATE_DOTFILES_DIR}/ssh" ]]; then
+    rsync -a "${PRIVATE_DOTFILES_DIR}/ssh/" "${HOME}/.ssh/"
+fi
 "${SCRIPT_DIR}/plists" --install

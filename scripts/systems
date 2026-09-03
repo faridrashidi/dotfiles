@@ -234,10 +234,8 @@ execute "defaults write com.apple.HIToolbox.plist AppleEnabledInputSources -arra
 # Disable all service shortcut keys
 execute "defaults write pbs NSServicesStatus -dict"
 
-# Get keyboard vendor and product ID for modifier mapping
-kbid=$(ioreg -n IOHIDKeyboard -r | grep -e VendorID\" -e ProductID | tr -d \
-    "|\"[:blank:]" | cut -d\= -f2 | tr "\n" -)
-execute "defaults -currentHost write -g \"com.apple.keyboard.modifiermapping.${kbid}0\" \
+# Map Caps Lock (0) to Control (2) for default keyboard
+execute "defaults -currentHost write -g \"com.apple.keyboard.modifiermapping.0\" \
 \"<array> \
     <dict> \
       <key>HIDKeyboardModifierMappingSrc</key><integer>0</integer> \
@@ -245,6 +243,23 @@ execute "defaults -currentHost write -g \"com.apple.keyboard.modifiermapping.${k
     </dict> \
   </array> \
 \""
+
+# Also apply modifier mapping to any connected keyboards
+while read -r vendor product; do
+    if [[ -n "$vendor" && -n "$product" ]]; then
+        execute "defaults -currentHost write -g \"com.apple.keyboard.modifiermapping.${vendor}-${product}-0\" \
+\"<array> \
+    <dict> \
+      <key>HIDKeyboardModifierMappingSrc</key><integer>0</integer> \
+      <key>HIDKeyboardModifierMappingDst</key><integer>2</integer> \
+    </dict> \
+  </array> \
+\""
+    fi
+done < <(ioreg -n IOHIDKeyboard -r 2>/dev/null | awk '
+    /VendorID/ { vid=$NF }
+    /ProductID/ { if (vid) { print vid, $NF; vid="" } }
+' || true)
 
 # Enable "Select previous input source" hotkey (Hyperkey + Space)
 execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 60 \
