@@ -20,7 +20,7 @@
 	prune = true # Cleans up deleted branches
 
 [alias]
-	sweep = "!git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D"
+	sweep = "!git fetch --prune && git branch -vv | awk '/: gone]/ && !/^[+*]/ {print $1}' | xargs -r git branch -D"
 
 [rebase]
 	autoStash = true # Stashes dirty worktree before rebase
