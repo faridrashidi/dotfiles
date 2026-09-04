@@ -5,11 +5,14 @@
 ###############################################################################
 
 # Deduplicate path arrays
-typeset -U path fpath manpath
+typeset -U PATH path fpath manpath
 
 # Non-login interactive shells still need XDG defaults for cached init and app loaders.
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 : "${XDG_CACHE_HOME:=$HOME/.cache}"
+
+# Load environment variables and application paths before initializing plugins.
+[[ -f "$ZDOTDIR/.zprofile" ]] && source "$ZDOTDIR/.zprofile"
 
 # Cache a tool's init output; regenerate when the binary (or -w watch file) updates
 # Uses $commands[] (zsh hash table) instead of $(command -v) to avoid subshell forks
