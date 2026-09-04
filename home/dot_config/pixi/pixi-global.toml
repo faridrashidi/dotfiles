@@ -85,6 +85,11 @@ channels = ["conda-forge"]
 dependencies = { gh = "==2.96.0" }
 exposed = { gh = "gh" }
 
+[envs.git]
+channels = ["conda-forge"]
+dependencies = { git = "*" }
+exposed = { git = "git" }
+
 [envs.gcloud]
 channels = ["conda-forge"]
 dependencies = { google-cloud-sdk = "*" }
