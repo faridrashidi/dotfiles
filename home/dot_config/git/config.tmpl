@@ -20,7 +20,17 @@
 	prune = true # Cleans up deleted branches
 
 [alias]
-	sweep = "!git fetch --prune && git branch -vv | awk '/: gone]/ && !/^[+*]/ {print $1}' | xargs -r git branch -D"
+	sweep = "!f() { \
+		case \"$*\" in ''|--delete) ;; *) printf 'Usage: git sweep [--delete]\\n' >&2; return 2 ;; esac; \
+		git fetch --prune || return; \
+		refs=$(git for-each-ref --merged=HEAD --format='%(refname:lstrip=2) %(upstream:track) %(worktreepath)' refs/heads/) || return; \
+		printf '%s\\n' \"$refs\" | while read -r branch track worktree; do \
+			if [ \"$track\" = '[gone]' ] && [ -z \"$worktree\" ]; then \
+				if [ \"$*\" = --delete ]; then git branch -d -- \"$branch\" || return; \
+				else printf '%s\\n' \"$branch\"; fi; \
+			fi; \
+		done; \
+	}; f"
 
 [rebase]
 	autoStash = true # Stashes dirty worktree before rebase

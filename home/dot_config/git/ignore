@@ -60,12 +60,10 @@ env/
 ENV/
 env.bak/
 venv.bak/
-.python-version
 pythonenv*
 __pypackages__/
 .pdm.toml
 .pdm-python
-pdm.lock
 .pixi/*
 !.pixi/config.toml
 
@@ -168,9 +166,6 @@ vendor/
 .Rdata
 .Ruserdata
 .Rproj.user/
-*.Rproj
-.renv/
-renv/
 
 # ===========================
 # Documentation
