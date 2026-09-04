@@ -94,16 +94,17 @@ run() {
     local program=${cmd%% *}
     if ! command -v "$program" >/dev/null 2>&1; then
         print_msg "[$program is not available] $cmd" "error"
-        return
+        return 127
     fi
 
     local output
     if output=$(sh -c "$cmd" 2>&1); then
         print_msg "$cmd" "success"
     else
+        local exit_code=$?
         print_msg "$cmd" "error"
         local -a errors
-        IFS=$'\n' read -r -d '' -a errors <<<"$output"
+        IFS=$'\n' read -r -d '' -a errors <<<"$output" || true
         local n=${#errors[@]}
         local start_idx=0
         [[ "$error_len" != "-1" ]] && start_idx=$((n - error_len)) && [[ $start_idx -lt 0 ]] && start_idx=0
@@ -120,7 +121,8 @@ run() {
         done
         if [[ -n "$log_file" && -f "$log_file" ]]; then
             echo "Found log file: $log_file. Printing last $error_len lines:"
-            [[ "$error_len" != "-1" ]] && tail -n "$error_len" "$log_file" || cat "$log_file"
+            [[ "$error_len" != "-1" ]] && tail -n "$error_len" "$log_file" || cat "$log_file" || true
         fi
+        return "$exit_code"
     fi
 }
