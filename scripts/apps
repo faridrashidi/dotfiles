@@ -12,7 +12,6 @@ source "${SCRIPT_DIR}/utils.sh"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/apps"
 REPO_CONFIG_DIR="${SCRIPT_DIR}/../home/dot_config/apps"
 APP_DIR="$HOME/Applications"
-CASK_DIR="/tmp/casks"
 PRIVATE_APPS_SCRIPT="${SCRIPT_DIR}/apps-private"
 
 CHECK_OUTDATED=false
@@ -134,7 +133,8 @@ check_versions_difference() {
 
 get_app_info_from_brew() {
     local cask_name="$1"
-    local json_data=$(curl -s "https://formulae.brew.sh/api/cask/$cask_name.json")
+    local json_data
+    json_data=$(curl -fsSL "https://formulae.brew.sh/api/cask/$cask_name.json") || return 1
     if [[ $(echo "$json_data" | jq -r '.message?') == "Not found" ]]; then
         print_msg "Error: Could not find $cask_name in Homebrew Cask API" "error"
         return 1
@@ -147,7 +147,8 @@ get_app_info_from_brew() {
         return 1
     fi
     local version=$(echo "$json_data" | jq -r '.version' | cut -d',' -f1 | sed 's/\.0$//')
-    echo "$name|$url|$version"
+    local checksum=$(echo "$json_data" | jq -r '.sha256 // empty')
+    echo "$name|$url|$version|$checksum"
 }
 
 get_app_info_from_appstore() {
@@ -170,10 +171,22 @@ get_app_info_from_appstore() {
 download_dmg_or_zip_from_url() {
     local url="$1"
     local dest_dir="$2"
-    mkdir -p "$dest_dir"
-    if ! curl -s -L -o "$dest_dir/$(basename "$url")" "$url"; then
+    local checksum="$3"
+    local archive="$dest_dir/$(basename "$url")"
+    mkdir -p "$dest_dir" || return 1
+    if ! curl -fsL -o "$archive" "$url"; then
+        rm -f "$archive"
         print_msg "Error: Failed to download $url" "error"
         return 1
+    fi
+    if [[ "$checksum" != "no_check" ]]; then
+        local actual
+        actual=$(shasum -a 256 "$archive") || return 1
+        if [[ ! "$checksum" =~ ^[[:xdigit:]]{64}$ || "${actual%% *}" != "$checksum" ]]; then
+            rm -f "$archive"
+            print_msg "Error: Checksum mismatch for $url" "error"
+            return 1
+        fi
     fi
 }
 
@@ -196,7 +209,7 @@ extract_dot_app_from_dmg_or_zip() {
             print_msg "Error: No .app found in $dmg_or_zip" "error"
             return 1
         fi
-        mv -f "$app_file" "$dest_dir"
+        mv -f "$app_file" "$dest_dir" || return 1
         rm -rf "$dest_dir/tmp"
     elif [[ "$file_type" == *"compressed"* ]]; then
         mkdir -p "$dest_dir/tmp"
@@ -213,9 +226,11 @@ extract_dot_app_from_dmg_or_zip() {
             print_msg "Error: No .app found in $dmg_or_zip" "error"
             return 1
         fi
-        cp -R "$app_file" "$dest_dir"
-        hdiutil detach "$dest_dir/tmp" -quiet
+        local copy_status=0
+        cp -R "$app_file" "$dest_dir" || copy_status=$?
+        hdiutil detach "$dest_dir/tmp" -quiet || return 1
         rm -rf "$dest_dir/tmp"
+        [[ "$copy_status" == 0 ]] || return "$copy_status"
     else
         print_msg "Error: Unsupported format $dmg_or_zip" "error"
         return 1
@@ -226,39 +241,89 @@ get_app_dir() {
     [[ "$1" == "1Password" ]] && echo "/Applications" || echo "$APP_DIR"
 }
 
-install_or_update_downloaded_app() {
+install_or_update_downloaded_app() (
     local name="$1"
     local downloaded_dir="$2"
     local app_dir=$(get_app_dir "$name")
+    local target="$app_dir/$name.app"
+    local plist="$downloaded_dir/$name.app/Contents/Info.plist"
+    local executable
+    if ! plutil -lint "$plist" >/dev/null 2>&1 ||
+        ! executable=$(/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "$plist" 2>/dev/null) ||
+        [[ -z "$executable" || ! -f "$downloaded_dir/$name.app/Contents/MacOS/$executable" ||
+            ! -x "$downloaded_dir/$name.app/Contents/MacOS/$executable" ]]; then
+        print_msg "Error: Invalid app bundle for $name" "error"
+        return 1
+    fi
     local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
     local downloaded_version=$(get_version_from_dot_app "$downloaded_dir/$name.app")
+    if [[ "$downloaded_version" == "unknown" ]]; then
+        print_msg "Error: Could not determine version for $name" "error"
+        return 1
+    fi
     local difference=$(check_versions_difference "$installed_version" "$downloaded_version")
+
+    if [[ "$difference" == "install" || "$difference" == "update" ]]; then
+        local stage_dir
+        stage_dir=$(mktemp -d "$app_dir/.apps.XXXXXX") || return 1
+        cleanup_app_install() {
+            local result=$?
+            local stage_dir="$1" target="$2" name="$3"
+            if [[ -d "$stage_dir/previous.app" && ! -e "$target" ]]; then
+                if ! mv "$stage_dir/previous.app" "$target"; then
+                    print_msg "Error: Could not restore $name; backup kept at $stage_dir/previous.app" "error" >&2
+                    return 1
+                fi
+            fi
+            rm -rf "$stage_dir"
+            return "$result"
+        }
+        local cleanup_command
+        # EXIT can run after Bash has unwound the function's local variables.
+        printf -v cleanup_command 'cleanup_app_install %q %q %q' "$stage_dir" "$target" "$name"
+        trap "$cleanup_command" EXIT
+        trap 'exit 129' HUP
+        trap 'exit 130' INT
+        trap 'exit 143' TERM
+
+        # Stage on the destination filesystem so replacement uses a rename.
+        cp -R "$downloaded_dir/$name.app" "$stage_dir/$name.app" || return 1
+        if [[ "$difference" == "update" ]]; then
+            mv "$target" "$stage_dir/previous.app" || return 1
+        fi
+        mv "$stage_dir/$name.app" "$target" || return 1
+    fi
 
     case "$difference" in
         install)
             print_msg "$name installed (v$downloaded_version)" "success"
-            mv -f "$downloaded_dir/$name.app" "$app_dir"
             ;;
         update)
             print_msg "$name updated (v$installed_version -> v$downloaded_version)" "success"
-            rm -rf "$app_dir/$name.app"
-            mv -f "$downloaded_dir/$name.app" "$app_dir"
             ;;
         *)
             print_msg "$name already up-to-date (v$installed_version)" "default"
             rm -rf "$downloaded_dir/$name.app"
             ;;
     esac
-}
+)
 
-manage_cask() {
+manage_cask() (
     local name="$1"
     local url="$2"
-    local temp_dir="$CASK_DIR/$(echo "$name" | tr -d ' ')"
-    download_dmg_or_zip_from_url "$url" "$temp_dir"
-    extract_dot_app_from_dmg_or_zip "$temp_dir/$(basename "$url")" "$temp_dir"
+    local checksum="$3"
+    local temp_dir
+    temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/cask.XXXXXX") || return 1
+    local cleanup_command
+    printf -v cleanup_command 'rm -rf -- %q' "$temp_dir"
+    trap "$cleanup_command" EXIT
+    trap 'exit 129' HUP
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+    download_dmg_or_zip_from_url "$url" "$temp_dir" "$checksum" || return 1
+    extract_dot_app_from_dmg_or_zip "$temp_dir/$(basename "$url")" "$temp_dir" || return 1
     install_or_update_downloaded_app "$name" "$temp_dir"
-}
+)
 
 run_public_apps_script() {
     load_apps_config
@@ -278,7 +343,9 @@ run_public_apps_script() {
 
     if [[ ${#mac_casks[@]} -gt 0 ]]; then
         for cask in "${mac_casks[@]}"; do
-            IFS='|' read -r name url remote_version <<<"$(get_app_info_from_brew "$cask")"
+            local app_info checksum
+            app_info=$(get_app_info_from_brew "$cask") || return 1
+            IFS='|' read -r name url remote_version checksum <<<"$app_info"
             local app_dir=$(get_app_dir "$name")
             local installed_version=$(get_version_from_dot_app "$app_dir/$name.app")
             local difference=$(check_versions_difference "$installed_version" "$remote_version")
@@ -294,11 +361,11 @@ run_public_apps_script() {
             fi
             if [[ "$difference" == "install" ]]; then
                 if [[ "$INSTALL_APPS" == "true" ]]; then
-                    manage_cask "$name" "$url"
+                    manage_cask "$name" "$url" "$checksum"
                 fi
             elif [[ "$difference" == "update" ]]; then
                 if [[ "$UPDATE_APPS" == "true" ]]; then
-                    manage_cask "$name" "$url"
+                    manage_cask "$name" "$url" "$checksum"
                 fi
             fi
         done
