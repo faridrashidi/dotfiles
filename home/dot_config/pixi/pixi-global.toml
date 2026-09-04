@@ -135,11 +135,6 @@ channels = ["conda-forge"]
 dependencies = { parallel = "*" }
 exposed = { parallel = "parallel" }
 
-[envs.pip]
-channels = ["conda-forge"]
-dependencies = { pip = "*" }
-exposed = { pip = "pip", pip3 = "pip3" }
-
 [envs.pipx]
 channels = ["conda-forge"]
 dependencies = { pipx = "*" }
