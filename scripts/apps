@@ -35,8 +35,10 @@ parse_config_file() {
             current_section="${BASH_REMATCH[1]}"
             continue
         fi
-        [[ "$current_section" == "casks" ]] && mac_casks+=("$line")
-        [[ "$current_section" == "mas" ]] && mac_mases+=("$line")
+        case "$current_section" in
+            casks) mac_casks+=("$line") ;;
+            mas) mac_mases+=("$line") ;;
+        esac
     done < "$file"
 }
 
@@ -371,7 +373,7 @@ run_public_apps_script() {
         done
     fi
 
-    if [[ "$DRY_RUN" == "true" && ${#mac_mases[@]} -gt 0 ]]; then
+    if [[ ( "$DRY_RUN" == "true" || "$CHECK_OUTDATED" == "true" ) && ${#mac_mases[@]} -gt 0 ]]; then
         for item in "${mac_mases[@]}"; do
             if [[ "$item" == *":"* ]]; then
                 mas="${item%%:*}"

@@ -22,8 +22,10 @@ parse_config_file() {
             current_section="${BASH_REMATCH[1]}"
             continue
         fi
-        [[ "$current_section" == "sources" ]] && SKILL_SOURCES+=("$line")
-        [[ "$current_section" == "agents" ]] && SKILL_AGENTS+=("$line")
+        case "$current_section" in
+            sources) SKILL_SOURCES+=("$line") ;;
+            agents) SKILL_AGENTS+=("$line") ;;
+        esac
     done < "$file"
 }
 
