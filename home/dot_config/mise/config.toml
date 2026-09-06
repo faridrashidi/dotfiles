@@ -30,6 +30,7 @@ version_json_path = ".tag_name"
 strip_components = 1
 bin_path = "."
 postinstall = """
+set -eu
 cd "$MISE_TOOL_INSTALL_PATH"
 version="$(sed -n 's/^VERSION="\\([^"]*\\)"$/\\1/p' mole | head -n 1)"
 arch="$(uname -m)"
@@ -41,8 +42,11 @@ for helper in analyze status; do
     target="bin/${helper}-go"
     curl -fsSL "https://github.com/tw93/Mole/releases/download/${tag}/${asset}" -o "$target"
     expected="$(printf '%s\n' "$checksums" | awk -v asset="$asset" '$2 == asset { print $1; exit }')"
-    actual="$(shasum -a 256 "$target" | awk '{ print $1 }')"
-    [ -n "$expected" ] && [ "$actual" = "$expected" ]
+    actual="$(shasum -a 256 "$target")"
+    if [ -z "$expected" ] || [ "${actual%% *}" != "$expected" ]; then
+        printf 'Error: missing or mismatched SHA-256 checksum for %s\\n' "$asset" >&2
+        exit 1
+    fi
     chmod +x "$target"
 done
 """
