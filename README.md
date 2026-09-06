@@ -47,7 +47,7 @@ default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
 ### Cross-platform CLI tools
 
 - Shell and terminal: [Atuin](https://github.com/atuinsh/atuin) · [btop](https://github.com/aristocratos/btop) · [direnv](https://github.com/direnv/direnv) · [eza](https://github.com/eza-community/eza) · [fd](https://github.com/sharkdp/fd) · [fzf](https://github.com/junegunn/fzf) · [ncdu](https://github.com/conda-forge/ncdu-feedstock)† · [sesh](https://github.com/joshmedeski/sesh) · [Sheldon](https://github.com/rossmacarthur/sheldon) · [Starship](https://github.com/starship/starship) · [Superfile](https://github.com/yorukot/superfile) · [tmux](https://github.com/tmux/tmux) · [zoxide](https://github.com/ajeetdsouza/zoxide)
-- Development: [bat](https://github.com/sharkdp/bat) · [Docker CLI](https://github.com/docker/cli) · [Git](https://github.com/git/git) · [GitHub CLI](https://github.com/cli/cli) · [Google Cloud CLI](https://github.com/conda-forge/google-cloud-sdk-feedstock)† · [lazydocker](https://github.com/jesseduffield/lazydocker) · [lazygit](https://github.com/jesseduffield/lazygit) · [Neovim](https://github.com/neovim/neovim) · [pipx](https://github.com/pypa/pipx) · [ripgrep](https://github.com/BurntSushi/ripgrep) · [uv](https://github.com/astral-sh/uv)
+- Development: [bat](https://github.com/sharkdp/bat) · [Docker CLI](https://github.com/docker/cli) · [Git](https://github.com/git/git) · [GitHub CLI](https://github.com/cli/cli) · [Google Cloud CLI](https://github.com/conda-forge/google-cloud-sdk-feedstock)† · [lazydocker](https://github.com/jesseduffield/lazydocker) · [lazygit](https://github.com/jesseduffield/lazygit) · [Neovim](https://github.com/neovim/neovim) · [ripgrep](https://github.com/BurntSushi/ripgrep) · [uv](https://github.com/astral-sh/uv)
 - Utilities: [FFmpeg](https://github.com/FFmpeg/FFmpeg) · [jq](https://github.com/jqlang/jq) · [MuPDF](https://github.com/ArtifexSoftware/mupdf) · [GNU Parallel](https://github.com/martinda/gnu-parallel)† · [rsync](https://github.com/WayneD/rsync) · [tealdeer](https://github.com/dbrgn/tealdeer)
 
 ### macOS-only Pixi tools
@@ -58,6 +58,10 @@ default is yes; enabling it updates `/private/etc/pam.d/sudo_local`.
 
 - Cross-platform: [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) · [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [skills](https://github.com/vercel-labs/skills) · [Wrangler](https://github.com/cloudflare/workers-sdk) · [llmfit](https://github.com/AlexsJones/llmfit) · [gitoverit](https://github.com/mevanlc/gitoverit)
 - macOS only: [1Password CLI](https://github.com/1Password/install-cli-action)† · [dooti](https://github.com/lkubb/dooti) · [Things CLI](https://github.com/ryanlewis/things-cli) · [Mole](https://github.com/tw93/Mole)
+
+Python CLIs (`gitoverit` and `dooti`) are managed by mise's
+[`pipx:` backend](https://mise.jdx.dev/dev-tools/backends/pipx.html), which uses
+the Pixi-provided `uv`. A separate `pipx` installation is not required.
 
 ### Fonts
 
