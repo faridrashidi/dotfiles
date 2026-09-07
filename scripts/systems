@@ -544,6 +544,9 @@ execute "defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool
 # Disable auto-correct (useful for coding and precision typing)
 execute "defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false"
 
+# Disable checking spelling while typing
+execute "defaults write -g NSAllowContinuousSpellChecking -bool false"
+
 ###############################################################################
 # Display and Screensaver                                                     #
 ###############################################################################
