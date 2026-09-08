@@ -28,6 +28,17 @@ fi
         "${HOME}/Desktop" \
         "${HOME}/Dropbox/Archive" \
         "${HOME}/Dropbox/Resources"
+
+if [[ "$(uname)" == "Darwin" ]] &&
+    [[ "$(chezmoi execute-template '{{ get . "touch_id_sudo" }}')" == "true" ]]; then
+    if [[ -t 0 && -t 1 ]]; then
+        printf 'Enabling Touch ID for sudo\n'
+        "${SCRIPT_DIR}/enable-touch-id-sudo"
+    else
+        printf 'Touch ID setup deferred; run %s/enable-touch-id-sudo interactively\n' "$SCRIPT_DIR"
+    fi
+fi
+
 "${SCRIPT_DIR}/skm" --install
 
 zsh <<'ZSH'

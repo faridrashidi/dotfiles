@@ -88,8 +88,8 @@ if [[ -n "$HPC_SELECTION" ]]; then
     CHEZMOI_INIT_ARGS+=(--promptBool "Use HPC settings?=$HPC_SELECTION")
 fi
 if [[ ! -t 0 || ! -t 1 ]]; then
-    print_step "No TTY detected, using default answers for first-run chezmoi prompts"
-    CHEZMOI_INIT_ARGS+=(--promptDefaults --no-tty)
+    print_step "No TTY detected, using saved Git identity and defaults for remaining chezmoi prompts"
+    CHEZMOI_INIT_ARGS+=(--promptDefaults --no-tty --promptBool "Enable Touch ID for sudo?=false")
 fi
 "$CHEZMOI_BIN" "${CHEZMOI_INIT_ARGS[@]}"
 

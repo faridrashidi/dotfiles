@@ -1,5 +1,8 @@
-{{- $gitName := promptStringOnce . "git_name" "Git name" "name" -}}
-{{- $gitEmail := promptStringOnce . "git_email" "Git email" "email" -}}
+{{- $gitName := promptStringOnce . "git.name" "Git name" "" -}}
+{{- $gitEmail := promptStringOnce . "git.email" "Git email" "" -}}
+{{- if or (eq (trim $gitName) "") (eq (lower (trim $gitName)) "name") (eq (trim $gitEmail) "") (eq (lower (trim $gitEmail)) "email") -}}
+{{- fail "Git name and email must be set and must not use the placeholders name/email. Run chezmoi init --prompt to set them." -}}
+{{- end -}}
 {{- $touchIDSudo := false -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $touchIDSudo = promptBoolOnce . "touch_id_sudo" "Enable Touch ID for sudo?" true -}}

@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$(uname)" != Darwin ]; then
+    printf 'Error: Touch ID for sudo is only supported on macOS.\n' >&2
+    exit 1
+fi
+
+sudo /bin/sh <<'SH'
+set -eu
+
+target=/private/etc/pam.d/sudo_local
+template=/private/etc/pam.d/sudo_local.template
+
+if grep -Eq '^[[:space:]]*auth[[:space:]]+sufficient[[:space:]]+pam_tid\.so([[:space:]]|$)' "$target" 2>/dev/null; then
+    exit 0
+fi
+
+if [ ! -f "$target" ] && [ ! -f "$template" ]; then
+    printf 'Error: this macOS installation has no sudo_local template.\n' >&2
+    exit 1
+fi
+
+tmp="$(mktemp /private/etc/pam.d/.sudo_local.XXXXXX)"
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+{
+    if [ -f "$target" ]; then
+        cat "$target"
+    else
+        cat "$template"
+    fi
+    # Keep existing rules ahead of the sufficient Touch ID rule.
+    printf '\nauth       sufficient     pam_tid.so\n'
+} > "$tmp"
+
+chown root:wheel "$tmp"
+chmod 0444 "$tmp"
+mv -f "$tmp" "$target"
+SH
