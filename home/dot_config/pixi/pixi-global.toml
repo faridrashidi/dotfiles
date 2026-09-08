@@ -17,17 +17,17 @@ exposed = { R = "R", Rscript = "Rscript" }
 
 [envs.ruby]
 channels = ["conda-forge"]
-dependencies = { ruby = "==3.4.8" }
+dependencies = { ruby = "==4.0.6" }
 exposed = { ruby = "ruby", gem = "gem", bundle = "bundle", bundler = "bundler" }
 
 [envs.rust]
 channels = ["conda-forge"]
-dependencies = { rust = "==1.93.1" }
+dependencies = { rust = "==1.98.1" }
 exposed = { rustc = "rustc", cargo = "cargo", rustdoc = "rustdoc", rustfmt = "rustfmt" }
 
 [envs.go]
 channels = ["conda-forge"]
-dependencies = { go = "==1.26.1" }
+dependencies = { go = "==1.27.1" }
 exposed = { go = "go", gofmt = "gofmt" }
 
 [envs.atuin]
