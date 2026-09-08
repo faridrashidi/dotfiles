@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+set -o noclobber
 
 CPU=8 TIME="0-2:00:00" MEM=50 NAME="helper" DIR=$(pwd)
+FORCE=false
 
 usage() {
     cat <<EOF
@@ -13,7 +15,23 @@ Options:
   --time TIME     Time (default: 0-2:00:00)
   --mem NUM       Memory in GB (default: 50)
   --name NAME     Job name (default: helper)
+  --force         Replace an existing regular job script (symlinks are refused)
 EOF
+}
+
+prepare_output() {
+    local output="$1"
+    if [[ -L "$output" || ( -e "$output" && ! -f "$output" ) ]]; then
+        printf 'Error: refusing to replace a symlink or non-regular file: %s\n' "$output" >&2
+        exit 1
+    fi
+    if [[ -e "$output" ]]; then
+        if [[ "$FORCE" != true ]]; then
+            printf 'Error: %s already exists; use --force to replace it.\n' "$output" >&2
+            exit 1
+        fi
+        rm -f -- "$output"
+    fi
 }
 
 [[ $# -lt 1 ]] && {
@@ -25,6 +43,14 @@ COMMAND=$1
 shift
 
 while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --cpu | --time | --mem | --name)
+            if [[ $# -lt 2 || -z "$2" || "$2" == --* ]]; then
+                printf 'Error: %s requires a value.\n' "$1" >&2
+                exit 1
+            fi
+            ;;
+    esac
     case "$1" in
         --cpu)
             CPU="$2"
@@ -42,6 +68,10 @@ while [[ $# -gt 0 ]]; do
             NAME="$2"
             shift 2
             ;;
+        --force)
+            FORCE=true
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -52,6 +82,7 @@ done
 
 case "$COMMAND" in
     slurm)
+        prepare_output _sbatch.sh
         cat >_sbatch.sh <<EOF
 #!/bin/bash
 
@@ -74,6 +105,7 @@ EOF
         ;;
 
     swarm)
+        prepare_output _swarm.sh
         cat >_swarm.sh <<EOF
 #!/bin/bash
 
@@ -83,7 +115,7 @@ EOF
 #	--time ${TIME} \\
 #	--gres=lscratch:1 \\
 #	--gb-per-process ${MEM} \\
-#	--threads-per-process 1 \\
+#	--threads-per-process ${CPU} \\
 #	--module GATK/4.2.0.0 \\
 #	--bundle 1 --partition norm --processes-per-subjob 1 --noht \\
 #	--sbatch "--mail-type=BEGIN,END,FAIL --job-name=${NAME}"
@@ -94,6 +126,7 @@ EOF
         ;;
 
     pbs)
+        prepare_output _qsub.sh
         cat >_qsub.sh <<EOF
 #!/bin/bash
 
