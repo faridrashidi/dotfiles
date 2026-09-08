@@ -14,23 +14,73 @@ typeset -U PATH path fpath manpath
 # Load environment variables and application paths before initializing plugins.
 [[ -f "$ZDOTDIR/.zprofile" ]] && source "$ZDOTDIR/.zprofile"
 
-# Cache a tool's init output; regenerate when the binary (or -w watch file) updates
-# Uses $commands[] (zsh hash table) instead of $(command -v) to avoid subshell forks
+# Fingerprint file identity, including replacement by an older tool version.
+_cached_eval_file_id() {
+    local file
+    local -A info
+    REPLY=""
+    for file in "$@"; do
+        if zstat -H info -- "$file" 2>/dev/null; then
+            REPLY+="${(q)file}:${info[device]}:${info[inode]}:${info[mode]}:${info[size]}:${info[mtime]}:${info[ctime]};"
+        else
+            REPLY+="${(q)file}:missing;"
+        fi
+    done
+}
+
+# Cache generated code atomically. Pixi launchers retain their own identity when
+# packages change, so resolve their executable once and stat that on cache hits.
 _cached_eval() {
-    local watch=""
-    [[ "$1" == "-w" ]] && {
-        watch=$2
+    local -a watches args
+    while [[ "$1" == "-w" ]]; do
+        watches+=("$2")
         shift 2
-    }
+    done
     local cmd=$1 cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/${1}.zsh"
     shift
-    if [[ ! -f "$cache" || "${commands[$cmd]}" -nt "$cache" ]] ||
-        [[ -n "$watch" && "$watch" -nt "$cache" ]]; then
-        mkdir -p "${cache:h}"
-        command "$cmd" "$@" >"$cache" || {
-            rm -f "$cache"
+    args=("${(@q)@}")
+    local executable=${commands[$cmd]} REPLY
+    [[ -n "$executable" ]] || return 1
+    zmodload -F zsh/stat b:zstat || return 1
+    local launcher="${executable:h}/trampoline_configuration/${executable:t}.json"
+    local magic old_launcher old_executable old_signature
+    if [[ -r "$cache" ]]; then
+        {
+            IFS= read -r magic
+            IFS= read -r old_launcher
+            IFS= read -r old_executable
+            IFS= read -r old_signature
+        } <"$cache"
+    fi
+    _cached_eval_file_id "$executable" "$launcher"
+    local launcher_id=$REPLY
+    if [[ -f "$launcher" ]]; then
+        if [[ "$magic" == '# cached-eval-v1' && "$old_launcher" == "# $launcher_id" ]]; then
+            executable=${(Q)${old_executable#\# }}
+        else
+            executable=$(command jq -er '.exe' "$launcher") || return 1
+        fi
+    fi
+    _cached_eval_file_id "$executable"
+    local identity="$launcher_id$REPLY ${(j: :)args}"
+    # fzf's history binding is conditional on whether Atuin owns Ctrl-R.
+    [[ "$cmd" == fzf ]] && identity+=" ctrl-r:${+FZF_CTRL_R_COMMAND}:${(q)FZF_CTRL_R_COMMAND}"
+    _cached_eval_file_id "${watches[@]}"
+    local signature="$identity $REPLY"
+    if [[ "$magic" != '# cached-eval-v1' || "$old_signature" != "# $signature" ]]; then
+        local generated temporary
+        generated=$(command "$cmd" "$@") || return 1
+        # Sheldon may create/update its lock file while generating source.
+        _cached_eval_file_id "${watches[@]}"
+        signature="$identity $REPLY"
+        mkdir -p "${cache:h}" || return 1
+        temporary=$(mktemp "${cache}.XXXXXX") || return 1
+        if ! print -rl -- '# cached-eval-v1' "# $launcher_id" "# ${(q)executable}" \
+            "# $signature" "$generated" >"$temporary" ||
+            ! mv -f "$temporary" "$cache"; then
+            rm -f "$temporary"
             return 1
-        }
+        fi
     fi
     source "$cache"
 }
@@ -39,10 +89,11 @@ _cached_eval() {
 # 2. Plugin & Completion Management                                           #
 ###############################################################################
 
-# Initialize plugins and completions via sheldon; regenerate when plugins.toml changes
+# Initialize plugins and completions; watch both configured input and resolved lock.
 if (($+commands[sheldon])); then
-    local _sc="${XDG_CONFIG_HOME:-$HOME/.config}/sheldon"
-    _cached_eval -w "$_sc/plugins.toml" sheldon source
+    local _sc="${SHELDON_CONFIG_FILE:-${SHELDON_CONFIG_DIR:-$XDG_CONFIG_HOME/sheldon}/plugins.toml}"
+    local _sd="${SHELDON_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/sheldon}"
+    _cached_eval -w "$_sc" -w "$_sd/plugins.lock" sheldon source
 fi
 
 # Fallback: sheldon absent, or `sheldon source` failed — completions must still work
