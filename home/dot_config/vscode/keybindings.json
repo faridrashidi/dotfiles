@@ -63,10 +63,10 @@
   // ----------------------------------------------------------------------
   // # Editor Actions
   // ----------------------------------------------------------------------
-  // Paste and Indent by default
+  // Native paste
   {
     "key": "cmd+v",
-    "command": "pasteAndIndent.action",
+    "command": "editor.action.clipboardPasteAction",
     "when": "editorTextFocus && !editorReadonly"
   },
   {
@@ -243,12 +243,7 @@
   },
   {
     "key": "f5",
-    "command": "sortLines.sortLines",
-    "when": "editorTextFocus"
-  },
-  {
-    "key": "f9",
-    "command": "-sortLines.sortLines",
-    "when": "editorTextFocus"
+    "command": "editor.action.sortLinesAscending",
+    "when": "editorTextFocus && editorHasSelection"
   }
 ]

@@ -5,16 +5,12 @@ astro-build.astro-vscode
 charliermarsh.ruff
 christian-kohler.path-intellisense
 esbenp.prettier-vscode
-formulahendry.auto-close-tag
-formulahendry.auto-rename-tag
 formulahendry.code-runner
 github.vscode-github-actions
 github.vscode-pull-request-github
 google.google-antigravity
 gruntfuggly.todo-tree
 jdinhlife.gruvbox
-kevinrose.vsc-python-indent
-maciejdems.add-to-gitignore
 marimo-team.vscode-marimo
 mhutchie.git-graph
 mkhl.shfmt
@@ -29,9 +25,7 @@ openai.chatgpt
 pkief.material-icon-theme
 redhat.vscode-yaml
 ritwickdey.liveserver
-rubymaniac.vscode-paste-and-indent
 tombi-toml.tombi
 tomoki1207.pdf
-tyriar.sort-lines
 usernamehw.errorlens
 vue.volar
