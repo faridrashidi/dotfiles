@@ -154,21 +154,21 @@ function archive() {
         return 1
     fi
 
-    local name="${folder:t:r}"
+    local name="${${folder%/}:t}"
     case "$format" in
         zip)
             if ! command -v zip &>/dev/null; then
                 echo "Error: zip not found."
                 return 1
             fi
-            zip -r "$name" "$folder"
+            zip -r "$name.zip" "$folder"
             ;;
         tar)
             if ! command -v tar &>/dev/null; then
                 echo "Error: tar not found."
                 return 1
             fi
-            tar -cvf "$name" "$folder"
+            tar -cvf "$name.tar" "$folder"
             ;;
         targz)
             if ! command -v tar &>/dev/null; then
