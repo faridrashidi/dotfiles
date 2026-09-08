@@ -10,6 +10,19 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 - Whenever the user asks you to commit changes, use the global `gitmoji` skill.
 - Use any available package manager, such as Pixi, uv, or npm, when dependencies or tools are needed. Keep all installations and related files—including dependencies, virtual environments, binaries, runtimes, and caches—inside the current working directory. Never install them globally, system-wide, or elsewhere in the user's home directory.
 
+## Persian writing style
+
+Apply these preferences across all projects when responding in Persian or writing and editing Persian content, including UI text, articles, documentation, and comments:
+
+- Use clear, natural, consistent Persian and match the requested formal or conversational tone.
+- Do not use optional vowel marks, tanwin, tashdid, or decorative kashida. Write the ezafe after final heh as «ه‌ی», such as «صفحه‌ی» and «مجموعه‌ی», instead of «هٔ» or «ۀ».
+- Prefer established spellings without hamza or Arabic-style forms, such as «تایید»، «تاثیر»، «سوال»، «مسوول» and «ویدیو». Preserve meaning and proper names; do not blindly delete letters or replace Arabic-origin vocabulary. Keep Persian letters such as «آ» intact.
+- Use Persian «ی» and «ک» instead of Arabic «ي» and «ك». Use correct half-spaces, such as «می‌شود»، «نمی‌توان»، «مقاله‌ها» and «به‌روزرسانی».
+- Use Persian punctuation («،»، «؛»، «؟») and quotation marks («…»), with consistent spacing and no repeated spaces.
+- Use Persian digits («۰۱۲۳۴۵۶۷۸۹») in human-readable Persian text.
+- Display human-readable Persian dates in the Solar Hijri (Jalali) calendar with Persian digits. Convert dates accurately, preserve the intended date and timezone, and clarify missing date components when they cannot be inferred reliably.
+- Preserve technical formats: do not alter code, identifiers, URLs or slugs, file paths, commands, API values, machine-readable numbers or dates (including ISO 8601 dates in metadata), or exact quotations and names when fidelity matters. Apply these preferences to requested content changes without rewriting unrelated existing text.
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
