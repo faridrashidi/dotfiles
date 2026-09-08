@@ -12,7 +12,6 @@ google.google-antigravity
 gruntfuggly.todo-tree
 jdinhlife.gruvbox
 marimo-team.vscode-marimo
-mhutchie.git-graph
 mkhl.shfmt
 ms-python.debugpy
 ms-python.python
