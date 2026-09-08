@@ -42,10 +42,16 @@ ZSH
 
 dooti apply --dynamic
 
+if [[ -L "${HOME}/.ssh" ]]; then
+    printf 'Error: refusing to modify a symlinked ~/.ssh directory.\n' >&2
+    exit 1
+fi
 install -d -m 0700 "${HOME}/.ssh"
 if [[ -d "${PRIVATE_DOTFILES_DIR}/ssh" ]]; then
-    rsync -a "${PRIVATE_DOTFILES_DIR}/ssh/" "${HOME}/.ssh/"
+    rsync -a --no-specials --no-devices --chmod=D700,F600 "${PRIVATE_DOTFILES_DIR}/ssh/" "${HOME}/.ssh/"
 fi
+find -P "${HOME}/.ssh" -type d -exec chmod 0700 {} +
+find -P "${HOME}/.ssh" -type f -exec chmod 0600 {} +
 if [[ -d "${PRIVATE_DOTFILES_DIR}/plists" ]]; then
     "${SCRIPT_DIR}/plists" --install --dir "${PRIVATE_DOTFILES_DIR}/plists"
 fi
