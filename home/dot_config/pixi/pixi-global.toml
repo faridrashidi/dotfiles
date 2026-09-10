@@ -180,6 +180,11 @@ channels = ["conda-forge"]
 dependencies = { uv = "*" }
 exposed = { uv = "uv", uvx = "uvx" }
 
+[envs.vd]
+channels = ["conda-forge"]
+dependencies = { visidata = "*" }
+exposed = { vd = "vd" }
+
 [envs.zoxide]
 channels = ["conda-forge"]
 dependencies = { zoxide = "*" }
