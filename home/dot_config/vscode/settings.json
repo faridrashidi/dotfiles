@@ -234,8 +234,10 @@
   "chat.fontSize": 16,
   "chat.tools.global.autoApprove": true,
   "chat.tools.terminal.enableAutoApprove": true,
-  "chat.titleBar.openInAgentsWindow.enabled": false,
+  "chat.titleBar.openInAgentsWindow.enabled": true,
   "chat.viewSessions.orientation": "stacked",
+  "chat.agentHost.codexAgent.enabled": true,
+  "chat.agentHost.allowSignedOutWhenUsable": true,
 
   // GitHub Copilot
   "github.copilot.enable": { "*": true },
