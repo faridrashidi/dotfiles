@@ -214,9 +214,6 @@ execute "sysadminctl -screenLock immediate -password -"
 # General System Settings                                                     #
 ###############################################################################
 
-# Shorten Notification Center banner display time to 2 seconds
-execute "defaults write com.apple.notificationcenterui bannerTime 2"
-
 # Set double-click action to minimize windows instead of maximizing
 execute "defaults write NSGlobalDomain AppleActionOnDoubleClick -string \"Minimize\""
 
@@ -230,19 +227,13 @@ execute "defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false"
 execute "defaults write com.apple.dock mru-spaces -bool true"
 
 # Disable user activity advertising and receiving for privacy
-execute "defaults write ~/Library/Preferences/ByHost/com.apple.coreservices.useractivityd \
+execute "defaults -currentHost write com.apple.coreservices.useractivityd \
 ActivityAdvertisingAllowed -bool false"
-execute "defaults write ~/Library/Preferences/ByHost/com.apple.coreservices.useractivityd \
+execute "defaults -currentHost write com.apple.coreservices.useractivityd \
 ActivityReceivingAllowed -bool false"
 
 # Always prompt for confirmation when closing windows with changes
 execute "defaults write -g NSCloseAlwaysConfirmsChanges -bool true"
-
-# Disable the first-run quarantine dialog for downloaded apps
-execute "defaults write com.apple.LaunchServices LSQuarantine -bool false"
-
-# Disable the crash reporter dialog
-execute "defaults write com.apple.CrashReporter DialogType -string \"none\""
 
 # Enable network time synchronization using Apple's time server
 [[ -z "${CI:-}" ]] && execute "sudo systemsetup -setusingnetworktime on"
@@ -261,9 +252,6 @@ execute "defaults write NSGlobalDomain AppleInterfaceStyleSwitchesAutomatically 
 execute "defaults write NSGlobalDomain AppleHighlightColor -string \
 \"0.764700 0.976500 0.568600\""
 
-# Enable font smoothing for better text rendering
-execute "defaults write -g CGFontRenderingFontSmoothingDisabled -bool false"
-
 # Enable audio feedback when changing volume
 execute "defaults write -globalDomain \"com.apple.sound.beep.feedback\" -int 1"
 
@@ -279,13 +267,12 @@ execute "defaults write -g NSUserKeyEquivalents -dict-add \"Fill\" \"@^\\U2191\"
 # Disable clicking the desktop to show it (Mission Control behavior)
 execute "defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false"
 
-# Remove all menu bar items
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Battery\" -bool false"
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible WiFi\" -bool false"
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Bluetooth\" -bool false"
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible AirDrop\" -bool false"
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Clock\" -bool false"
-execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Sound\" -bool false"
+# Hide Control Center items from menu bar
+execute "defaults -currentHost write com.apple.controlcenter Battery -int 8"
+execute "defaults -currentHost write com.apple.controlcenter WiFi -int 8"
+execute "defaults -currentHost write com.apple.controlcenter Bluetooth -int 8"
+execute "defaults -currentHost write com.apple.controlcenter AirDrop -int 8"
+execute "defaults -currentHost write com.apple.controlcenter Sound -int 8"
 
 ###############################################################################
 # Input Devices (Keyboard and Trackpad)                                       #
@@ -726,30 +713,7 @@ execute "defaults write com.apple.finder FXPreferredViewStyle -string \"clmv\""
 execute "defaults write com.apple.finder FXInfoPanesExpanded -dict \
 General -bool true MetaData -bool true OpenWith -bool true Privileges -bool true"
 
-# Customize Desktop view settings with a single defaults command
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:iconSize 36\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:gridSpacing 45\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:textSize 13\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:labelOnBottom false\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:showItemInfo true\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:showIconPreview true\" \
-~/Library/Preferences/com.apple.finder.plist"
-execute "/usr/libexec/PlistBuddy -c \
-\"Set :DesktopViewSettings:IconViewSettings:arrangeBy grid\" \
-~/Library/Preferences/com.apple.finder.plist"
-
-# Customize Column view settings with a single defaults command
+# Customize Desktop and Column view settings
 function set_plist_entry() {
     local key="$1"
     local type="$2"
@@ -768,6 +732,17 @@ function set_plist_entry() {
         fi
     fi
 }
+
+set_plist_entry "DesktopViewSettings" "dict"
+set_plist_entry "DesktopViewSettings:IconViewSettings" "dict"
+set_plist_entry "DesktopViewSettings:IconViewSettings:iconSize" "integer" "36"
+set_plist_entry "DesktopViewSettings:IconViewSettings:gridSpacing" "integer" "45"
+set_plist_entry "DesktopViewSettings:IconViewSettings:textSize" "integer" "13"
+set_plist_entry "DesktopViewSettings:IconViewSettings:labelOnBottom" "bool" "false"
+set_plist_entry "DesktopViewSettings:IconViewSettings:showItemInfo" "bool" "true"
+set_plist_entry "DesktopViewSettings:IconViewSettings:showIconPreview" "bool" "true"
+set_plist_entry "DesktopViewSettings:IconViewSettings:arrangeBy" "string" "grid"
+
 set_plist_entry "StandardViewOptions" "dict"
 set_plist_entry "StandardViewOptions:ColumnViewOptions" "dict"
 set_plist_entry "StandardViewOptions:ColumnViewOptions:ArrangeBy" "string" "dnam"
@@ -855,9 +830,6 @@ execute "defaults write com.apple.dock wvous-br-modifier -int 0"
 # Speed up Dock auto-hide animation
 execute "defaults write com.apple.dock autohide-time-modifier -float 0.2"
 
-# Show hidden app icons in the Dock as translucent
-execute "defaults write com.apple.dock showhidden -bool true"
-
 # Lock Dock size to prevent resizing
 execute "defaults write com.apple.dock size-immutable -bool true"
 
@@ -921,32 +893,20 @@ execute "defaults write com.apple.spotlight orderedItems -array \
 # Ensure Spotlight indexing is enabled for the main volume
 execute "sudo mdutil -i on /"
 
-# Restart metadata service, Finder and clear preference cache to apply changes
+# Restart metadata service, Finder, Dock, SystemUIServer and clear preference cache
 if [[ -z "${CI:-}" ]]; then
     execute "killall cfprefsd"
     execute "killall Finder"
+    execute "killall Dock"
+    execute "killall SystemUIServer"
 fi
 
 ###############################################################################
 # Manual Configuration Prompts                                                #
 ###############################################################################
 
-# Function to print colored bullet messages
-message() {
-    local -r bullet_color="$1" message="$2"
-    local -rA colors=([black]=0 [red]=1 [green]=2 [yellow]=3 [blue]=4 [magenta]=5 [cyan]=6 [white]=7)
-    if [[ -n "${colors[$bullet_color]+x}" ]]; then
-        echo -e "$(tput setaf "${colors[$bullet_color]}")•$(tput sgr0) ${message}"
-    else
-        echo "${FUNCNAME[0]}: '${bullet_color}' is not a valid color."
-        return 1
-    fi
-}
-
 # Function to prompt user to open an app with arguments
 ask_gui() {
-    # message 'yellow' "${1}"
-    # open -Wa "${2}" --args "${@:3}"
     print_msg "$1" "warning"
 }
 
