@@ -1,5 +1,6 @@
 --smart-case
 --hidden
+--glob=!.git
 --colors=match:style:nobold
 --colors=path:style:nobold
 
