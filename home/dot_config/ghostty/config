@@ -28,7 +28,7 @@ notify-on-command-finish-action = no-bell,notify
 notify-on-command-finish-after = 30s
 
 # Shell Integration & Behavior
-shell-integration-features = no-cursor
+shell-integration-features = no-cursor,ssh-terminfo,ssh-env
 clipboard-trim-trailing-spaces = true
 copy-on-select = clipboard
 
