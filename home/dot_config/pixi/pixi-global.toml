@@ -130,6 +130,11 @@ channels = ["conda-forge"]
 dependencies = { nvim = "*" }
 exposed = { nvim = "nvim" }
 
+[envs.ouch]
+channels = ["conda-forge"]
+dependencies = { ouch = "*" }
+exposed = { ouch = "ouch" }
+
 [envs.parallel]
 channels = ["conda-forge"]
 dependencies = { parallel = "*" }
