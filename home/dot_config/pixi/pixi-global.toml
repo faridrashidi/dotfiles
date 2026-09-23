@@ -60,6 +60,11 @@ channels = ["conda-forge"]
 dependencies = { docker-cli = "==29.6.2" }
 exposed = { docker = "docker" }
 
+[envs.dust]
+channels = ["conda-forge"]
+dependencies = { dust = "*" }
+exposed = { dust = "dust" }
+
 [envs.eza]
 channels = ["conda-forge"]
 dependencies = { eza = "*" }
