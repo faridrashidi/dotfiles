@@ -35,7 +35,7 @@ customCommands:
         title: "Choose a Gitmoji"
         command: "gitmoji -l"
         filter: "^(?P<emoji>.*?) - (?P<code>:.*?:) - (?P<description>.*)$"
-        valueFormat: "{{ .code }}"
+        valueFormat: "{{ .emoji }}"
         labelFormat: "{{ .emoji }} {{ .description }}"
       - type: "input"
         key: "message"
