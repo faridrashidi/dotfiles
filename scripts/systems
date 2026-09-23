@@ -26,7 +26,6 @@ Options:
   --languages <lang...>             Set preferred system languages (e.g. en fa)
   --input-sources <source...>       Set enabled keyboard input sources (e.g. "U.S." "Persian-ISIRI 2901")
   --new-window-target-path <path>   Set default folder for new Finder windows
-  --browser <name|bundle_id>        Set default HTTP/HTTPS browser (e.g. brave, chrome, safari)
   --favorites-paths <paths...>      Set Finder Favorites to specified folder paths
   --help, -h                        Display this help message
 EOF
@@ -42,7 +41,6 @@ LOCK_MESSAGE=""
 LANGUAGES=()
 INPUT_SOURCES=()
 NEW_WINDOW_TARGET_PATH=""
-DEFAULT_BROWSER=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -65,7 +63,7 @@ while [[ $# -gt 0 ]]; do
         --languages)
             shift
             while [[ $# -gt 0 && "$1" != -* ]]; do
-                IFS=',' read -ra split_langs <<< "$1"
+                IFS=',' read -ra split_langs <<<"$1"
                 for l in "${split_langs[@]}"; do
                     l="${l#"${l%%[![:space:]]*}"}"
                     l="${l%"${l##*[![:space:]]}"}"
@@ -75,7 +73,7 @@ while [[ $# -gt 0 ]]; do
             done
             ;;
         --languages=*)
-            IFS=',' read -ra split_langs <<< "${1#*=}"
+            IFS=',' read -ra split_langs <<<"${1#*=}"
             for l in "${split_langs[@]}"; do
                 l="${l#"${l%%[![:space:]]*}"}"
                 l="${l%"${l##*[![:space:]]}"}"
@@ -86,7 +84,7 @@ while [[ $# -gt 0 ]]; do
         --input-sources)
             shift
             while [[ $# -gt 0 && "$1" != -* ]]; do
-                IFS=',' read -ra split_sources <<< "$1"
+                IFS=',' read -ra split_sources <<<"$1"
                 for s in "${split_sources[@]}"; do
                     s="${s#"${s%%[![:space:]]*}"}"
                     s="${s%"${s##*[![:space:]]}"}"
@@ -96,7 +94,7 @@ while [[ $# -gt 0 ]]; do
             done
             ;;
         --input-sources=*)
-            IFS=',' read -ra split_sources <<< "${1#*=}"
+            IFS=',' read -ra split_sources <<<"${1#*=}"
             for s in "${split_sources[@]}"; do
                 s="${s#"${s%%[![:space:]]*}"}"
                 s="${s%"${s##*[![:space:]]}"}"
@@ -116,22 +114,10 @@ while [[ $# -gt 0 ]]; do
             NEW_WINDOW_TARGET_PATH="${1#*=}"
             shift
             ;;
-        --browser | --default-browser)
-            if [[ $# -lt 2 || "$2" == -* ]]; then
-                print_msg "Option $1 requires a browser name or bundle ID." "error"
-                exit 1
-            fi
-            DEFAULT_BROWSER="$2"
-            shift 2
-            ;;
-        --browser=* | --default-browser=*)
-            DEFAULT_BROWSER="${1#*=}"
-            shift
-            ;;
         --favorites-paths)
             shift
             while [[ $# -gt 0 && "$1" != -* ]]; do
-                IFS=',' read -ra split_paths <<< "$1"
+                IFS=',' read -ra split_paths <<<"$1"
                 for p in "${split_paths[@]}"; do
                     p="${p#"${p%%[![:space:]]*}"}"
                     p="${p%"${p##*[![:space:]]}"}"
@@ -141,7 +127,7 @@ while [[ $# -gt 0 ]]; do
             done
             ;;
         --favorites-paths=*)
-            IFS=',' read -ra split_paths <<< "${1#*=}"
+            IFS=',' read -ra split_paths <<<"${1#*=}"
             for p in "${split_paths[@]}"; do
                 p="${p#"${p%%[![:space:]]*}"}"
                 p="${p%"${p##*[![:space:]]}"}"
@@ -212,11 +198,8 @@ if [[ -n "$LOCK_MESSAGE" ]]; then
 \"$LOCK_MESSAGE\""
 fi
 
-# Disable guest access for Apple File Server
-execute "defaults write com.apple.AppleFileServer guestAccess -bool false"
-
 # Disable SMB guest access for security
-execute "defaults write SystemConfiguration/com.apple.smb.server AllowGuestAccess -bool false"
+execute "sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server AllowGuestAccess -bool false"
 
 # Prevent power button from sleeping the system
 execute "defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool false"
@@ -225,8 +208,7 @@ execute "defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool fals
 execute "defaults write com.apple.loginwindow TALLogoutSavesState 0"
 
 # Require password immediately after screensaver or sleep
-execute "defaults write com.apple.screensaver askForPassword -int 1"
-execute "defaults write com.apple.screensaver askForPasswordDelay -int 0"
+execute "sysadminctl -screenLock immediate -password -"
 
 ###############################################################################
 # General System Settings                                                     #
@@ -294,13 +276,6 @@ execute "defaults write com.apple.WindowManager EnableTiledWindowMargins -bool f
 # Change the "Fill" window tiling shortcut to Command + Control + Up Arrow
 execute "defaults write -g NSUserKeyEquivalents -dict-add \"Fill\" \"@^\\U2191\""
 
-# Set light font smoothing level (1 = light)
-execute "defaults write NSGlobalDomain AppleFontSmoothing -int 1"
-
-# Enable high-resolution display support
-execute "sudo defaults write /Library/Preferences/com.apple.windowserver \
-DisplayResolutionEnabled -bool true"
-
 # Disable clicking the desktop to show it (Mission Control behavior)
 execute "defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false"
 
@@ -315,9 +290,6 @@ execute "defaults write com.apple.controlcenter \"NSStatusItem Visible Sound\" -
 ###############################################################################
 # Input Devices (Keyboard and Trackpad)                                       #
 ###############################################################################
-
-# Dim keyboard backlight when idle
-execute "defaults write com.apple.BezelServices kDim -bool true"
 
 # Disable automatic keyboard brightness adjustment
 execute "sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor \
@@ -561,9 +533,6 @@ execute "defaults write com.apple.screencapture disable-shadow -bool true"
 
 # Hide AirPlay menu bar icon
 execute "defaults write com.apple.airplay showInMenuBarIfPresent -bool false"
-
-# Enable automatic display brightness adjustment
-execute "defaults write com.apple.BezelServices dAuto -bool true"
 
 # Disable automatic display brightness based on ambient light
 execute "sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor \
@@ -922,50 +891,11 @@ ConfigDataInstall -bool true"
 execute "sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate \
 CriticalUpdateInstall -bool true"
 
-# Set default browser via Launch Services if specified
-configure_default_browser() {
-    if [[ -z "$DEFAULT_BROWSER" || -n "${CI:-}" ]]; then
-        return 0
-    fi
-
-    local bundle_id=""
-    case "$DEFAULT_BROWSER" in
-        [Bb]rave* | com.brave.Browser)
-            bundle_id="com.brave.Browser"
-            for app in "$HOME/Applications/Brave Browser.app" "/Applications/Brave Browser.app"; do
-                if [[ -d "$app" ]]; then
-                    execute "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -f \"$app\""
-                    break
-                fi
-            done
-            ;;
-        [Cc]hrome* | com.google.Chrome)
-            bundle_id="com.google.Chrome"
-            ;;
-        [Ff]irefox* | org.mozilla.firefox)
-            bundle_id="org.mozilla.firefox"
-            ;;
-        [Ss]afari* | com.apple.Safari)
-            bundle_id="com.apple.Safari"
-            ;;
-        *)
-            bundle_id="$DEFAULT_BROWSER"
-            ;;
-    esac
-
-    execute "defaults write com.apple.LaunchServices/com.apple.launchservices.secure \
-LSHandlers -array-add '{LSHandlerRoleAll=\"${bundle_id}\";LSHandlerURLScheme=\"http\";}' \
-'{LSHandlerRoleAll=\"${bundle_id}\";LSHandlerURLScheme=\"https\";}'"
-}
-
-configure_default_browser
-unset -f configure_default_browser
-
 ###############################################################################
 # Spotlight                                                                   #
 ###############################################################################
 
-# Disable all Spotlight search categories for minimal indexing
+# Disable Spotlight search result categories
 execute "defaults write com.apple.spotlight orderedItems -array \
 '{enabled = 0; name = APPLICATIONS;}' \
 '{enabled = 0; name = \"MENU_SPOTLIGHT_SUGGESTIONS\";}' \
@@ -990,9 +920,6 @@ execute "defaults write com.apple.spotlight orderedItems -array \
 
 # Ensure Spotlight indexing is enabled for the main volume
 execute "sudo mdutil -i on /"
-
-# Rebuild Spotlight index from scratch
-execute "sudo mdutil -E /"
 
 # Restart metadata service, Finder and clear preference cache to apply changes
 if [[ -z "${CI:-}" ]]; then
@@ -1039,4 +966,6 @@ if [[ -z "${CI:-}" ]]; then
         'x-apple.systempreferences:com.apple.preference.displays'
     ask_system_settings 'Input Sources -> Edit... -> Persian -> keyboard shortcuts -> On keyboard shortcuts' \
         'x-apple.systempreferences:com.apple.preference.keyboard?InputSources'
+    ask_system_settings 'Desktop & Dock -> Default web browser' \
+        'x-apple.systempreferences:com.apple.Desktop-Settings.extension'
 fi
