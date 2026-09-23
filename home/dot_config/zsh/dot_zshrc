@@ -89,6 +89,8 @@ _cached_eval() {
 # 2. Plugin & Completion Management                                           #
 ###############################################################################
 
+fpath=("$PIXI_HOME/completions/zsh" $fpath)
+
 # Initialize plugins and completions; watch both configured input and resolved lock.
 if (($+commands[sheldon])); then
     local _sc="${SHELDON_CONFIG_FILE:-${SHELDON_CONFIG_DIR:-$XDG_CONFIG_HOME/sheldon}/plugins.toml}"
@@ -97,12 +99,12 @@ if (($+commands[sheldon])); then
 fi
 
 # Fallback: sheldon absent, or `sheldon source` failed — completions must still work
-if (( ! $+functions[compdef] )); then
+if ((! $+functions[compdef])); then
     autoload -Uz compinit
     () {
         local dumpfile=${ZDOTDIR:-$HOME}/.zcompdump
-        local stale=( ${~dumpfile}(N.mh+24) )
-        if (( $#stale )); then
+        local stale=(${~dumpfile}(N.mh+24))
+        if (($#stale)); then
             compinit && touch "$dumpfile" # compinit won't refresh an unchanged dump
         else
             compinit -C
