@@ -245,26 +245,6 @@ function backup() {
     echo "Backup completed: $zipfile -> $target"
 }
 
-function dsize() {
-    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: dsize [directory]"
-        echo "  Shows disk usage of immediate children, sorted by size."
-        return 0
-    fi
-
-    local target="${1:-.}"
-    if [[ ! -d "$target" ]]; then
-        echo "Error: Directory '$target' not found."
-        return 1
-    fi
-
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        du -ah -d 1 "$target" | sort -hr
-    else
-        du -ah --max-depth=1 "$target" | sort -hr
-    fi
-}
-
 function finder-sidebar-icon() {
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: finder-sidebar-icon <folder> <sf-symbol>"
