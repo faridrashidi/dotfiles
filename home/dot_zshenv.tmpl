@@ -23,4 +23,8 @@ export PIXI_HOME="$HOME/.pixi"
 export LANG="en_US.UTF-8"
 export COLORTERM=truecolor
 export EDITOR="nvim"
+{{ if eq .chezmoi.os "darwin" -}}
 export VISUAL="code --wait"
+{{ else -}}
+export VISUAL="nvim"
+{{ end -}}
