@@ -16,12 +16,6 @@ dir = "plugins/git"
 use = ["*.plugin.zsh"]
 apply = ["defer"]
 
-[plugins.ohmyzsh-extract]
-github = "ohmyzsh/ohmyzsh"
-dir = "plugins/extract"
-use = ["*.plugin.zsh"]
-apply = ["defer"]
-
 [plugins.ohmyzsh-aliases]
 github = "ohmyzsh/ohmyzsh"
 dir = "plugins/aliases"

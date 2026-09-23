@@ -139,58 +139,6 @@ function ytdl() {
 }
 alias ytdl="noglob ytdl"
 
-function archive() {
-    if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: archive <format> <folder>"
-        echo "Formats: zip, tar, targz, tarbz2"
-        return 1
-    fi
-
-    local format="$1"
-    local folder="$2"
-
-    if [[ ! -d "$folder" ]]; then
-        echo "Error: Directory '$folder' does not exist."
-        return 1
-    fi
-
-    local name="${${folder%/}:t}"
-    case "$format" in
-        zip)
-            if ! command -v zip &>/dev/null; then
-                echo "Error: zip not found."
-                return 1
-            fi
-            zip -r "$name.zip" "$folder"
-            ;;
-        tar)
-            if ! command -v tar &>/dev/null; then
-                echo "Error: tar not found."
-                return 1
-            fi
-            tar -cvf "$name.tar" "$folder"
-            ;;
-        targz)
-            if ! command -v tar &>/dev/null; then
-                echo "Error: tar not found."
-                return 1
-            fi
-            tar -czvf "$name.tar.gz" "$folder"
-            ;;
-        tarbz2)
-            if ! command -v tar &>/dev/null; then
-                echo "Error: tar not found."
-                return 1
-            fi
-            tar -cjvf "$name.tar.bz2" "$folder"
-            ;;
-        *)
-            echo "Error: Unsupported format '$format'."
-            return 1
-            ;;
-    esac
-}
-
 function ffconv() {
     if [[ $# -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: ffconv <output_format> <input_file>"
@@ -345,7 +293,7 @@ function finder-sidebar-icon() {
         return 1
     fi
 
-    if ! osascript -l JavaScript - "$symbol" >/dev/null 2>&1 <<'JXA'; then
+    if ! osascript -l JavaScript - "$symbol" >/dev/null 2>&1 <<'JXA'
 ObjC.import("AppKit");
 
 function run(args) {
@@ -357,6 +305,7 @@ function run(args) {
     if (!image || image.isNil()) throw new Error(`Unknown SF Symbol: ${symbol}`);
 }
 JXA
+    then
         echo "Error: '$symbol' is not an SF Symbol available on this Mac."
         return 1
     fi
@@ -459,7 +408,7 @@ JXA
         return 1
     fi
 
-    if osascript -l JavaScript - "$folder" "$code" <<'JXA'; then
+    if osascript -l JavaScript - "$folder" "$code" <<'JXA'
 ObjC.import("Foundation");
 ObjC.import("CoreServices");
 
@@ -497,6 +446,7 @@ function run(args) {
     throw new Error("Folder is not currently in Finder Favorites.");
 }
 JXA
+    then
         killall Finder
         echo "Finder sidebar icon for '$folder' set to '$symbol'."
     else
