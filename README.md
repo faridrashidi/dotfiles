@@ -53,7 +53,7 @@ yes uses `/data/$USER/.pixi` and enables that configuration. An existing
 
 ### mise-managed tools
 
-- Cross-platform: [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) · [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [skills](https://github.com/vercel-labs/skills) · [Wrangler](https://github.com/cloudflare/workers-sdk) · [llmfit](https://github.com/AlexsJones/llmfit) · [gitoverit](https://github.com/mevanlc/gitoverit)
+- Cross-platform: [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) · [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [gitmoji-cli](https://github.com/carloscuesta/gitmoji-cli) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [skills](https://github.com/vercel-labs/skills) · [Wrangler](https://github.com/cloudflare/workers-sdk) · [llmfit](https://github.com/AlexsJones/llmfit) · [gitoverit](https://github.com/mevanlc/gitoverit)
 - macOS only: [1Password CLI](https://github.com/1Password/install-cli-action)† · [dooti](https://github.com/lkubb/dooti) · [Things CLI](https://github.com/ryanlewis/things-cli) · [Mole](https://github.com/tw93/Mole)
 
 Python CLIs (`gitoverit` and `dooti`) are managed by mise's
