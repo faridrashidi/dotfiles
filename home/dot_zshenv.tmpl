@@ -20,11 +20,13 @@ export PIXI_HOME="$HOME/.pixi"
 # .zprofile after macOS path_helper rebuilds PATH.
 [[ -f "$ZDOTDIR/path.zsh" ]] && source "$ZDOTDIR/path.zsh"
 
-export LANG="en_US.UTF-8"
 export COLORTERM=truecolor
 export EDITOR="nvim"
 {{ if eq .chezmoi.os "darwin" -}}
+export LANG="en_US.UTF-8"
 export VISUAL="code --wait"
 {{ else -}}
+# Minimal Linux images often lack en_US.UTF-8; C.UTF-8 is built into glibc.
+export LANG="C.UTF-8"
 export VISUAL="nvim"
 {{ end -}}
