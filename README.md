@@ -33,8 +33,8 @@ On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
 - `server`: for cloud VMs. Installs only the "All profiles" tools in the
   [Pixi manifest](home/dot_config/pixi/pixi-global.toml.tmpl), plus Zsh. Skips
   mise-managed tools and fonts.
-- `hpc`: everything except fonts. Uses `/data/$USER/.pixi` and enables the
-  Biowulf configuration.
+- `hpc`: everything except fonts, FFmpeg, and Google Cloud CLI. Uses
+  `/data/$USER/.pixi` and enables the Biowulf configuration.
 
 An existing `PIXI_HOME` always takes precedence.
 

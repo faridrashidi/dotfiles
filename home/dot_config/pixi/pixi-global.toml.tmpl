@@ -165,16 +165,6 @@ channels = ["conda-forge"]
 dependencies = { docker-cli = "==29.6.2" }
 exposed = { docker = "docker" }
 
-[envs.ffmpeg]
-channels = ["conda-forge"]
-dependencies = { ffmpeg = "*" }
-exposed = { ffmpeg = "ffmpeg", ffprobe = "ffprobe" }
-
-[envs.gcloud]
-channels = ["conda-forge"]
-dependencies = { google-cloud-sdk = "*" }
-exposed = { gcloud = "gcloud", gsutil = "gsutil", bq = "bq" }
-
 [envs.lazydocker]
 channels = ["conda-forge"]
 dependencies = { lazydocker = "==0.24.4" }
@@ -204,6 +194,20 @@ exposed = { spf = "spf" }
 channels = ["conda-forge"]
 dependencies = { visidata = "*" }
 exposed = { vd = "vd" }
+{{- end }}
+{{- if and (not (get . "hpc")) (ne (get . "profile") "server") }}
+
+# desktop profile
+
+[envs.ffmpeg]
+channels = ["conda-forge"]
+dependencies = { ffmpeg = "*" }
+exposed = { ffmpeg = "ffmpeg", ffprobe = "ffprobe" }
+
+[envs.gcloud]
+channels = ["conda-forge"]
+dependencies = { google-cloud-sdk = "*" }
+exposed = { gcloud = "gcloud", gsutil = "gsutil", bq = "bq" }
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
 
