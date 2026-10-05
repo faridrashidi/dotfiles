@@ -135,10 +135,6 @@ An existing `PIXI_HOME` always takes precedence.
   - [Things CLI](https://github.com/ryanlewis/things-cli)
   - [Mole](https://github.com/tw93/Mole)
 
-Python CLIs (`gitoverit` and `dooti`) are managed by mise's
-[`pipx:` backend](https://mise.jdx.dev/dev-tools/backends/pipx.html), which uses
-the Pixi-provided `uv`. A separate `pipx` installation is not required.
-
 ### Fonts
 
 - [Fira Code](https://github.com/tonsky/FiraCode)
