@@ -1,4 +1,0 @@
-[envs.zsh]
-channels = ["conda-forge"]
-dependencies = { zsh = "*" }
-exposed = { zsh = "zsh" }

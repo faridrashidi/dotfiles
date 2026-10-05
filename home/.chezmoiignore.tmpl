@@ -3,7 +3,6 @@
 {{- end }}
 {{- if eq (get . "profile") "server" }}
 .config/mise/config.toml
-.config/pixi/pixi-full.toml
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
 .bash_profile

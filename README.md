@@ -30,10 +30,9 @@ GIT_NAME="Your Name" GIT_EMAIL="you@example.com" ./bootstrap
 On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
 
 - `desktop` (default, and always used on macOS): everything below.
-- `server`: for cloud VMs. Installs only the core
-  [Pixi](home/dot_config/pixi/pixi-global.toml) tools and Zsh. Skips the
-  [full Pixi](home/dot_config/pixi/pixi-full.toml) manifest, mise-managed
-  tools, and fonts.
+- `server`: for cloud VMs. Installs only the "All profiles" tools in the
+  [Pixi manifest](home/dot_config/pixi/pixi-global.toml.tmpl), plus Zsh. Skips
+  mise-managed tools and fonts.
 - `hpc`: everything except fonts. Uses `/data/$USER/.pixi` and enables the
   Biowulf configuration.
 
@@ -42,10 +41,7 @@ An existing `PIXI_HOME` always takes precedence.
 ## What bootstrap installs
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the
-[Pixi](home/dot_config/pixi/pixi-global.toml),
-[full Pixi](home/dot_config/pixi/pixi-full.toml),
-[macOS Pixi](home/dot_config/pixi/pixi-macos.toml),
-[Linux Pixi](home/dot_config/pixi/pixi-linux.toml), and
+[Pixi](home/dot_config/pixi/pixi-global.toml.tmpl) and
 [mise](home/dot_config/mise/config.toml) manifests.
 
 ### Bootstrap
