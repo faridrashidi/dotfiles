@@ -56,12 +56,12 @@ An existing `PIXI_HOME` always takes precedence.
 
 ### Language runtimes
 
-- [Python](https://github.com/python/cpython)
-- [Node.js](https://github.com/nodejs/node)
-- [R](https://github.com/wch/r-source)†
-- [Ruby](https://github.com/ruby/ruby)
-- [Rust](https://github.com/rust-lang/rust)
-- [Go](https://github.com/golang/go)
+- [Python](https://github.com/python/cpython) (3.12.12)
+- [Node.js](https://github.com/nodejs/node) (26.8.1)
+- [R](https://github.com/wch/r-source)† (4.3.3)
+- [Ruby](https://github.com/ruby/ruby) (4.0.6)
+- [Rust](https://github.com/rust-lang/rust) (1.98.1)
+- [Go](https://github.com/golang/go) (1.27.1)
 
 ### Cross-platform CLI tools
 
@@ -72,22 +72,22 @@ An existing `PIXI_HOME` always takes precedence.
   - [dust](https://github.com/bootandy/dust)
   - [eza](https://github.com/eza-community/eza)
   - [fd](https://github.com/sharkdp/fd)
-  - [fzf](https://github.com/junegunn/fzf)
+  - [fzf](https://github.com/junegunn/fzf) (0.68.0)
   - [ncdu](https://github.com/conda-forge/ncdu-feedstock)†
   - [sesh](https://github.com/joshmedeski/sesh)
   - [Sheldon](https://github.com/rossmacarthur/sheldon)
   - [Starship](https://github.com/starship/starship)
   - [Superfile](https://github.com/yorukot/superfile)
-  - [tmux](https://github.com/tmux/tmux)
+  - [tmux](https://github.com/tmux/tmux) (3.5a)
   - [zoxide](https://github.com/ajeetdsouza/zoxide)
 - Development:
   - [bat](https://github.com/sharkdp/bat)
-  - [Docker CLI](https://github.com/docker/cli)
+  - [Docker CLI](https://github.com/docker/cli) (29.6.2)
   - [Git](https://github.com/git/git)
-  - [GitHub CLI](https://github.com/cli/cli)
+  - [GitHub CLI](https://github.com/cli/cli) (2.96.0)
   - [Google Cloud CLI](https://github.com/conda-forge/google-cloud-sdk-feedstock)†
-  - [lazydocker](https://github.com/jesseduffield/lazydocker)
-  - [lazygit](https://github.com/jesseduffield/lazygit)
+  - [lazydocker](https://github.com/jesseduffield/lazydocker) (0.24.4)
+  - [lazygit](https://github.com/jesseduffield/lazygit) (0.58.1)
   - [Neovim](https://github.com/neovim/neovim)
   - [ripgrep](https://github.com/BurntSushi/ripgrep)
   - [uv](https://github.com/astral-sh/uv)
