@@ -1,4 +1,4 @@
-{{- if not (get . "hpc") }}
+{{- if and (not (get . "hpc")) (ne (get . "profile") "server") }}
 {{- $fontDir := ".local/share/fonts" -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $fontDir = "Library/Fonts" -}}

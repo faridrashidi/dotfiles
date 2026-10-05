@@ -27,15 +27,23 @@ On first run, bootstrap asks for your Git name and email. For unattended runs
 GIT_NAME="Your Name" GIT_EMAIL="you@example.com" ./bootstrap
 ```
 
-On Linux, bootstrap asks `Use HPC settings? [y/N]`.
-The default uses `~/.pixi` and excludes the Biowulf configuration. Answering
-yes uses `/data/$USER/.pixi` and enables that configuration. An existing
-`PIXI_HOME` always takes precedence. Fonts are skipped in HPC mode.
+On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
+
+- `desktop` (default, and always used on macOS): everything below.
+- `server`: for cloud VMs. Installs only the core
+  [Pixi](home/dot_config/pixi/pixi-global.toml) tools and Zsh. Skips the
+  [full Pixi](home/dot_config/pixi/pixi-full.toml) manifest, mise-managed
+  tools, and fonts.
+- `hpc`: everything except fonts. Uses `/data/$USER/.pixi` and enables the
+  Biowulf configuration.
+
+An existing `PIXI_HOME` always takes precedence.
 
 ## What bootstrap installs
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the
 [Pixi](home/dot_config/pixi/pixi-global.toml),
+[full Pixi](home/dot_config/pixi/pixi-full.toml),
 [macOS Pixi](home/dot_config/pixi/pixi-macos.toml),
 [Linux Pixi](home/dot_config/pixi/pixi-linux.toml), and
 [mise](home/dot_config/mise/config.toml) manifests.

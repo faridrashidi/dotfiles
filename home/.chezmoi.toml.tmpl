@@ -7,10 +7,15 @@
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $touchIDSudo = promptBoolOnce . "touch_id_sudo" "Enable Touch ID for sudo?" true -}}
 {{- end -}}
-{{- $hpc := false -}}
+{{- $profile := "desktop" -}}
 {{- if ne .chezmoi.os "darwin" -}}
-{{- $hpc = promptBoolOnce . "hpc" "Use HPC settings?" false -}}
+{{- $defaultProfile := "desktop" -}}
+{{- if get . "hpc" -}}
+{{- $defaultProfile = "hpc" -}}
 {{- end -}}
+{{- $profile = promptChoiceOnce . "profile" "Profile" (list "desktop" "server" "hpc") $defaultProfile -}}
+{{- end -}}
+{{- $hpc := eq $profile "hpc" -}}
 {{- $defaultPixiHome := printf "%s/.pixi" (env "HOME") -}}
 {{- if $hpc -}}
 {{- $defaultPixiHome = printf "/data/%s/.pixi" (env "USER") -}}
@@ -25,6 +30,7 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
 hpc = {{ $hpc }}
+profile = {{ $profile | quote }}
 pixi_home = {{ $pixiHome | quote }}
 touch_id_sudo = {{ $touchIDSudo }}
 

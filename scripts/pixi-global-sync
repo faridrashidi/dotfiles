@@ -8,6 +8,7 @@ PIXI_BIN="${PIXI_HOME_DIR}/bin/pixi"
 MANIFEST_DIR="${PIXI_HOME_DIR}/manifests"
 MANIFEST_FILE="${MANIFEST_DIR}/pixi-global.toml"
 BASE_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-global.toml"
+FULL_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-full.toml"
 MACOS_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-macos.toml"
 LINUX_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-linux.toml"
 
@@ -27,6 +28,12 @@ fi
 
 mkdir -p "$MANIFEST_DIR"
 cat "$BASE_MANIFEST_FILE" >"$MANIFEST_FILE"
+
+# chezmoi skips the full manifest on the server profile.
+if [[ -f "$FULL_MANIFEST_FILE" ]]; then
+    printf '\n' >>"$MANIFEST_FILE"
+    cat "$FULL_MANIFEST_FILE" >>"$MANIFEST_FILE"
+fi
 
 if [[ "$(uname)" == "Darwin" && -f "$MACOS_MANIFEST_FILE" ]]; then
     printf '\n' >>"$MANIFEST_FILE"
