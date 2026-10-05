@@ -18,7 +18,8 @@ cd dotfiles
 ./bootstrap
 ```
 
-Requires Git, Bash, Zsh, and curl. macOS also requires Xcode Command Line Tools.
+Requires Git, Bash, and curl. macOS also requires Xcode Command Line Tools.
+On Linux, Zsh is installed with Pixi.
 On first run, bootstrap asks for your Git name and email.
 
 On Linux, bootstrap asks `Use HPC settings? [y/N]`.
@@ -30,7 +31,8 @@ yes uses `/data/$USER/.pixi` and enables that configuration. An existing
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the
 [Pixi](home/dot_config/pixi/pixi-global.toml),
-[macOS Pixi](home/dot_config/pixi/pixi-macos.toml), and
+[macOS Pixi](home/dot_config/pixi/pixi-macos.toml),
+[Linux Pixi](home/dot_config/pixi/pixi-linux.toml), and
 [mise](home/dot_config/mise/config.toml) manifests.
 
 ### Bootstrap
@@ -50,6 +52,10 @@ yes uses `/data/$USER/.pixi` and enables that configuration. An existing
 ### macOS-only Pixi tools
 
 - [ExifTool](https://github.com/exiftool/exiftool) · [Colima](https://github.com/abiosoft/colima) · [Vercel CLI](https://github.com/vercel/vercel) · [Ollama](https://github.com/ollama/ollama) · [yt-dlp](https://github.com/yt-dlp/yt-dlp) · [Fastfetch](https://github.com/fastfetch-cli/fastfetch) · [shfmt](https://github.com/mvdan/sh) · [rclone](https://github.com/rclone/rclone)
+
+### Linux-only Pixi tools
+
+- [Zsh](https://github.com/zsh-users/zsh)
 
 ### mise-managed tools
 

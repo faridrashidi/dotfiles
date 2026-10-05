@@ -9,6 +9,7 @@ MANIFEST_DIR="${PIXI_HOME_DIR}/manifests"
 MANIFEST_FILE="${MANIFEST_DIR}/pixi-global.toml"
 BASE_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-global.toml"
 MACOS_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-macos.toml"
+LINUX_MANIFEST_FILE="${DOT_PIXI_CONFIG_DIR}/pixi-linux.toml"
 
 if command -v pixi >/dev/null 2>&1; then
     PIXI_CMD=(pixi)
@@ -30,6 +31,11 @@ cat "$BASE_MANIFEST_FILE" >"$MANIFEST_FILE"
 if [[ "$(uname)" == "Darwin" && -f "$MACOS_MANIFEST_FILE" ]]; then
     printf '\n' >>"$MANIFEST_FILE"
     cat "$MACOS_MANIFEST_FILE" >>"$MANIFEST_FILE"
+fi
+
+if [[ "$(uname)" == "Linux" && -f "$LINUX_MANIFEST_FILE" ]]; then
+    printf '\n' >>"$MANIFEST_FILE"
+    cat "$LINUX_MANIFEST_FILE" >>"$MANIFEST_FILE"
 fi
 
 "${PIXI_CMD[@]}" global sync
