@@ -50,21 +50,67 @@ An existing `PIXI_HOME` always takes precedence.
 
 ### Bootstrap
 
-- [Pixi](https://github.com/prefix-dev/pixi) · [chezmoi](https://github.com/twpayne/chezmoi) · [mise](https://github.com/jdx/mise)
+- [Pixi](https://github.com/prefix-dev/pixi)
+- [chezmoi](https://github.com/twpayne/chezmoi)
+- [mise](https://github.com/jdx/mise)
 
 ### Language runtimes
 
-- [Python](https://github.com/python/cpython) · [Node.js](https://github.com/nodejs/node) · [R](https://github.com/wch/r-source)† · [Ruby](https://github.com/ruby/ruby) · [Rust](https://github.com/rust-lang/rust) · [Go](https://github.com/golang/go)
+- [Python](https://github.com/python/cpython)
+- [Node.js](https://github.com/nodejs/node)
+- [R](https://github.com/wch/r-source)†
+- [Ruby](https://github.com/ruby/ruby)
+- [Rust](https://github.com/rust-lang/rust)
+- [Go](https://github.com/golang/go)
 
 ### Cross-platform CLI tools
 
-- Shell and terminal: [Atuin](https://github.com/atuinsh/atuin) · [btop](https://github.com/aristocratos/btop) · [direnv](https://github.com/direnv/direnv) · [dust](https://github.com/bootandy/dust) · [eza](https://github.com/eza-community/eza) · [fd](https://github.com/sharkdp/fd) · [fzf](https://github.com/junegunn/fzf) · [ncdu](https://github.com/conda-forge/ncdu-feedstock)† · [sesh](https://github.com/joshmedeski/sesh) · [Sheldon](https://github.com/rossmacarthur/sheldon) · [Starship](https://github.com/starship/starship) · [Superfile](https://github.com/yorukot/superfile) · [tmux](https://github.com/tmux/tmux) · [zoxide](https://github.com/ajeetdsouza/zoxide)
-- Development: [bat](https://github.com/sharkdp/bat) · [Docker CLI](https://github.com/docker/cli) · [Git](https://github.com/git/git) · [GitHub CLI](https://github.com/cli/cli) · [Google Cloud CLI](https://github.com/conda-forge/google-cloud-sdk-feedstock)† · [lazydocker](https://github.com/jesseduffield/lazydocker) · [lazygit](https://github.com/jesseduffield/lazygit) · [Neovim](https://github.com/neovim/neovim) · [ripgrep](https://github.com/BurntSushi/ripgrep) · [uv](https://github.com/astral-sh/uv)
-- Utilities: [FFmpeg](https://github.com/FFmpeg/FFmpeg) · [jq](https://github.com/jqlang/jq) · [MuPDF](https://github.com/ArtifexSoftware/mupdf) · [ouch](https://github.com/ouch-org/ouch) · [GNU Parallel](https://github.com/martinda/gnu-parallel)† · [rsync](https://github.com/WayneD/rsync) · [tealdeer](https://github.com/dbrgn/tealdeer) · [VisiData](https://github.com/saulpw/visidata)
+- Shell and terminal:
+  - [Atuin](https://github.com/atuinsh/atuin)
+  - [btop](https://github.com/aristocratos/btop)
+  - [direnv](https://github.com/direnv/direnv)
+  - [dust](https://github.com/bootandy/dust)
+  - [eza](https://github.com/eza-community/eza)
+  - [fd](https://github.com/sharkdp/fd)
+  - [fzf](https://github.com/junegunn/fzf)
+  - [ncdu](https://github.com/conda-forge/ncdu-feedstock)†
+  - [sesh](https://github.com/joshmedeski/sesh)
+  - [Sheldon](https://github.com/rossmacarthur/sheldon)
+  - [Starship](https://github.com/starship/starship)
+  - [Superfile](https://github.com/yorukot/superfile)
+  - [tmux](https://github.com/tmux/tmux)
+  - [zoxide](https://github.com/ajeetdsouza/zoxide)
+- Development:
+  - [bat](https://github.com/sharkdp/bat)
+  - [Docker CLI](https://github.com/docker/cli)
+  - [Git](https://github.com/git/git)
+  - [GitHub CLI](https://github.com/cli/cli)
+  - [Google Cloud CLI](https://github.com/conda-forge/google-cloud-sdk-feedstock)†
+  - [lazydocker](https://github.com/jesseduffield/lazydocker)
+  - [lazygit](https://github.com/jesseduffield/lazygit)
+  - [Neovim](https://github.com/neovim/neovim)
+  - [ripgrep](https://github.com/BurntSushi/ripgrep)
+  - [uv](https://github.com/astral-sh/uv)
+- Utilities:
+  - [FFmpeg](https://github.com/FFmpeg/FFmpeg)
+  - [jq](https://github.com/jqlang/jq)
+  - [MuPDF](https://github.com/ArtifexSoftware/mupdf)
+  - [ouch](https://github.com/ouch-org/ouch)
+  - [GNU Parallel](https://github.com/martinda/gnu-parallel)†
+  - [rsync](https://github.com/WayneD/rsync)
+  - [tealdeer](https://github.com/dbrgn/tealdeer)
+  - [VisiData](https://github.com/saulpw/visidata)
 
 ### macOS-only Pixi tools
 
-- [ExifTool](https://github.com/exiftool/exiftool) · [Colima](https://github.com/abiosoft/colima) · [Vercel CLI](https://github.com/vercel/vercel) · [Ollama](https://github.com/ollama/ollama) · [yt-dlp](https://github.com/yt-dlp/yt-dlp) · [Fastfetch](https://github.com/fastfetch-cli/fastfetch) · [shfmt](https://github.com/mvdan/sh) · [rclone](https://github.com/rclone/rclone)
+- [ExifTool](https://github.com/exiftool/exiftool)
+- [Colima](https://github.com/abiosoft/colima)
+- [Vercel CLI](https://github.com/vercel/vercel)
+- [Ollama](https://github.com/ollama/ollama)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [Fastfetch](https://github.com/fastfetch-cli/fastfetch)
+- [shfmt](https://github.com/mvdan/sh)
+- [rclone](https://github.com/rclone/rclone)
 
 ### Linux-only Pixi tools
 
@@ -72,8 +118,22 @@ An existing `PIXI_HOME` always takes precedence.
 
 ### mise-managed tools
 
-- Cross-platform: [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) · [Codex CLI](https://github.com/openai/codex) · [Claude Code](https://github.com/anthropics/claude-code) · [herdr](https://github.com/ogulcancelik/herdr) · [gitmoji-cli](https://github.com/carloscuesta/gitmoji-cli) · [sharp-cli](https://github.com/vseventer/sharp-cli) · [skills](https://github.com/vercel-labs/skills) · [Wrangler](https://github.com/cloudflare/workers-sdk) · [llmfit](https://github.com/AlexsJones/llmfit) · [gitoverit](https://github.com/mevanlc/gitoverit)
-- macOS only: [1Password CLI](https://github.com/1Password/install-cli-action)† · [dooti](https://github.com/lkubb/dooti) · [Things CLI](https://github.com/ryanlewis/things-cli) · [Mole](https://github.com/tw93/Mole)
+- Cross-platform:
+  - [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli)
+  - [Codex CLI](https://github.com/openai/codex)
+  - [Claude Code](https://github.com/anthropics/claude-code)
+  - [herdr](https://github.com/ogulcancelik/herdr)
+  - [gitmoji-cli](https://github.com/carloscuesta/gitmoji-cli)
+  - [sharp-cli](https://github.com/vseventer/sharp-cli)
+  - [skills](https://github.com/vercel-labs/skills)
+  - [Wrangler](https://github.com/cloudflare/workers-sdk)
+  - [llmfit](https://github.com/AlexsJones/llmfit)
+  - [gitoverit](https://github.com/mevanlc/gitoverit)
+- macOS only:
+  - [1Password CLI](https://github.com/1Password/install-cli-action)†
+  - [dooti](https://github.com/lkubb/dooti)
+  - [Things CLI](https://github.com/ryanlewis/things-cli)
+  - [Mole](https://github.com/tw93/Mole)
 
 Python CLIs (`gitoverit` and `dooti`) are managed by mise's
 [`pipx:` backend](https://mise.jdx.dev/dev-tools/backends/pipx.html), which uses
@@ -81,7 +141,13 @@ the Pixi-provided `uv`. A separate `pipx` installation is not required.
 
 ### Fonts
 
-- [Fira Code](https://github.com/tonsky/FiraCode) · [Inter](https://github.com/rsms/inter) · [Lalezar](https://github.com/google/fonts/tree/main/ofl/lalezar) · [Meslo LG](https://github.com/andreberg/Meslo-Font) · [Sahel](https://github.com/rastikerdar/sahel-font) · [Symbols Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts) · [Vazirmatn](https://github.com/rastikerdar/vazirmatn)
+- [Fira Code](https://github.com/tonsky/FiraCode)
+- [Inter](https://github.com/rsms/inter)
+- [Lalezar](https://github.com/google/fonts/tree/main/ofl/lalezar)
+- [Meslo LG](https://github.com/andreberg/Meslo-Font)
+- [Sahel](https://github.com/rastikerdar/sahel-font)
+- [Symbols Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts)
+- [Vazirmatn](https://github.com/rastikerdar/vazirmatn)
 
 † A maintained GitHub mirror, package feedstock, or official installer is linked
 when the upstream project does not publish a canonical public GitHub repository.
