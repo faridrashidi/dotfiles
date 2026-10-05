@@ -20,7 +20,12 @@ cd dotfiles
 
 Requires Git, Bash, and curl. macOS also requires Xcode Command Line Tools.
 On Linux, Zsh is installed with Pixi.
-On first run, bootstrap asks for your Git name and email.
+On first run, bootstrap asks for your Git name and email. For unattended runs
+(cloud-init, Packer, CI), set them in the environment instead:
+
+```bash
+GIT_NAME="Your Name" GIT_EMAIL="you@example.com" ./bootstrap
+```
 
 On Linux, bootstrap asks `Use HPC settings? [y/N]`.
 The default uses `~/.pixi` and excludes the Biowulf configuration. Answering

@@ -87,6 +87,12 @@ CHEZMOI_INIT_ARGS=(init --apply --source="$ROOT_DIR" --promptString "PIXI_HOME=$
 if [[ -n "$HPC_SELECTION" ]]; then
     CHEZMOI_INIT_ARGS+=(--promptBool "Use HPC settings?=$HPC_SELECTION")
 fi
+if [[ -n "${GIT_NAME:-}" ]]; then
+    CHEZMOI_INIT_ARGS+=(--promptString "Git name=$GIT_NAME")
+fi
+if [[ -n "${GIT_EMAIL:-}" ]]; then
+    CHEZMOI_INIT_ARGS+=(--promptString "Git email=$GIT_EMAIL")
+fi
 if [[ ! -t 0 || ! -t 1 ]]; then
     print_step "No TTY detected, using saved Git identity and defaults for remaining chezmoi prompts"
     CHEZMOI_INIT_ARGS+=(--promptDefaults --no-tty --promptBool "Enable Touch ID for sudo?=false")
