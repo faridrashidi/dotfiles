@@ -4,13 +4,6 @@
 # 1. Initialization & Path Setup                                              #
 ###############################################################################
 
-# Deduplicate path arrays
-typeset -U PATH path fpath manpath
-
-# Non-login interactive shells still need XDG defaults for cached init and app loaders.
-: "${XDG_CONFIG_HOME:=$HOME/.config}"
-: "${XDG_CACHE_HOME:=$HOME/.cache}"
-
 # Load environment variables and application paths before initializing plugins.
 [[ -o login ]] || { [[ -f "$ZDOTDIR/.zprofile" ]] && source "$ZDOTDIR/.zprofile"; }
 
@@ -157,17 +150,5 @@ bindkey -r "^G"
 # 5. Reserved Config Load Order                                               #
 ###############################################################################
 
-_source_named_configs() {
-    local name file
-    for name in "$@"; do
-        file="$ZDOTDIR/$name"
-        [[ -f "$file" ]] && source "$file"
-        for file in "$XDG_CONFIG_HOME"/*/"$name"(N); do
-            [[ "${file:h:t}" == zsh ]] && continue
-            source "$file"
-        done
-    done
-}
-
+# Defined in .zprofile, which always runs before this file.
 _source_named_configs completions.zsh functions.zsh init.zsh aliases.zsh binders.zsh
-unfunction _source_named_configs

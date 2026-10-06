@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+# Kept defined so .zshrc can reuse it.
 _source_named_configs() {
     local name file
     for name in "$@"; do
@@ -13,4 +14,3 @@ _source_named_configs() {
 }
 
 _source_named_configs env.zsh path.zsh
-unfunction _source_named_configs
