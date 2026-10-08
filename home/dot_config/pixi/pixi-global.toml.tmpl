@@ -92,6 +92,11 @@ channels = ["conda-forge"]
 dependencies = { rsync = "*" }
 exposed = { rsync = "rsync" }
 
+[envs.sd]
+channels = ["conda-forge"]
+dependencies = { sd = "*" }
+exposed = { sd = "sd" }
+
 [envs.sesh]
 channels = ["https://prefix.dev/github-releases"]
 dependencies = { sesh = "*" }
@@ -184,6 +189,11 @@ exposed = { ouch = "ouch" }
 channels = ["conda-forge"]
 dependencies = { parallel = "*" }
 exposed = { parallel = "parallel" }
+
+[envs.rga]
+channels = ["conda-forge"]
+dependencies = { ripgrep-all = "*", poppler = "*" } # poppler provides pdftotext for PDF search
+exposed = { rga = "rga" }
 
 [envs.superfile]
 channels = ["conda-forge"]

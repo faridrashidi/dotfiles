@@ -86,6 +86,7 @@ An existing `PIXI_HOME` always takes precedence.
   - [lazygit](https://github.com/jesseduffield/lazygit) (0.58.1)
   - [Neovim](https://github.com/neovim/neovim)
   - [ripgrep](https://github.com/BurntSushi/ripgrep)
+  - [ripgrep-all](https://github.com/phiresky/ripgrep-all)
   - [uv](https://github.com/astral-sh/uv)
 - Utilities:
   - [FFmpeg](https://github.com/FFmpeg/FFmpeg)
@@ -94,6 +95,7 @@ An existing `PIXI_HOME` always takes precedence.
   - [ouch](https://github.com/ouch-org/ouch)
   - [GNU Parallel](https://github.com/martinda/gnu-parallel)†
   - [rsync](https://github.com/WayneD/rsync)
+  - [sd](https://github.com/chmln/sd)
   - [tealdeer](https://github.com/dbrgn/tealdeer)
   - [VisiData](https://github.com/saulpw/visidata)
 
