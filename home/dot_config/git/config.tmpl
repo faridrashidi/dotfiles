@@ -1,5 +1,9 @@
 [core]
 	excludesfile = "~/.config/git/ignore"
+	untrackedCache = true # Caches untracked files for faster status
+{{- if eq .chezmoi.os "darwin" }}
+	fsmonitor = true # Watches files for faster status (no Linux support)
+{{- end }}
 
 {{ if eq .chezmoi.os "darwin" -}}
 [credential]
@@ -8,6 +12,9 @@
 {{ end -}}
 [init]
 	defaultBranch = "main"
+
+[commit]
+	verbose = true # Shows the diff in the commit message editor
 
 [pull]
 	rebase = true
@@ -24,9 +31,12 @@
 
 [rebase]
 	autoStash = true # Stashes dirty worktree before rebase
+	autoSquash = true # Moves fixup! commits into place in rebase -i
+	updateRefs = true # Moves stacked branches along during rebase
 
 [rerere]
 	enabled = true # Remembers conflict resolutions
+	autoUpdate = true # Stages files rerere already resolved
 
 [diff]
 	algorithm = histogram # Better diff output than default "myers"
