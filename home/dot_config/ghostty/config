@@ -31,6 +31,7 @@ notify-on-command-finish-after = 30s
 shell-integration-features = no-cursor
 clipboard-trim-trailing-spaces = true
 copy-on-select = clipboard
+macos-option-as-alt = left
 
 # Quick Terminal
 # keybind = global:control+space=toggle_quick_terminal
