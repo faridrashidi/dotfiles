@@ -445,6 +445,9 @@ execute "defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -di
 # Show input menu in menu bar
 execute "defaults write com.apple.TextInputMenu visible -bool true"
 
+# Enable bidirectional text keyboard shortcuts (Input Sources -> Persian)
+execute "defaults write NSGlobalDomain NSAllowsBaseWritingDirectionKeyBindings -bool true"
+
 # Set trackpad tracking speed (0.875 is moderately slow)
 execute "defaults write NSGlobalDomain com.apple.trackpad.scaling -float 0.875"
 
@@ -524,6 +527,29 @@ execute "defaults write com.apple.airplay showInMenuBarIfPresent -bool false"
 # Disable automatic display brightness based on ambient light
 execute "sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor \
 \"Automatic Display Enabled\" -bool false"
+
+# Set Night Shift schedule to Sunset to Sunrise (BlueReductionMode 1)
+user_uuid=$(dscl . -read "$HOME" GeneratedUID | awk '{print $2}')
+execute "sudo defaults write /var/root/Library/Preferences/com.apple.CoreBrightness \
+\"CBUser-${user_uuid}\" -dict-add CBBlueReductionStatus \
+\"<dict> \
+    <key>AutoBlueReductionEnabled</key><integer>1</integer> \
+    <key>BlueLightReductionDisableScheduleAlertCounter</key><integer>3</integer> \
+    <key>BlueLightReductionSchedule</key><dict> \
+      <key>DayStartHour</key><integer>7</integer> \
+      <key>DayStartMinute</key><integer>0</integer> \
+      <key>NightStartHour</key><integer>22</integer> \
+      <key>NightStartMinute</key><integer>0</integer> \
+    </dict> \
+    <key>BlueReductionAvailable</key><integer>1</integer> \
+    <key>BlueReductionEnabled</key><integer>0</integer> \
+    <key>BlueReductionMode</key><integer>1</integer> \
+    <key>BlueReductionSunScheduleAllowed</key><integer>1</integer> \
+    <key>Version</key><integer>1</integer> \
+  </dict> \
+\""
+[[ -z "${CI:-}" ]] && execute "sudo killall corebrightnessd"
+unset user_uuid
 
 ###############################################################################
 # Finder                                                                      #
@@ -922,10 +948,7 @@ if [[ -z "${CI:-}" ]]; then
         'x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane?iCloud'
     ask_system_settings 'Turn off all notifs except Message' \
         'x-apple.systempreferences:com.apple.preference.notifications'
-    ask_system_settings 'Night Shift... -> Sunset to Sunrise' \
-        'x-apple.systempreferences:com.apple.preference.displays'
-    ask_system_settings 'Input Sources -> Edit... -> Persian -> keyboard shortcuts -> On keyboard shortcuts' \
-        'x-apple.systempreferences:com.apple.preference.keyboard?InputSources'
-    ask_system_settings 'Desktop & Dock -> Default web browser' \
-        'x-apple.systempreferences:com.apple.Desktop-Settings.extension'
+
+    # Ask Brave to become the default browser (macOS shows a confirmation dialog)
+    execute "open -a \"Brave Browser\" --args --make-default-browser"
 fi
