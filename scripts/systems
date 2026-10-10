@@ -574,12 +574,12 @@ if [[ -n "$NEW_WINDOW_TARGET_PATH" ]]; then
     execute "defaults write com.apple.finder NewWindowTargetPath -string \"file://${NEW_WINDOW_TARGET_PATH}\""
 fi
 
-# Open folders in tabs instead of new Finder windows
-# FIXME: When another Desktop already has a Finder window, this causes new
-# Finder windows on the current Desktop to open very small instead of reusing
-# the previous window size. Find a workaround that preserves both behaviors.
-# For now I disabled it to false.
-execute "defaults write com.apple.finder FinderSpawnTab -bool false"
+# Open folders in tabs and make Command-N create a tab in Finder.
+# Keep Command-Option-N available for a separate Finder window.
+# Apps that explicitly request a Finder window can still create one.
+execute "defaults write com.apple.finder FinderSpawnTab -bool true"
+execute "defaults write com.apple.finder NSUserKeyEquivalents -dict-add \"New Finder Window\" \"@~n\""
+execute "defaults write com.apple.finder NSUserKeyEquivalents -dict-add \"New Tab\" \"@n\""
 
 # Keep only the workflow tags in Finder's sidebar. Their order also maps
 # Control-1 through Control-3 to Focus, Review, and Waiting respectively.
@@ -944,6 +944,7 @@ ask_system_settings() {
 
 # Run manual configuration steps
 if [[ -z "${CI:-}" ]]; then
+    ask_gui 'Finder: Window > Merge All Windows; Dock icon > Options > Assign To > This Desktop'
     ask_system_settings 'Turn off unnecessary apps from iCloud' \
         'x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane?iCloud'
     ask_system_settings 'Turn off all notifs except Message' \
