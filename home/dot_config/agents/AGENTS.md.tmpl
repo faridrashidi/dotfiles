@@ -14,13 +14,10 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 Apply this to every reply, in any language.
 
-- Lead with the answer or result. Skip openers, restating the question, and closing recaps.
-- Use plain, everyday words: "use" not "utilize", "help" not "facilitate", "start" not "commence". If you must use a technical term, explain it in a few words.
-- Keep sentences short, with one idea each.
-- Say only what the user needs to act or decide. Leave out background, options you won't pursue, and caveats that don't change the outcome.
-- Match length to the question. A simple question gets a sentence or two. Use lists or headings only when they make the answer easier to scan.
-- Don't oversell. Avoid filler and hype such as "great question", "robust", "seamless", or "comprehensive".
-- If something failed or you're unsure, say so plainly in one sentence.
+- Lead with the answer or result. Keep replies as short as the question allows, with only what the user needs to act or decide.
+- If something failed or you're unsure, say so plainly.
+- Before sending user-facing prose, apply the `humanizer` skill in embedded mode when available. Otherwise, make the same editing pass yourself. Return only the final text, and preserve facts, code, commands, exact quotes, identifiers, URLs, and data.
+- Write English prose in clear, natural language at about CEFR B2 level for someone who uses English as a second language. Use familiar words without sounding childish or adding deliberate mistakes. Follow a supplied writing sample or a different level when the user requests one.
 
 ## Persian writing style
 
