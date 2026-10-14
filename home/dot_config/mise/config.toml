@@ -12,14 +12,11 @@ minimum_release_age = "0s"
 "npm:skills" = "latest"
 "npm:wrangler" = { version = "latest", allow_builds = ["esbuild", "workerd"] }
 
-
 "1password" = { version = "latest", os = ["macos"] }
 "github:google-antigravity/antigravity-cli" = { version = "latest", rename_exe = { antigravity = "agy" } }
 "github:AlexsJones/llmfit" = "latest"
 "pipx:mevanlc/gitoverit" = "latest"
 "pipx:dooti" = { version = "latest", os = ["macos"] }
-"go:github.com/ryanlewis/things-cli/cmd/things" = { version = "latest", os = ["macos"] }
-
 
 [tools."http:mole"]
 version = "latest"
