@@ -126,11 +126,10 @@ An existing `PIXI_HOME` always takes precedence.
   - [skills](https://github.com/vercel-labs/skills)
   - [Wrangler](https://github.com/cloudflare/workers-sdk)
   - [llmfit](https://github.com/AlexsJones/llmfit)
-  - [gitoverit](https://github.com/mevanlc/gitoverit)
+  - [mgitstatus](https://github.com/fboender/multi-git-status)
 - macOS only:
   - [1Password CLI](https://github.com/1Password/install-cli-action)†
   - [dooti](https://github.com/lkubb/dooti)
-  - [Things CLI](https://github.com/ryanlewis/things-cli)
   - [Mole](https://github.com/tw93/Mole)
 
 ### Fonts
