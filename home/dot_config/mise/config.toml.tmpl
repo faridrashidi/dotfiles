@@ -10,18 +10,20 @@ minimum_release_age = "0s"
 "npm:gitmoji-cli" = "latest"
 "npm:sharp-cli" = "latest"
 "npm:skills" = "latest"
+{{- if not (get . "hpc") }}
 "npm:wrangler" = { version = "latest", allow_builds = ["esbuild", "workerd"] }
+{{- end }}
 
 "1password" = { version = "latest", os = ["macos"] }
 "github:google-antigravity/antigravity-cli" = { version = "latest", rename_exe = { antigravity = "agy" } }
 "github:AlexsJones/llmfit" = "latest"
 "pipx:dooti" = { version = "latest", os = ["macos"] }
-"http:mgitstatus" = { version = "latest", url = "https://raw.githubusercontent.com/fboender/multi-git-status/{{ version }}/mgitstatus", version_list_url = "https://api.github.com/repos/fboender/multi-git-status/tags?per_page=1", version_json_path = ".[].name", bin = "mgitstatus" }
+"http:mgitstatus" = { version = "latest", url = "https://raw.githubusercontent.com/fboender/multi-git-status/{{ `{{ version }}` }}/mgitstatus", version_list_url = "https://api.github.com/repos/fboender/multi-git-status/tags?per_page=1", version_json_path = ".[].name", bin = "mgitstatus" }
 
 [tools."http:mole"]
 version = "latest"
 os = ["macos"]
-url = "https://github.com/tw93/Mole/archive/refs/tags/{{ version }}.tar.gz"
+url = "https://github.com/tw93/Mole/archive/refs/tags/{{ `{{ version }}` }}.tar.gz"
 version_list_url = "https://api.github.com/repos/tw93/Mole/releases/latest"
 version_json_path = ".tag_name"
 strip_components = 1
