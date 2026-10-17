@@ -62,7 +62,7 @@ An existing `PIXI_HOME` always takes precedence.
 ### Cross-platform CLI tools
 
 - Shell and terminal:
-  - [Atuin](https://github.com/atuinsh/atuin)
+  - [Atuin](https://github.com/atuinsh/atuin) (18.23.0)
   - [btop](https://github.com/aristocratos/btop)
   - [direnv](https://github.com/direnv/direnv)
   - [dust](https://github.com/bootandy/dust)
