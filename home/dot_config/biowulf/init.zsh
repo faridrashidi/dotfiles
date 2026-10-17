@@ -7,6 +7,7 @@ _biowulf_atuin_setup() {
 
     local socket_dir="${TMPDIR:-/tmp}/atuin-$USER"
     export ATUIN_DAEMON__SOCKET_PATH="${ATUIN_DAEMON__SOCKET_PATH:-$socket_dir/atuin.sock}"
+    export ATUIN_DAEMON__PIDFILE_PATH="${ATUIN_DAEMON__PIDFILE_PATH:-${ATUIN_DAEMON__SOCKET_PATH:h}/atuin.pid}"
     mkdir -p "${ATUIN_DAEMON__SOCKET_PATH:h}"
 
     # Avoid opening Atuin's SQLite store on every keystroke over Biowulf's shared storage.

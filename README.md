@@ -35,6 +35,7 @@ On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
   mise-managed tools and fonts.
 - `hpc`: everything except fonts, FFmpeg, Google Cloud CLI, and Wrangler. Uses
   `/data/$USER/.pixi` and enables the Biowulf configuration.
+  Atuin's daemon socket and PID file are local to each node.
 
 An existing `PIXI_HOME` always takes precedence.
 
