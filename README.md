@@ -150,6 +150,6 @@ when the upstream project does not publish a canonical public GitHub repository.
 
 ```bash
 pixi self-update && pixi global-outdated && pixi global update
-mise outdated && mise upgrade
+mise outdated && mise upgrade && mise prune -y
 apps -o && apps -u
 ```
