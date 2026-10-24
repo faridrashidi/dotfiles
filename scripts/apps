@@ -39,7 +39,7 @@ parse_config_file() {
             casks) mac_casks+=("$line") ;;
             mas) mac_mases+=("$line") ;;
         esac
-    done < "$file"
+    done <"$file"
 }
 
 load_apps_config() {
@@ -90,6 +90,15 @@ get_version_from_dot_app() {
         fi
         if [[ "$app_name" == "Sublime Text" ]]; then
             normalized_version=$(echo "$version" | sed 's/^Build //')
+        fi
+        if [[ "$app_name" == "iStat Menus" && "$version" == "7.50" ]]; then
+            local build_version=""
+            if [[ -f "$plist_path" ]]; then
+                build_version=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "$plist_path" 2>/dev/null)
+            fi
+            if [[ "$build_version" == "2356" ]]; then
+                normalized_version="7.50.1"
+            fi
         fi
         echo "$normalized_version"
     else
@@ -373,7 +382,7 @@ run_public_apps_script() {
         done
     fi
 
-    if [[ ( "$DRY_RUN" == "true" || "$CHECK_OUTDATED" == "true" ) && ${#mac_mases[@]} -gt 0 ]]; then
+    if [[ ("$DRY_RUN" == "true" || "$CHECK_OUTDATED" == "true") && ${#mac_mases[@]} -gt 0 ]]; then
         for item in "${mac_mases[@]}"; do
             if [[ "$item" == *":"* ]]; then
                 mas="${item%%:*}"
