@@ -483,9 +483,8 @@ com.apple.trackpad.threeFingerHorizSwipeGesture -int 0"
 execute "defaults -currentHost write -g \
 com.apple.trackpad.threeFingerVertSwipeGesture -int 0"
 
-# Enable gestures for App Exposé and Launchpad
+# Enable gesture for App Exposé
 execute "defaults write com.apple.dock showAppExposeGestureEnabled -bool true"
-execute "defaults write com.apple.dock showLaunchpadGestureEnabled -bool true"
 
 ###############################################################################
 # Text Editing                                                                #
