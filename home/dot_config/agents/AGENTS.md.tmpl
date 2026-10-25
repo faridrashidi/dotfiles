@@ -1,9 +1,5 @@
 # AGENTS.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
 ## General guidelines
 
 - Do not add `Co-Authored-By` to git commits.
@@ -15,8 +11,6 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 Apply this to every reply, in any language.
 
 - Lead with the answer or result. Keep replies as short as the question allows, with only what the user needs to act or decide.
-- If something failed or you're unsure, say so plainly.
-- Before sending user-facing prose, apply the `humanizer` skill in embedded mode when available. Otherwise, make the same editing pass yourself. Return only the final text, and preserve facts, code, commands, exact quotes, identifiers, URLs, and data.
 - Write English prose in clear, natural language at about CEFR B2 level for someone who uses English as a second language. Use familiar words without sounding childish or adding deliberate mistakes. Follow a supplied writing sample or a different level when the user requests one.
 
 ## Persian writing style
@@ -29,65 +23,6 @@ Apply these preferences across all projects, but only to Persian-language passag
 - Use Persian «ی» and «ک» instead of Arabic «ي» and «ك». Use correct half-spaces, such as «می‌شود»، «نمی‌توان»، «مقاله‌ها» and «به‌روزرسانی».
 - Use Persian punctuation («،»، «؛»، «؟») and quotation marks («…»), with consistent spacing and no repeated spaces.
 - Use Persian digits («۰۱۲۳۴۵۶۷۸۹») in human-readable Persian text.
+- Keep Persian lines readable in right-to-left display: do not label items with Latin letters such as a, b, c (for figure panels, write «پنل اول»، «پنل دوم» and so on, with the letter in parentheses if needed, such as «پنل اول (a)»), and do not start a line, heading or list item with a Latin word or code. Prefer the Persian word over an English abbreviation when a familiar one exists.
 - Display human-readable Persian dates in the Solar Hijri (Jalali) calendar with Persian digits. Convert dates accurately, preserve the intended date and timezone, and clarify missing date components when they cannot be inferred reliably.
 - Preserve technical formats: do not alter code, identifiers, URLs or slugs, file paths, commands, API values, machine-readable numbers or dates (including ISO 8601 dates in metadata), or exact quotations and names when fidelity matters. Apply these preferences to requested content changes without rewriting unrelated existing text.
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
