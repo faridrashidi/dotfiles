@@ -937,17 +937,14 @@ ask_gui() {
 
 # Function to prompt user to adjust System Settings
 ask_system_settings() {
-    # open "${2}"
     ask_gui "$1" 'System Settings'
 }
 
 # Run manual configuration steps
 if [[ -z "${CI:-}" ]]; then
     ask_gui 'Finder: Window > Merge All Windows; Dock icon > Options > Assign To > This Desktop'
-    ask_system_settings 'Turn off unnecessary apps from iCloud' \
-        'x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane?iCloud'
-    ask_system_settings 'Turn off all notifs except Message' \
-        'x-apple.systempreferences:com.apple.preference.notifications'
+    ask_system_settings 'Turn off unnecessary apps from iCloud'
+    ask_system_settings 'Turn off all notifs except Message'
 
     # Ask Brave to become the default browser (macOS shows a confirmation dialog)
     execute "open -a \"Brave Browser\" --args --make-default-browser"

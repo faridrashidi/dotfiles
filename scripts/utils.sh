@@ -9,14 +9,12 @@ RESET="\033[0m"
 print_msg() {
     local msg="$1"
     local kind="$2"
-    # local now="[$(date '+%H:%M:%S')] "
-    local now=""
 
     case "$kind" in
-        default) echo -e "${WHITE}${now}• $msg${RESET}" ;;
-        success) echo -e "${GREEN}${now}✔ $msg${RESET}" ;;
-        error) echo -e "${RED}${now}✘ $msg${RESET}" ;;
-        warning) echo -e "${YELLOW}${now}↺ $msg${RESET}" ;;
+        default) echo -e "${WHITE}• $msg${RESET}" ;;
+        success) echo -e "${GREEN}✔ $msg${RESET}" ;;
+        error) echo -e "${RED}✘ $msg${RESET}" ;;
+        warning) echo -e "${YELLOW}↺ $msg${RESET}" ;;
         banner)
             local width=80
             local msg_upper=$(echo "$msg" | tr '[:lower:]' '[:upper:]')
