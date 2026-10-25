@@ -188,63 +188,6 @@ function ffconv() {
     fi
 }
 
-function backup() {
-    local DROPBOX_DIR="${HOME}/Dropbox"
-    local DOT_BACKUP_TARGET_DIR="/Volumes/Data/iMac/backup"
-    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: backup"
-        echo "  Zips \$DROPBOX_DIR and rsyncs to \$DOT_BACKUP_TARGET_DIR"
-        return 0
-    fi
-
-    if ! command -v rsync &>/dev/null || ! command -v zip &>/dev/null; then
-        echo "Error: rsync and zip are required."
-        return 1
-    fi
-
-    local source="${DROPBOX_DIR:-}"
-    local target="${DOT_BACKUP_TARGET_DIR:-}"
-
-    if [[ -z "$source" || -z "$target" ]]; then
-        echo "Error: DROPBOX_DIR and DOT_BACKUP_TARGET_DIR must be configured."
-        return 1
-    fi
-
-    if [[ ! -d "$source" ]]; then
-        echo "Error: Source '$source' not found."
-        return 1
-    fi
-    if [[ ! -d "$target" ]]; then
-        echo "Error: Target '$target' not found (drive not mounted?)."
-        return 1
-    fi
-    if [[ ! -w "$target" ]]; then
-        echo "Error: Target '$target' is not writable."
-        return 1
-    fi
-
-    if ! cd "$HOME"; then
-        echo "Error: Cannot access home dir."
-        return 1
-    fi
-
-    local name="$(date +%y-%m-%d-%H-%M)"
-    local zipfile="${name}.zip"
-
-    zip -r "$zipfile" "$(basename "$source")" || {
-        echo "Error: ZIP creation failed."
-        return 1
-    }
-
-    rsync -ahrX --no-compress --info=progress2 --remove-source-files "$zipfile" "$target" || {
-        echo "Error: rsync failed."
-        return 1
-    }
-
-    cd - >/dev/null
-    echo "Backup completed: $zipfile -> $target"
-}
-
 function finder-sidebar-icon() {
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: finder-sidebar-icon <folder> <sf-symbol>"
