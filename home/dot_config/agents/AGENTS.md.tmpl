@@ -4,6 +4,7 @@
 
 - Do not add `Co-Authored-By` to git commits.
 - Whenever the user asks you to commit changes, use the global `gitmoji` skill.
+- When creating a GitHub repository, configure its Git remote with an SSH URL (`git@github.com:OWNER/REPO.git`) for both fetch and push. Ensure the SSH remote is set before the first push, including when creating the repository with `gh`.
 - Use any available package manager, such as Pixi, uv, or npm, when dependencies or tools are needed. Keep all installations and related files—including dependencies, virtual environments, binaries, runtimes, and caches—inside the current working directory. Never install them globally, system-wide, or elsewhere in the user's home directory.
 
 ## Communication style
