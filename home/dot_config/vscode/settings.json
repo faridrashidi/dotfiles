@@ -206,17 +206,7 @@
   "code-runner.saveFileBeforeRun": true,
   "code-runner.showExecutionMessage": true,
 
-  // Todo Highlight & Tree
-  "todohighlight.isEnable": true,
-  "todohighlight.isCaseSensitive": true,
-  "todohighlight.keywords": [
-    {
-      "text": "NOTE:",
-      "color": "white",
-      "backgroundColor": "gray",
-      "isWholeLine": false
-    }
-  ],
+  // Better Todo Tree
   "better-todo-tree.general.tags": ["TODO:", "FIXME:", "NOTE:"],
   "better-todo-tree.tree.sortTagsOnlyViewAlphabetically": true,
 
