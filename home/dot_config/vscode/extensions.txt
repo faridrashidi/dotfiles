@@ -5,11 +5,11 @@ astro-build.astro-vscode
 charliermarsh.ruff
 christian-kohler.path-intellisense
 esbenp.prettier-vscode
+fanaticpythoner.better-todo-tree
 formulahendry.code-runner
 github.vscode-github-actions
 github.vscode-pull-request-github
 google.google-antigravity
-gruntfuggly.todo-tree
 jdinhlife.gruvbox
 marimo-team.vscode-marimo
 mkhl.shfmt
