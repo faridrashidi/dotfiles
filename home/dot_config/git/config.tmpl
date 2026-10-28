@@ -1,9 +1,6 @@
 [core]
 	excludesfile = "~/.config/git/ignore"
 	untrackedCache = true # Caches untracked files for faster status
-{{- if eq .chezmoi.os "darwin" }}
-	fsmonitor = true # Watches files for faster status (no Linux support)
-{{- end }}
 
 {{ if eq .chezmoi.os "darwin" -}}
 [credential]
