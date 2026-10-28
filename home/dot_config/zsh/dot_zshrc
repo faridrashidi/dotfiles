@@ -95,12 +95,13 @@ fi
 if ((! $+functions[compdef])); then
     autoload -Uz compinit
     () {
-        local dumpfile=${ZDOTDIR:-$HOME}/.zcompdump
+        local dumpfile=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump
+        [[ -d "${dumpfile:h}" ]] || mkdir -p "${dumpfile:h}"
         local stale=(${~dumpfile}(N.mh+24))
         if (($#stale)); then
-            compinit && touch "$dumpfile" # compinit won't refresh an unchanged dump
+            compinit -d "$dumpfile" && touch "$dumpfile" # compinit won't refresh an unchanged dump
         else
-            compinit -C
+            compinit -C -d "$dumpfile"
         fi
     }
 fi
