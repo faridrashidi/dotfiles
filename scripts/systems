@@ -467,11 +467,14 @@ com.apple.trackpad.trackpadCornerClickBehavior -int 0"
 execute "defaults -currentHost write NSGlobalDomain \
 com.apple.trackpad.enableSecondaryClick -bool true"
 
-# Enable three-finger tap for look-up gesture
+# Disable Look Up & data detectors via force click and three-finger tap
+execute "defaults write NSGlobalDomain com.apple.trackpad.forceClick -bool false"
 execute "defaults write com.apple.AppleMultitouchTrackpad \
-TrackpadThreeFingerTapGesture -int 2"
+TrackpadThreeFingerTapGesture -int 0"
 execute "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad \
-TrackpadThreeFingerTapGesture -int 2"
+TrackpadThreeFingerTapGesture -int 0"
+execute "defaults -currentHost write NSGlobalDomain \
+com.apple.trackpad.threeFingerTapGesture -int 0"
 
 # Enable three-finger drag and disable swipe gestures for simplicity
 execute "defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true"
