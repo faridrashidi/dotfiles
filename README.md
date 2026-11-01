@@ -40,35 +40,6 @@ On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
 
 An existing `PIXI_HOME` always takes precedence.
 
-### Biowulf history
-
-Each interactive Zsh shell gets its own Atuin databases on local storage.
-An allocated `/lscratch/$SLURM_JOB_ID` is preferred, then a local `TMPDIR`,
-then `/tmp`. Network filesystems are rejected for the live databases.
-Atuin's daemon, cloud sync, and update checks are disabled on Biowulf.
-
-History changes are saved every 30 seconds and on normal shell exit under
-`/data/$USER/.local/share/atuin-offline/snapshots`. Each shell publishes its
-own closed SQLite snapshot by atomic replacement. Other shells copy these
-files locally before reading and merging them. Only changed entries are
-published; unfinished commands cannot overwrite completed ones, and deleted
-entries stay deleted. Shared files are never opened as live SQLite databases.
-Snapshots and their directory are private to the user.
-
-New shells restore the saved history automatically. Running shells receive
-other sessions' saved changes during the next 30-second checkpoint. Force a
-checkpoint with `_atuin_offline_save`. If a node or job is killed abruptly,
-changes since the last successful checkpoint may be lost. Keep snapshots on
-`/data`: Slurm deletes a job's local scratch directory when the job ends.
-Failed backups leave the local files in place and are reported in
-`$ATUIN_DATA_DIR/backup.log`.
-
-When migrating an existing installation, stop the old Atuin daemon and export
-a consistent copy of its history to `snapshots/seed.db` before enabling this
-configuration. Startup refuses to silently replace existing history with an
-empty archive. Use a SQLite backup, rather than copying an open database and
-omitting its WAL file. Restart existing shells after migration.
-
 ## What bootstrap installs
 
 `./bootstrap` installs the top-level projects below. Versions are defined in the
