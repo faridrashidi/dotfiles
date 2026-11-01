@@ -149,11 +149,6 @@ when the upstream project does not publish a canonical public GitHub repository.
 
 ## Update
 
-The current Atuin upgrades on macOS and Biowulf are installed inside this
-checkout at `.tools/pixi`. The existing Pixi Atuin environment links to that
-directory. Keep `.tools` in place while those launchers are in use; it is
-excluded from Git.
-
 ```bash
 pixi self-update && pixi global-outdated && pixi global update
 mise outdated && mise upgrade && mise prune -y
