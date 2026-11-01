@@ -49,7 +49,7 @@ An existing `PIXI_HOME` always takes precedence.
 ### Bootstrap
 
 - [Pixi](https://github.com/prefix-dev/pixi)
-- [chezmoi](https://github.com/twpayne/chezmoi)
+- [chezmoi](https://github.com/twpayne/chezmoi) (2.73.0)
 - [mise](https://github.com/jdx/mise)
 
 ### Language runtimes
