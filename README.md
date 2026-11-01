@@ -35,8 +35,8 @@ On Linux, bootstrap asks for a profile, or reads `DOTFILES_PROFILE`:
   mise-managed tools and fonts.
 - `hpc`: everything except fonts, FFmpeg, Google Cloud CLI, and Wrangler. Uses
   `/data/$USER/.pixi` and enables the Biowulf configuration.
-  Atuin uses a separate local database for each shell, with offline history
-  exchange and backups on `/data`. No Atuin account is needed.
+  Atuin keeps one local database per node and shares history through `/data`.
+  No Atuin account is needed.
 
 An existing `PIXI_HOME` always takes precedence.
 
