@@ -10,7 +10,7 @@ formulahendry.code-runner
 github.vscode-github-actions
 github.vscode-pull-request-github
 google.google-antigravity
-jdinhlife.gruvbox
+mvllow.rose-pine
 marimo-team.vscode-marimo
 mkhl.shfmt
 ms-python.debugpy

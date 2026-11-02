@@ -2,7 +2,6 @@
 # built-in default. Reference: https://superfile.dev/configure/superfile-config/
 ignore_missing_fields = true
 
-theme = "gruvbox"
 code_previewer = "bat"
 
 # Requires exiftool

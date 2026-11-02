@@ -1,14 +1,21 @@
 return {
   {
-    "ellisonleao/gruvbox.nvim",
+    "rose-pine/neovim",
+    name = "rose-pine",
     priority = 1000,
-    config = true,
+    opts = {
+      variant = "auto",
+      dark_variant = "main",
+      highlight_groups = {
+        -- Keep comments readable in both variants.
+        Comment = { fg = "subtle" },
+      },
+    },
   },
-  -- Set it as your default colorscheme
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "gruvbox",
+      colorscheme = "rose-pine",
     },
   },
 }

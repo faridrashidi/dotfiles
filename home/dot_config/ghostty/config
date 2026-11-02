@@ -1,5 +1,5 @@
 # Theme & Colors
-theme = "Gruvbox Material Dark"
+theme = light:Rose Pine Dawn,dark:Rose Pine
 
 # Font
 font-family = "Meslo LG L"

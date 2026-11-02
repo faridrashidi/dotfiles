@@ -26,7 +26,8 @@ command = "herdr-file-viewer.open-file-viewer-tab"
 description = "open file viewer in tab"
 
 [theme]
-name = "gruvbox"
+# Use the host terminal's colors.
+name = "terminal"
 
 [ui.toast]
 delivery = "herdr"

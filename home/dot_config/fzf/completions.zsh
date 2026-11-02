@@ -7,11 +7,9 @@
 # fzf-tab ignores FZF_DEFAULT_OPTS unless told otherwise
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 
-# LS_COLORS is deliberately left unset so eza uses its own theme.yml, so give
-# the completion menu an explicit gruvbox-material palette instead
+# Use terminal ANSI colors; leave LS_COLORS unset for eza's defaults.
 zstyle ':completion:*' list-colors \
-    'di=38;5;109' 'ln=38;5;108' 'ex=38;5;142' 'so=38;5;175' \
-    'pi=38;5;214' 'bd=38;5;167' 'cd=38;5;167'
+    'di=34' 'ln=36' 'ex=32' 'so=35' 'pi=33' 'bd=31' 'cd=31'
 
 # Group results by completion type; page between groups with < and >
 zstyle ':completion:*' group-name ''
