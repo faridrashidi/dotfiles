@@ -52,6 +52,34 @@
   "workbench.secondarySideBar.showLabels": false,
   "workbench.startupEditor": "none",
 
+  "workbench.colorCustomizations": {
+    "[Rosé Pine Dawn]": {
+      "editor.background": "#FFFFFF",
+      "editorGutter.background": "#FFFFFF",
+      "editorOverviewRuler.background": "#FFFFFF",
+      "breadcrumb.background": "#FFFFFF",
+      "terminal.background": "#FFFFFF",
+      "notebook.cellEditorBackground": "#FFFFFF",
+      "sideBar.background": "#F5F5F5",
+      "activityBar.background": "#F5F5F5",
+      "panel.background": "#F5F5F5",
+      "statusBar.background": "#F5F5F5",
+      "statusBar.noFolderBackground": "#F5F5F5",
+      "titleBar.activeBackground": "#F5F5F5",
+      "titleBar.inactiveBackground": "#F5F5F5",
+      "editorGroupHeader.tabsBackground": "#F5F5F5",
+      "tab.activeBackground": "#FFFFFF",
+      "tab.inactiveBackground": "#F5F5F5",
+      "editorWidget.background": "#F5F5F5",
+      "editorHoverWidget.background": "#F5F5F5",
+      "editorSuggestWidget.background": "#F5F5F5",
+      "quickInput.background": "#FFFFFF",
+      "menu.background": "#FFFFFF",
+      "dropdown.background": "#FFFFFF",
+      "notifications.background": "#FFFFFF"
+    }
+  },
+
   // ----------------------------------------------------------------------
   // # Terminal
   // ----------------------------------------------------------------------

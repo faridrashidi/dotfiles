@@ -1,0 +1,10 @@
+{
+  "variables": {
+    "base": "#FFFFFF",
+    "surface": "#F5F5F5",
+    "overlay": "#EEEEEE",
+    "highlight-low": "#F5F5F5",
+    "highlight-med": "#E5E5E5",
+    "highlight-high": "#DDDDDD"
+  }
+}
