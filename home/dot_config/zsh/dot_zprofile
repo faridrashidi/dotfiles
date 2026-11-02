@@ -5,9 +5,11 @@ _source_named_configs() {
     local name file
     for name in "$@"; do
         file="$ZDOTDIR/$name"
-        [[ -f "$file" ]] && source "$file"
+        [[ -f "$file" && -r "$file" ]] && source "$file"
         for file in "$XDG_CONFIG_HOME"/*/"$name"(N); do
             [[ "${file:h:t}" == zsh ]] && continue
+            # Removed configs can leave dangling chezmoi symlinks.
+            [[ -f "$file" && -r "$file" ]] || continue
             source "$file"
         done
     done
