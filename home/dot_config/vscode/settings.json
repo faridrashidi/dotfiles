@@ -1,4 +1,38 @@
 {
+  "editor.tokenColorCustomizations": {
+    "[Rosé Pine Dawn]": {
+      "comments": "#817a8e",
+      "strings": "#b87516",
+      "numbers": "#bf625f",
+      "keywords": "#1f617d",
+      "types": "#357e8c",
+      "functions": "#bf625f",
+      "variables": "#242424",
+      "textMateRules": [
+        {
+          "scope": [
+            "entity.other.attribute-name",
+            "entity.other.inherited-class",
+            "variable.parameter",
+            "meta.diff.range",
+            "meta.directive.vue"
+          ],
+          "settings": {
+            "foreground": "#7c609c"
+          }
+        },
+        {
+          "scope": [
+            "punctuation"
+          ],
+          "settings": {
+            "foreground": "#69647f"
+          }
+        }
+      ]
+    }
+  },
+
   // ----------------------------------------------------------------------
   // # Application, Window & Security
   // ----------------------------------------------------------------------
@@ -76,7 +110,26 @@
       "quickInput.background": "#FFFFFF",
       "menu.background": "#FFFFFF",
       "dropdown.background": "#FFFFFF",
-      "notifications.background": "#FFFFFF"
+      "notifications.background": "#FFFFFF",
+      "editor.foreground": "#242424",
+      "terminal.foreground": "#242424",
+      "terminalCursor.foreground": "#242424",
+      "editorLineNumber.foreground": "#817a8e",
+      "terminal.ansiRed": "#a84d68",
+      "terminal.ansiBrightRed": "#a84d68",
+      "terminal.ansiGreen": "#1f617d",
+      "terminal.ansiBrightGreen": "#1f617d",
+      "terminal.ansiYellow": "#b87516",
+      "terminal.ansiBrightYellow": "#b87516",
+      "terminal.ansiBlue": "#357e8c",
+      "terminal.ansiBrightBlue": "#357e8c",
+      "terminal.ansiMagenta": "#7c609c",
+      "terminal.ansiBrightMagenta": "#7c609c",
+      "terminal.ansiCyan": "#bf625f",
+      "terminal.ansiBrightCyan": "#bf625f",
+      "terminal.ansiWhite": "#242424",
+      "terminal.ansiBrightWhite": "#242424",
+      "terminal.ansiBrightBlack": "#817a8e"
     }
   },
 
