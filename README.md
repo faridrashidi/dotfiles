@@ -4,7 +4,7 @@ My personal dotfiles and macOS/Linux setup automation.
 
 <p align="center">
   <img
-    src="https://github.com/user-attachments/assets/3a121cc6-d4df-40d7-b7d1-11309a157cc9"
+    src="https://github.com/user-attachments/assets/a07bae75-9e28-430b-8bcc-4ba9f8c0fa42"
     alt="Dotfiles environment"
     width="1200"
   >
