@@ -1,0 +1,49 @@
+{
+  "name": "GitHub Light Default",
+  "type": "light",
+  "variables": {
+    "background": "#ffffff",
+    "foreground": "#1f2328",
+    "surface": "#f6f8fa",
+    "selection": "#0969da33",
+    "line": "#eaeef280",
+    "caret": "#0969da",
+    "comment": "#6e7781",
+    "keyword": "#cf222e",
+    "string": "#0a3069",
+    "constant": "#0550ae",
+    "function": "#8250df",
+    "type": "#116329",
+    "variable": "#953800",
+    "invalid": "#82071e",
+    "punctuation": "#1f2328"
+  },
+  "globals": {
+    "background": "var(background)",
+    "foreground": "var(foreground)",
+    "caret": "var(caret)",
+    "gutter": "var(surface)",
+    "gutter_foreground": "var(comment)",
+    "line_highlight": "var(line)",
+    "selection": "var(selection)",
+    "selection_foreground": "var(foreground)"
+  },
+  "rules": [
+    {"scope": "comment", "foreground": "var(comment)", "font_style": "italic"},
+    {"scope": "keyword, storage", "foreground": "var(keyword)"},
+    {"scope": "string", "foreground": "var(string)"},
+    {"scope": "constant, support.constant", "foreground": "var(constant)"},
+    {"scope": "entity.name", "foreground": "var(constant)"},
+    {"scope": "entity.name.function, support.function, variable.function", "foreground": "var(function)"},
+    {"scope": "entity.name.type, entity.name.class, support.type, support.class", "foreground": "var(type)"},
+    {"scope": "variable", "foreground": "var(variable)"},
+    {"scope": "punctuation", "foreground": "var(punctuation)"},
+    {"scope": "invalid", "foreground": "var(invalid)"},
+    {"scope": "markup.heading", "foreground": "var(function)", "font_style": "bold"},
+    {"scope": "markup.bold", "font_style": "bold"},
+    {"scope": "markup.italic", "font_style": "italic"},
+    {"scope": "entity.name.tag", "foreground": "var(type)"},
+    {"scope": "variable.other, variable.parameter", "foreground": "var(foreground)"},
+    {"scope": "support, constant.numeric, constant.language, meta.property-name", "foreground": "var(constant)"}
+  ]
+}

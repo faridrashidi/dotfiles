@@ -1,41 +1,36 @@
+local function apply_theme()
+  local light = vim.o.background == "light"
+  local name = light and "github_light_default" or "kanagawa"
+  if vim.g.colors_name ~= name then
+    vim.cmd.colorscheme(light and "github_light_default" or "kanagawa-dragon")
+  end
+end
+
 return {
   {
-    "rose-pine/neovim",
-    name = "rose-pine",
+    "projekt0n/github-nvim-theme",
+    name = "github-theme",
     priority = 1000,
-    opts = {
-      variant = "auto",
-      dark_variant = "main",
-      palette = {
-        dawn = {
-          base = "#ffffff",
-          surface = "#f5f5f5",
-          overlay = "#eeeeee",
-          _nc = "#f5f5f5",
-          highlight_low = "#f5f5f5",
-          highlight_med = "#e5e5e5",
-          highlight_high = "#dddddd",
-          text = "#242424",
-          muted = "#817a8e",
-          subtle = "#69647f",
-          love = "#a84d68",
-          gold = "#b87516",
-          rose = "#bf625f",
-          pine = "#1f617d",
-          foam = "#357e8c",
-          iris = "#7c609c",
-        },
-      },
-      highlight_groups = {
-        -- Keep comments readable in both variants.
-        Comment = { fg = "subtle" },
-      },
-    },
+    opts = {},
+  },
+  {
+    "rebelot/kanagawa.nvim",
+    priority = 1000,
+    opts = { theme = "dragon" },
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "rose-pine",
+      colorscheme = function()
+        vim.api.nvim_create_autocmd("OptionSet", {
+          pattern = "background",
+          group = vim.api.nvim_create_augroup("DotfilesTheme", { clear = true }),
+          callback = function()
+            vim.schedule(apply_theme)
+          end,
+        })
+        apply_theme()
+      end,
     },
   },
 }

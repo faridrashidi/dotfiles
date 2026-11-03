@@ -2,7 +2,6 @@
 	"bootstrapped": true,
 	"installed_packages":
 	[
-		"Theme - Rose Pine",
 		"Package Control",
 		"rainbow_csv",
 	],

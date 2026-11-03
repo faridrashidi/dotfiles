@@ -1,38 +1,4 @@
 {
-  "editor.tokenColorCustomizations": {
-    "[Rosé Pine Dawn]": {
-      "comments": "#817a8e",
-      "strings": "#b87516",
-      "numbers": "#bf625f",
-      "keywords": "#1f617d",
-      "types": "#357e8c",
-      "functions": "#bf625f",
-      "variables": "#242424",
-      "textMateRules": [
-        {
-          "scope": [
-            "entity.other.attribute-name",
-            "entity.other.inherited-class",
-            "variable.parameter",
-            "meta.diff.range",
-            "meta.directive.vue"
-          ],
-          "settings": {
-            "foreground": "#7c609c"
-          }
-        },
-        {
-          "scope": [
-            "punctuation"
-          ],
-          "settings": {
-            "foreground": "#69647f"
-          }
-        }
-      ]
-    }
-  },
-
   // ----------------------------------------------------------------------
   // # Application, Window & Security
   // ----------------------------------------------------------------------
@@ -74,64 +40,17 @@
   "breadcrumbs.enabled": true,
   "outline.collapseItems": "alwaysCollapse",
   "workbench.browser.showInTitleBar": true,
-  "workbench.colorTheme": "Rosé Pine",
+  "workbench.colorTheme": "Kanagawa Dragon",
   "workbench.editor.openSideBySideDirection": "down",
   "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" },
   "workbench.experimental.modernUI": false,
   "workbench.iconTheme": "material-icon-theme",
   "workbench.panel.defaultLocation": "bottom",
   "workbench.panel.showLabels": false,
-  "workbench.preferredDarkColorTheme": "Rosé Pine",
-  "workbench.preferredLightColorTheme": "Rosé Pine Dawn",
+  "workbench.preferredDarkColorTheme": "Kanagawa Dragon",
+  "workbench.preferredLightColorTheme": "GitHub Light Default",
   "workbench.secondarySideBar.showLabels": false,
   "workbench.startupEditor": "none",
-
-  "workbench.colorCustomizations": {
-    "[Rosé Pine Dawn]": {
-      "editor.background": "#FFFFFF",
-      "editorGutter.background": "#FFFFFF",
-      "editorOverviewRuler.background": "#FFFFFF",
-      "breadcrumb.background": "#FFFFFF",
-      "terminal.background": "#FFFFFF",
-      "notebook.cellEditorBackground": "#FFFFFF",
-      "sideBar.background": "#F5F5F5",
-      "activityBar.background": "#F5F5F5",
-      "panel.background": "#F5F5F5",
-      "statusBar.background": "#F5F5F5",
-      "statusBar.noFolderBackground": "#F5F5F5",
-      "titleBar.activeBackground": "#F5F5F5",
-      "titleBar.inactiveBackground": "#F5F5F5",
-      "editorGroupHeader.tabsBackground": "#F5F5F5",
-      "tab.activeBackground": "#FFFFFF",
-      "tab.inactiveBackground": "#F5F5F5",
-      "editorWidget.background": "#F5F5F5",
-      "editorHoverWidget.background": "#F5F5F5",
-      "editorSuggestWidget.background": "#F5F5F5",
-      "quickInput.background": "#FFFFFF",
-      "menu.background": "#FFFFFF",
-      "dropdown.background": "#FFFFFF",
-      "notifications.background": "#FFFFFF",
-      "editor.foreground": "#242424",
-      "terminal.foreground": "#242424",
-      "terminalCursor.foreground": "#242424",
-      "editorLineNumber.foreground": "#817a8e",
-      "terminal.ansiRed": "#a84d68",
-      "terminal.ansiBrightRed": "#a84d68",
-      "terminal.ansiGreen": "#1f617d",
-      "terminal.ansiBrightGreen": "#1f617d",
-      "terminal.ansiYellow": "#b87516",
-      "terminal.ansiBrightYellow": "#b87516",
-      "terminal.ansiBlue": "#357e8c",
-      "terminal.ansiBrightBlue": "#357e8c",
-      "terminal.ansiMagenta": "#7c609c",
-      "terminal.ansiBrightMagenta": "#7c609c",
-      "terminal.ansiCyan": "#bf625f",
-      "terminal.ansiBrightCyan": "#bf625f",
-      "terminal.ansiWhite": "#242424",
-      "terminal.ansiBrightWhite": "#242424",
-      "terminal.ansiBrightBlack": "#817a8e"
-    }
-  },
 
   // ----------------------------------------------------------------------
   // # Terminal

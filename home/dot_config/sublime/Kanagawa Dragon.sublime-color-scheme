@@ -1,0 +1,52 @@
+{
+  "name": "Kanagawa Dragon",
+  "type": "dark",
+  "variables": {
+    "background": "#181616",
+    "foreground": "#c5c9c5",
+    "surface": "#282727",
+    "selection": "#223249",
+    "line": "#393836",
+    "caret": "#c8c093",
+    "comment": "#737c73",
+    "keyword": "#8992a7",
+    "string": "#8a9a7b",
+    "constant": "#b6927b",
+    "function": "#8ba4b0",
+    "type": "#8ea4a2",
+    "variable": "#c5c9c5",
+    "invalid": "#e82424",
+    "punctuation": "#9e9b93",
+    "number": "#a292a3",
+    "operator": "#c4b28a",
+    "macro": "#c4746e"
+  },
+  "globals": {
+    "background": "var(background)",
+    "foreground": "var(foreground)",
+    "caret": "var(caret)",
+    "gutter": "var(surface)",
+    "gutter_foreground": "var(comment)",
+    "line_highlight": "var(line)",
+    "selection": "var(selection)",
+    "selection_foreground": "var(foreground)"
+  },
+  "rules": [
+    {"scope": "comment", "foreground": "var(comment)", "font_style": "italic"},
+    {"scope": "keyword, storage", "foreground": "var(keyword)"},
+    {"scope": "string", "foreground": "var(string)"},
+    {"scope": "constant, support.constant", "foreground": "var(constant)"},
+    {"scope": "entity.name", "foreground": "var(constant)"},
+    {"scope": "entity.name.function, support.function, variable.function", "foreground": "var(function)"},
+    {"scope": "entity.name.type, entity.name.class, support.type, support.class", "foreground": "var(type)"},
+    {"scope": "variable", "foreground": "var(variable)"},
+    {"scope": "punctuation", "foreground": "var(punctuation)"},
+    {"scope": "invalid", "foreground": "var(invalid)"},
+    {"scope": "markup.heading", "foreground": "var(function)", "font_style": "bold"},
+    {"scope": "markup.bold", "font_style": "bold"},
+    {"scope": "markup.italic", "font_style": "italic"},
+    {"scope": "constant.numeric", "foreground": "var(number)"},
+    {"scope": "keyword.operator, entity.name.tag", "foreground": "var(operator)"},
+    {"scope": "entity.name.function.macro", "foreground": "var(macro)"}
+  ]
+}
