@@ -7,12 +7,10 @@ christian-kohler.path-intellisense
 esbenp.prettier-vscode
 fanaticpythoner.better-todo-tree
 formulahendry.code-runner
-github.github-vscode-theme
 github.vscode-github-actions
 github.vscode-pull-request-github
 google.google-antigravity
 marimo-team.vscode-marimo
-metaphore.kanagawa-vscode-color-theme
 mkhl.shfmt
 ms-python.debugpy
 ms-python.python
@@ -30,3 +28,4 @@ tombi-toml.tombi
 tomoki1207.pdf
 usernamehw.errorlens
 vue.volar
+Webhooked.kanso-theme
