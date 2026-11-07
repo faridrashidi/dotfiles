@@ -11,9 +11,9 @@ store_failed = true
 enter_accept = true
 secrets_filter = true
 history_filter = [
-  "^ls( .*)?$",
+  "^(ls|l|ll|lt)([[:space:];]|$)",
   "^cd( .*)?$",
-  "^clear$",
+  "^clear([[:space:];]|$)",
   "^exit$",
   "^pwd$",
   "^history$",
