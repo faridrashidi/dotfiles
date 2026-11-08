@@ -1,1 +1,4 @@
+export ATUIN_HOME="$XDG_DATA_HOME/atuin"
+export ATUIN_DATA_DIR="$ATUIN_HOME"
+export ATUIN_CONFIG_DIR="$XDG_CONFIG_HOME/atuin"
 export ATUIN_LOGS__DIR="$XDG_CACHE_HOME/atuin/logs"
